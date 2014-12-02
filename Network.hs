@@ -1,8 +1,17 @@
 module Network
-( sigmoid
+( Neuron(..)
+, sigmoid
 , logistic
 , reclu
+, evaluate
 ) where
+
+data Neuron = Sigmoid | Logistic | Reclu
+
+evaluate :: (Floating a) => Neuron -> a -> a
+evaluate Sigmoid v = sigmoid v
+evaluate Logistic v = logistic v
+evaluate Reclu v = reclu v
 
 -- The sigmoid activation function
 sigmoid :: (Floating a) => a -> a
