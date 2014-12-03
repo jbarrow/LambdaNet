@@ -16,6 +16,6 @@ writeDat filename lst prec =
       mapM_ writeLine lst
 
 -- Usage:
---  > let n = Sigmoid
---  > let lst = computeApproximation (evaluate n)
---  > writeDat sigmoid.txt lst 5
+--  > writeDat "docs/sigmoid.txt" (computeApproximation (evaluate Sigmoid)) 5
+--  > writeDat "docs/reclu.txt" (computeApproximation (evaluate Reclu)) 5
+--  > writeDat "docs/logistic.txt" (computeApproximation (evaluate Logistic)) 5
