@@ -1,4 +1,5 @@
 import Network.Neuron
+import Network.Network
 import System.IO
 import Text.Printf
 import Control.Monad
