@@ -1,4 +1,4 @@
-import Network
+import Network.Neuron
 import System.IO
 import Text.Printf
 import Control.Monad
@@ -16,6 +16,6 @@ writeDat filename lst prec =
       mapM_ writeLine lst
 
 -- Usage:
---  > writeDat "docs/sigmoid.txt" (computeApproximation (evaluate Sigmoid)) 5
---  > writeDat "docs/reclu.txt" (computeApproximation (evaluate Reclu)) 5
---  > writeDat "docs/logistic.txt" (computeApproximation (evaluate Logistic)) 5
+--  > writeDat "docs/sigmoid.txt" (computeApproximation sigmoid) 5
+--  > writeDat "docs/reclu.txt" (computeApproximation reclu) 5
+--  > writeDat "docs/logistic.txt" (computeApproximation logistic) 5
