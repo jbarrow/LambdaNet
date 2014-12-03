@@ -17,3 +17,4 @@ project/plugins/project/
 .worksheet
 
 .DS_Store
+docs/*.txt

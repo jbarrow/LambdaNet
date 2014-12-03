@@ -9,7 +9,8 @@ Todo
 
 Todo
 
-__Generating the Documentation:__
+__Generating the Documentation Images:__
+
 All the documentation for the network was generated in the following manner. First, from the Haskell REPL, use the following commands:
 
 ```
