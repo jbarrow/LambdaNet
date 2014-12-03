@@ -8,7 +8,8 @@ module Network.Network
 
 import Network.Neuron
 
---
+-- Networks are constructed front to back. Start by adding an input layer,
+-- then each hidden layer, and finally an output layer.
 data Network a = Network [Layer a]
 
 data Layer a = Layer (Neuron a) Int
