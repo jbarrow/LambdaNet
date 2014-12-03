@@ -10,7 +10,7 @@ def plot_activation_functions(neuron_type):
     plt.savefig(neuron_type + ".png")
 
 def main():
-    for activation in ["sigmoid", "reclu", "logistic"]:
+    for activation in ["sigmoid", "reclu", "tanh"]:
         plot_activation_functions(activation)
 
 if __name__ == '__main__':

@@ -5,7 +5,7 @@ LambdaNet
 
 LambdaNet provides support for a number of activation functions:
 
-![Logistic](https://github.com/jbarrow/LambdaNet/blob/master/docs/logistic.png)
+![Logistic](https://github.com/jbarrow/LambdaNet/blob/master/docs/tanh.png)
 
 ![Sigmoid](https://github.com/jbarrow/LambdaNet/blob/master/docs/sigmoid.png)
 

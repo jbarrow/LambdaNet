@@ -19,4 +19,4 @@ writeDat filename lst prec =
 -- Usage:
 --  > writeDat "docs/sigmoid.txt" (computeApproximation sigmoid) 5
 --  > writeDat "docs/reclu.txt" (computeApproximation reclu) 5
---  > writeDat "docs/logistic.txt" (computeApproximation logistic) 5
+--  > writeDat "docs/tanh.txt" (computeApproximation logistic) 5

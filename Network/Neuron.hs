@@ -1,29 +1,49 @@
 module Network.Neuron
 ( Neuron(..)
+
+, ActivationFunction
+, ActivationFunction'
+, sigmoid_neuron
+, tanh_neuron
+, reclu_neuron
+
+, evaluate
+, evaluate'
+
 , sigmoid
 , sigmoid'
 , logistic
 , logistic'
 , reclu
 , reclu'
-, evaluate
-, evaluate'
 ) where
 
-data Neuron = Sigmoid | Logistic | Reclu
+-- Using this structure allows users of the library to create their own
+-- neurons by creating two functions - an activation function and its
+-- derivative - and packaging them up into a neuron type.
+data Neuron a = Neuron (ActivationFunction a) (ActivationFunction' a)
+
+type ActivationFunction a = a -> a
+type ActivationFunction' a = a -> a
 
 -- Evaluate the activation of a neuron by pattern matching it on
 -- the constructor.
-evaluate :: (Floating a) => Neuron -> [a] -> a
-evaluate Sigmoid = sigmoid . sum
-evaluate Logistic = logistic . sum
-evaluate Reclu = reclu . sum
+evaluate :: (Floating a) => Neuron a -> [a] -> a
+evaluate (Neuron f f') = f . sum
 
 -- Evaluate the derivative of a neuron, given a floating point vector
-evaluate' :: (Floating a) => Neuron -> [a] -> a
-evaluate' Sigmoid = sigmoid' . sum
-evaluate' Logistic = logistic' . sum
-evaluate' Reclu = reclu' . sum
+evaluate' :: (Floating a) => Neuron a -> [a] -> a
+evaluate' (Neuron f f') = f' . sum
+
+-- Our provided neuron types: sigmoid, tanh, reclu
+sigmoid_neuron :: (Floating a) => Neuron a
+sigmoid_neuron = Neuron sigmoid sigmoid'
+
+tanh_neuron :: (Floating a) => Neuron a
+tanh_neuron = Neuron logistic logistic'
+
+reclu_neuron :: (Floating a) => Neuron a
+reclu_neuron = Neuron reclu reclu'
 
 -- The sigmoid activation function, a standard activation function defined
 -- on the range (0, 1).

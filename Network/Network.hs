@@ -1,12 +1,20 @@
 module Network.Network
 ( Network(..)
 , Layer(..)
+
+, createNetwork
+, addLayer
 ) where
 
-import qualified Network.Neuron as Neuron
+import Network.Neuron
 
-data Network = Network [Layer]
+--
+data Network a = Network [Layer a]
 
-data Layer = Layer { layer_type :: Neuron.Neuron
-                   , count :: Int
-                   }
+data Layer a = Layer (Neuron a) Int
+
+createNetwork :: (Floating a) => Network a
+createNetwork = Network []
+
+addLayer :: (Floating a) => Network a -> Layer a -> Network a
+addLayer (Network layers) layer = Network (layers ++ [layer])
