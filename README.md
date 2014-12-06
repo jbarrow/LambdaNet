@@ -7,7 +7,14 @@ Todo
 
 ### Documentation
 
-Todo
+## Build and run frontend
+First, install (leiningen)[http://leiningen.org]. Then...
+```
+  cd frontend
+  lein cljsbuild once
+  lein ring server
+```
+The app will then be running on port 3000.
 
 __Generating the Documentation Images:__
 
