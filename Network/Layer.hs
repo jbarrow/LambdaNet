@@ -1,10 +1,11 @@
 module Network.Layer
-( Layer(..)
-, LayerDefinition(..)
+( LayerDefinition(..)
 
 , Connectivity
 ) where
 
-data LayerDefinition a = LayerDefinition (Neuron a) Int Connectivity
+import Network.Neuron
+
+data LayerDefinition a = LayerDefinition (Neuron a) Int (Connectivity a)
 
 type Connectivity a = Int -> Int -> [[a]]
