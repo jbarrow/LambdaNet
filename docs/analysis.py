@@ -17,7 +17,7 @@ def plot_activation_functions(neuron_type):
     plt.figure()
     plt.title(title + " Neuron Activation Graph")
     plt.plot(x, y)
-    plt.savefig(neuron_type + ".png")
+    plt.savefig("images/" + neuron_type + ".png")
 
 def main():
     # Iterate through the activation functions and their derivatives
