@@ -3,9 +3,9 @@ module Network.Neuron
 
 , ActivationFunction
 , ActivationFunction'
-, sigmoid_neuron
-, tanh_neuron
-, reclu_neuron
+, sigmoidNeuron
+, tanhNeuron
+, recluNeuron
 
 , evaluate
 , evaluate'
@@ -36,14 +36,14 @@ evaluate' :: (Floating a) => Neuron a -> [a] -> a
 evaluate' (Neuron f f') = f' . sum
 
 -- Our provided neuron types: sigmoid, tanh, reclu
-sigmoid_neuron :: (Floating a) => Neuron a
-sigmoid_neuron = Neuron sigmoid sigmoid'
+sigmoidNeuron :: (Floating a) => Neuron a
+sigmoidNeuron = Neuron sigmoid sigmoid'
 
-tanh_neuron :: (Floating a) => Neuron a
-tanh_neuron = Neuron logistic logistic'
+tanhNeuron :: (Floating a) => Neuron a
+tanhNeuron = Neuron logistic logistic'
 
-reclu_neuron :: (Floating a) => Neuron a
-reclu_neuron = Neuron reclu reclu'
+recluNeuron :: (Floating a) => Neuron a
+recluNeuron = Neuron reclu reclu'
 
 -- The sigmoid activation function, a standard activation function defined
 -- on the range (0, 1).
