@@ -33,11 +33,12 @@
 ;; -------------------------
 ;; View
 
-(defn atom-input [value]
-  [:input {:type "text"
-           :value @value
-           :on-change #(let [v (-> % .-target .-value)]
-                         (reset! value v))}])
+(defn atom-input [v k type]
+  [:input {:type (if type type "text")
+           :value (if k (k @v) @v)
+           :on-change #(let [text (-> % .-target .-value)]
+                         (if k (swap! v assoc k text) 
+                             (reset! v text)))}])
 
 (defn selection-list [v k items]
   [:select.form-control {:field :list :id :many-options
@@ -46,10 +47,11 @@
      [:option {:key (:key item)}
       (:label item)])])
 
-(defn neuron-config [layer]
+(defn neuron-config [layer] 
   [:div
    [selection-list layer :neuron-type neuron-types]
-   [selection-list layer :connectivity-type connectivity-types]])
+   [selection-list layer :connectivity-type connectivity-types]
+   [atom-input layer :neuron-count "number"]])
 
 (defn create-layer []
   (put! :layers (conj (get-state :layers)
