@@ -4,6 +4,7 @@ module Linear
 
 , mulVV
 , mulMV
+, hadamard
 ) where
 
 type Vector a = [a]
@@ -14,3 +15,6 @@ mulVV u v = sum $ zipWith (*) u v
 
 mulMV :: (Num a) => Matrix a -> Vector a -> Vector a
 mulMV m v = map (mulVV v) m
+
+hadamard :: (Num a) => Matrix a -> Matrix a -> Matrix a
+hadamard m m' = m

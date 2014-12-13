@@ -13,6 +13,7 @@ module Network.Layer
 
 import Network.Neuron
 import Linear
+import System.Random
 
 data LayerDefinition a = LayerDefinition (Neuron a) Int (Connectivity a)
 
@@ -33,18 +34,19 @@ connectFully :: Num a => Int -> Int -> Matrix a
 connectFully i j = take i (repeat (take j (repeat 1)))
 
 -- Initialize an infinite random list list with:
-randomList :: (RandomGen g, Random a, Floating a) => g -> [a]
-randomList (normals|ts|uniforms) . randoms
+randomList :: (RandomGen g, Random a, Floating a) => RandomTransform a -> g -> [a]
+randomList transform = transform . randoms
 
 -- Define a transformation on the uniform distribution to generate
 -- normally distributed numbers in Haskell (the Box-Muller transform)
 boxMuller :: Floating a => a -> a -> (a, a)
-boxMuller x1 x2 = (z1, z2) where z1 = sqrt . log x1 * cos (2 * pi * x2)
-                                 z2 = sqrt . log x1 * sin (2 * pi * x2)
+boxMuller x1 x2 = (z1, z2) where z1 = sqrt (log (-2) * x1) * cos (2 * pi * x2)
+                                 z2 = sqrt (log (-2) * x1) * sin (2 * pi * x2)
 
+-- Apply the Box-Muller transform
 normals :: Floating a => [a] -> [a]
-normals (x1:x2:us) = x1:x2:(boxMuller us)
-                        where (x1, x2) = boxMuller x1 x2
+normals (x1:x2:xs) = z1:z2:(normals xs)
+                        where (z1, z2) = boxMuller x1 x2
 
 uniforms :: Floating a => [a] -> [a]
-uniforms us = us
+uniforms xs = xs
