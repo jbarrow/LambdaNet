@@ -4,7 +4,7 @@ module Network.Layer
 
 , Connectivity
 
-, applyLayer
+, connectFully
 ) where
 
 import Network.Neuron
@@ -14,7 +14,7 @@ data LayerDefinition a = LayerDefinition (Neuron a) Int (Connectivity a)
 
 type Layer a = (Matrix a)
 
-type Connectivity a = Int -> Int -> [[a]]
+type Connectivity a = Int -> Int -> Matrix a
 
 -- connectFully
 -- parameters
@@ -24,5 +24,5 @@ type Connectivity a = Int -> Int -> [[a]]
 --   a i by j connectivity matrix
 --   elements of matrix in {0, 1}
 --   (or it could return boolean values)
-connectFully :: Num a => Int -> Int -> [[a]]
+connectFully :: Num a => Int -> Int -> Matrix a
 connectFully i j = take i (repeat (take j (repeat 1)))

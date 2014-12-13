@@ -5,7 +5,7 @@ module Network.Trainer
 , TestingData
 ) where
 
-import Data.Matrix
+import Linear
 
 data Trainer = Trainer
 

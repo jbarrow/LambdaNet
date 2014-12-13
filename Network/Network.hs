@@ -13,6 +13,3 @@ data Network a = Network [Layer a]
 
 addLayerDefinition :: (Floating a) => LayerDefinition a -> [LayerDefinition a] -> [LayerDefinition a]
 addLayerDefinition layer layers = (layers ++ [layer])
-
-predict :: (Floating a) => Network a -> TestingData a -> Vector a
-predict (Network layers) example = foldl applyLayer example layers
