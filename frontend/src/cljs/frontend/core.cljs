@@ -6,7 +6,7 @@
 ;; -------------------------
 ;; State
 
-(defonce app-state (atom {:layers [] :layer-text ""}))
+(defonce app-state (atom {:layers [] :init-fn "normal" :layer-text ""}))
 
 (defn get-state [k & [default]]
   (clojure.core/get @app-state k default))
@@ -30,6 +30,11 @@
    {:key :tangent :label "Hyberbolic Tangent"}
    {:key :linear :label "Rectified Linear"}])
 
+(def init-types
+  [{:key :normal :label "Normal"}
+   {:key :uniform :label "Uniform"}
+   {:key :t :label "Tea"}])
+
 (def connectivity-types
   [{:key :full :label "Fully Connected"}])
 
@@ -49,7 +54,11 @@
 (defn remove-layer [layer]
   (put! :layers (filter #(not= (:id %) (:id layer)) (get-state :layers))))
 
-(defn export [] (put! :layer-text (str (:layers @app-state))))
+(defn export [] (put! :layer-text
+                      (str "Initialize using "
+                           (:init-fn @app-state)
+                           " distribution, with the following layers: "
+                           (:layers @app-state))))
 
 
 ;; -------------------------
@@ -86,6 +95,7 @@
        [:p "Training Data" [atom-input training-data]]
        [:button {:on-click create-layer}
         "Create new layer."]
+       [selection-list [:init-fn] init-types]
        [:button {:on-click export}
         "Export"]
        (let [indexed (map-indexed vector (get-state :layers))]
