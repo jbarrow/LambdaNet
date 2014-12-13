@@ -26,4 +26,4 @@ hadamard m n = zipWith (zipWith (*)) m n
 --   i by j matrix where i is length of list / j
 reshape :: (Num a) => Int -> [a] -> Matrix a
 reshape j [] = []
-reshape j list = [(take i list)] ++ reshape i (drop i list)
+reshape j list = [(take j list)] ++ reshape j (drop j list)
