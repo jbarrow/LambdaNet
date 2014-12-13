@@ -17,6 +17,8 @@ type Layer a = (Matrix a)
 type Connectivity a = Int -> Int -> Matrix a
 
 -- connectFully
+--   a connectivity function that fully connects input neurons
+--   to the output neurons
 -- parameters
 --   i is the count of input neurons for a layer
 --   j is the count of the output neurons for a layer
