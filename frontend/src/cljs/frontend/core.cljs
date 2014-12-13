@@ -33,23 +33,6 @@
 (def connectivity-types
   [{:key :full :label "Fully Connected"}])
 
-;; -------------------------
-;; View
-
-(defn atom-input [v ks type]
-  [:input {:type (if type type "text")
-           :value (if ks (get-in @app-state ks) @v)
-           :on-change #(let [text (-> % .-target .-value)]
-                         (if ks (put-in! ks text) 
-                             (reset! v text)))}])
-
-(defn selection-list [k items]
-  [:select.form-control {:field :list :id :many-options
-                         :on-change #(put-in! k (keyword (-> % .-target .-value)))} 
-   (for [item items]
-     [:option {:value (:key item)}
-       (:label item)])])
-
 (defn rand-id []
     (let [chars (apply vector "abcdefghijklmnopqrstuvwxyz0123456789")
                    num-chars (count chars)]
@@ -67,6 +50,26 @@
   (println "Removing " (:id layer))
 
   (put! :layers (filter #(not= (:id %) (:id layer)) (get-state :layers))))
+
+(defn export [] (println (:layers @app-state)))
+
+
+;; -------------------------
+;; View
+
+(defn atom-input [v ks type]
+  [:input {:type (if type type "text")
+           :value (if ks (get-in @app-state ks) @v)
+           :on-change #(let [text (-> % .-target .-value)]
+                         (if ks (put-in! ks text) 
+                             (reset! v text)))}])
+
+(defn selection-list [k items]
+  [:select.form-control {:field :list :id :many-options
+                         :on-change #(put-in! k (keyword (-> % .-target .-value)))} 
+   (for [item items]
+     [:option {:value (:key item)}
+       (:label item)])])
 
 (defn neuron-config [layer i] 
   (println (get-in @app-state [:layers i] @app-state))
@@ -86,9 +89,10 @@
        [:p "Training Data" [atom-input training-data]]
        [:button {:on-click create-layer}
         "Create new layer."]
+       [:button {:on-click export}
+        "Export"]
        (let [indexed (map-indexed vector (get-state :layers))]
          [:p "Layers:" (for [[i layer] indexed]
-                         
                          (neuron-config layer i))])])))
 ;; -------------------------
 ;; Initialize app
