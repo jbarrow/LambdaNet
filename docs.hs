@@ -6,6 +6,7 @@ import System.IO
 import Text.Printf
 import Control.Monad
 import Linear
+import System.Random
 
 -- Compute a numerical approximation of a function on the range from
 -- -10 to 10 with step sizes of 0.01
@@ -26,3 +27,7 @@ writeDat filename lst prec =
 --  > writeDat "docs/derivative_sigmoid.txt" (computeApproximation sigmoid') 5
 --  > writeDat "docs/derivative_reclu.txt" (computeApproximation reclu') 5
 --  > writeDat "docs/derivative_tanh.txt" (computeApproximation tanh') 5
+
+--  > let g = mkStdGen 4
+--  > writeDat "docs/normal.txt" (take 20000 (randomList normals g)) 5
+--- > writeDat "docs/uniform.txt" (take 20000 (randomList uniforms g)) 5

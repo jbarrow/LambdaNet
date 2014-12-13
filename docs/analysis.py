@@ -19,15 +19,32 @@ def plot_activation_functions(neuron_type):
     plt.plot(x, y)
     plt.savefig("images/" + neuron_type + ".png")
 
+def plot_distribution_functions(distribution):
+    """
+    Load the text file generated in Haskell and use it to
+    generate a histogram of the data with 50 bins
+    """
+    data = np.loadtxt(distribution + ".txt")
+    plt.figure()
+    plt.hist(data, bins=50)
+    plt.savefig("images/" + distribution + ".png")
+
 def main():
     # Iterate through the activation functions and their derivatives
-    types = [
+    neuron_types = [
         "sigmoid", "reclu", "tanh",
         "derivative_sigmoid", "derivative_reclu", "derivative_tanh"
     ]
 
-    for activation in types:
+    for activation in neuron_types:
         plot_activation_functions(activation)
+
+    distribution_types = [
+        "normal", "uniform"
+    ]
+
+    for distribution in distribution_types:
+        plot_distribution_functions(distribution)
 
 if __name__ == '__main__':
     main()
