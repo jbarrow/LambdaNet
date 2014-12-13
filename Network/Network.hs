@@ -28,7 +28,7 @@ createNetwork t g (layerDef : (layerDef' : otherLayerDefs)) =
 --   a tuple of the weight matrix and the bias matrix
 connectLayers :: (Floating a) => LayerDefinition a -> LayerDefinition a -> (Matrix a, Matrix a)
 connectLayers layerDef layerDef' =
-  ((connect layerDef) (neuronCount layerDef) (neuronCount layerDef'),
+  ((connect layerDef) (neuronCount layerDef) ( neuronCount layerDef'),
    (connect layerDef) (neuronCount layerDef) (neuronCount layerDef'))
 
 addLayerDefinition :: (Floating a) => LayerDefinition a -> [LayerDefinition a] -> [LayerDefinition a]

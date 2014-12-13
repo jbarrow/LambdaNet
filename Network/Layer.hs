@@ -2,7 +2,6 @@ module Network.Layer
 ( LayerDefinition(..)
 
 , Connectivity
-, RandomTransform
 
 , connectFully
 ) where
