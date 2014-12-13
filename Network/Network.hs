@@ -1,6 +1,7 @@
 module Network.Network
 ( Network(..)
 
+, createNetwork
 ) where
 
 import Network.Neuron
