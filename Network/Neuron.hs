@@ -16,6 +16,7 @@ module Network.Neuron
 , tanh'
 , reclu
 , reclu'
+, input
 ) where
 
 -- Using this structure allows users of the library to create their own
