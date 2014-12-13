@@ -47,17 +47,32 @@
      [:option {:key (:key item)}
       (:label item)])])
 
+(defn rand-id []
+    (let [chars (apply vector "abcdefghijklmnopqrstuvwxyz0123456789")
+                   num-chars (count chars)]
+           (apply str
+                         (take 8 (repeatedly #(get chars (rand-int num-chars)))))))
+
+(defn create-layer []
+  (let [new-layer (atom {:connectivity-type :fully-connected
+                         :neuron-count 3
+                         :neuron-type :sigmoid
+                         :id (rand-id)})]
+    (put! :layers (conj (get-state :layers) new-layer))))
+
+(defn remove-layer [layer]
+  (println "Removing " (:id @layer))
+
+  (put! :layers (filter #(not= (:id @%) (:id @layer)) (get-state :layers))))
+
 (defn neuron-config [layer] 
   [:div
    [selection-list layer :neuron-type neuron-types]
    [selection-list layer :connectivity-type connectivity-types]
-   [atom-input layer :neuron-count "number"]])
-
-(defn create-layer []
-  (put! :layers (conj (get-state :layers)
-                      (atom {:connectivity-type :fully-connected
-                             :neuron-count 3
-                             :neuron-type :sigmoid}))))
+   [atom-input layer :neuron-count "number"]
+   [:div (@layer :id)]
+   [:button {:on-click #(remove-layer layer)}
+    "x"]])
 
 (defn main-page []
   (let [training-data (atom "[]")
@@ -68,6 +83,7 @@
        [:button {:on-click create-layer}
         "Create new layer."]
        [:p "Layers:" (for [layer (get-state :layers)]
+                       
                        (neuron-config layer))]])))
 ;; -------------------------
 ;; Initialize app
