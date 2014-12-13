@@ -31,5 +31,5 @@ connectLayers layerDef layerDef' =
 addLayerDefinition :: (Floating a) => LayerDefinition a -> [LayerDefinition a] -> [LayerDefinition a]
 addLayerDefinition layer layers = (layers ++ [layer])
 
--- feed :: (Floating a) => Vector a -> Network a -> Vector a
--- feed input network = input
+predict :: (Floating a) => Vector a -> Network a -> Vector a
+predict input network = input
