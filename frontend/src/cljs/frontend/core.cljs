@@ -6,13 +6,16 @@
 ;; -------------------------
 ;; State
 
-(defonce app-state (atom {:text "Hello, this is: "}))
+(defonce app-state (atom {:layers []}))
 
 (defn get-state [k & [default]]
   (clojure.core/get @app-state k default))
 
 (defn put! [k v]
   (swap! app-state assoc k v))
+
+(defn put-in! [ks v]
+  (swap! app-state assoc-in ks v)) 
 
 (defn json-parse
   "Returns ClojureScript data for the given JSON string."
@@ -33,19 +36,19 @@
 ;; -------------------------
 ;; View
 
-(defn atom-input [v k type]
+(defn atom-input [v ks type]
   [:input {:type (if type type "text")
-           :value (if k (k @v) @v)
+           :value (if ks (get-in @app-state ks) @v)
            :on-change #(let [text (-> % .-target .-value)]
-                         (if k (swap! v assoc k text) 
+                         (if ks (put-in! ks text) 
                              (reset! v text)))}])
 
-(defn selection-list [v k items]
+(defn selection-list [k items]
   [:select.form-control {:field :list :id :many-options
-                         :on-change #(swap! v assoc k (-> % .-target .-value))}
+                         :on-change #(put-in! k (keyword (-> % .-target .-value)))} 
    (for [item items]
-     [:option {:key (:key item)}
-      (:label item)])])
+     [:option {:value (:key item)}
+       (:label item)])])
 
 (defn rand-id []
     (let [chars (apply vector "abcdefghijklmnopqrstuvwxyz0123456789")
@@ -54,23 +57,24 @@
                          (take 8 (repeatedly #(get chars (rand-int num-chars)))))))
 
 (defn create-layer []
-  (let [new-layer (atom {:connectivity-type :fully-connected
-                         :neuron-count 3
-                         :neuron-type :sigmoid
-                         :id (rand-id)})]
+  (let [new-layer {:connectivity-type :fully-connected
+                   :neuron-count 3
+                   :neuron-type :sigmoid
+                   :id (rand-id)}]
     (put! :layers (conj (get-state :layers) new-layer))))
 
 (defn remove-layer [layer]
-  (println "Removing " (:id @layer))
+  (println "Removing " (:id layer))
 
-  (put! :layers (filter #(not= (:id @%) (:id @layer)) (get-state :layers))))
+  (put! :layers (filter #(not= (:id %) (:id layer)) (get-state :layers))))
 
-(defn neuron-config [layer] 
+(defn neuron-config [layer i] 
+  (println (get-in @app-state [:layers i] @app-state))
   [:div
-   [selection-list layer :neuron-type neuron-types]
-   [selection-list layer :connectivity-type connectivity-types]
-   [atom-input layer :neuron-count "number"]
-   [:div (@layer :id)]
+   [selection-list [:layers i :neuron-type] neuron-types]
+   [selection-list [:layers i :connectivity-type] connectivity-types]
+   [atom-input layer [:layers i :neuron-count] "number"]
+   ;; [:div (layer :id)]
    [:button {:on-click #(remove-layer layer)}
     "x"]])
 
@@ -82,9 +86,10 @@
        [:p "Training Data" [atom-input training-data]]
        [:button {:on-click create-layer}
         "Create new layer."]
-       [:p "Layers:" (for [layer (get-state :layers)]
-                       
-                       (neuron-config layer))]])))
+       (let [indexed (map-indexed vector (get-state :layers))]
+         [:p "Layers:" (for [[i layer] indexed]
+                         
+                         (neuron-config layer i))])])))
 ;; -------------------------
 ;; Initialize app
 
