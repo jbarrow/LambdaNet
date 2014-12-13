@@ -1,6 +1,5 @@
 module Network.Layer
 ( LayerDefinition(..)
-, Layer
 
 , Connectivity
 
