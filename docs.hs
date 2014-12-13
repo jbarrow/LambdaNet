@@ -5,6 +5,7 @@ import Network.Network
 import System.IO
 import Text.Printf
 import Control.Monad
+import Linear
 
 -- Compute a numerical approximation of a function on the range from
 -- -10 to 10 with step sizes of 0.01
