@@ -6,7 +6,7 @@
 ;; -------------------------
 ;; State
 
-(defonce app-state (atom {:layers []}))
+(defonce app-state (atom {:layers [] :layer-text ""}))
 
 (defn get-state [k & [default]]
   (clojure.core/get @app-state k default))
@@ -47,11 +47,9 @@
     (put! :layers (conj (get-state :layers) new-layer))))
 
 (defn remove-layer [layer]
-  (println "Removing " (:id layer))
-
   (put! :layers (filter #(not= (:id %) (:id layer)) (get-state :layers))))
 
-(defn export [] (println (:layers @app-state)))
+(defn export [] (put! :layer-text (str (:layers @app-state))))
 
 
 ;; -------------------------
@@ -72,7 +70,6 @@
        (:label item)])])
 
 (defn neuron-config [layer i] 
-  (println (get-in @app-state [:layers i] @app-state))
   [:div
    [selection-list [:layers i :neuron-type] neuron-types]
    [selection-list [:layers i :connectivity-type] connectivity-types]
@@ -93,7 +90,8 @@
         "Export"]
        (let [indexed (map-indexed vector (get-state :layers))]
          [:p "Layers:" (for [[i layer] indexed]
-                         (neuron-config layer i))])])))
+                         (neuron-config layer i))])
+       [:code (:layer-text @app-state)]])))
 ;; -------------------------
 ;; Initialize app
 
