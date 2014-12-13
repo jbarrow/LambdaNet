@@ -3,12 +3,24 @@ LambdaNet
 
 ### Using LambdaNet
 
-Todo
+### First Time Setup
+
+Install the [Haste Compiler](http://haste-lang.org). The second step will take a while, so go get some hard-earned shawarma while you wait.
+
+```
+  cabal update
+  cabal install hastec
+```
+
+Install [leiningen](http://leiningen.org).
+  1. Download the [lein script](https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein)
+  2. Place it on your $PATH where your shell can find it (eg. `~/bin`)
+  3. Set it to be executable (`chmod a+x ~/bin/lein`)
+  4. Run it (`./lein`) and it will download the self-install package
 
 ### Documentation
 
 ## Build and run frontend
-First, install (leiningen)[http://leiningen.org]. Then...
 ```
   cd frontend
   lein cljsbuild once
