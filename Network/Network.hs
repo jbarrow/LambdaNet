@@ -12,9 +12,8 @@ import System.Random
 
 -- Networks are constructed front to back. Start by adding an input layer,
 -- then each hidden layer, and finally an output layer.
---data Network a = Network [LayerDefinition a]
 
-type Network a = [(Matrix a, Matrix a)]
+data Network a = Network [Layer]
 
 -- t is transform
 -- g is a random number generator
@@ -26,10 +25,11 @@ createNetwork t g (layerDef : (layerDef' : otherLayerDefs)) =
 
 -- returns
 --   a tuple of the weight matrix and the bias matrix
-connectLayers :: (Floating a) => LayerDefinition a -> LayerDefinition a -> (Matrix a, Matrix a)
+connectLayers :: (Floating a) => LayerDefinition a -> LayerDefinition a -> Layer a
 connectLayers layerDef layerDef' =
-  ((connect layerDef) (neuronCount layerDef) ( neuronCount layerDef'),
-   (connect layerDef) (neuronCount layerDef) (neuronCount layerDef'))
+   (connect layerDef) (neuronCount layerDef) (neuronCount layerDef')
+   (connect layerDef) (neuronCount layerDef) (neuronCount layerDef')
+   (neuron layerDef)
 
 addLayerDefinition :: (Floating a) => LayerDefinition a -> [LayerDefinition a] -> [LayerDefinition a]
 addLayerDefinition layer layers = (layers ++ [layer])

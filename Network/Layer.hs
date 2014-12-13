@@ -14,6 +14,11 @@ data LayerDefinition a = LayerDefinition { neuron :: (Neuron a)
                                          , connect :: (Connectivity a)
                                          }
 
+data Layer a = Layer { weightMatrix :: (Matrix a)
+                     , biasMatrix :: (Matrix a)
+                     , neuron :: (Neuron a)
+                     }
+
 type Connectivity a = Int -> Int -> Matrix a
 
 -- connectFully
