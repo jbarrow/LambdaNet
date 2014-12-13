@@ -12,8 +12,8 @@ module Network.Neuron
 
 , sigmoid
 , sigmoid'
-, logistic
-, logistic'
+, tanh
+, tanh'
 , reclu
 , reclu'
 ) where
@@ -40,7 +40,7 @@ sigmoidNeuron :: (Floating a) => Neuron a
 sigmoidNeuron = Neuron sigmoid sigmoid'
 
 tanhNeuron :: (Floating a) => Neuron a
-tanhNeuron = Neuron logistic logistic'
+tanhNeuron = Neuron tanh tanh'
 
 recluNeuron :: (Floating a) => Neuron a
 recluNeuron = Neuron reclu reclu'
@@ -56,17 +56,13 @@ sigmoid' :: (Floating a) => a -> a
 sigmoid' t = s * (1 - s)
               where s = sigmoid t
 
--- The hyperbolic tangent activation function, another logistic function,
--- but unlike sigmoid it is defined on the range (-1, 1). Unfortunately,
--- we could not call it tanh due to naming conflicts with the Prelude tanh.
-logistic :: (Floating a) => a -> a
-logistic t = (1 - exp (-2 * t)) / (1 + exp (-2 * t))
-
+-- The hyperbolic tangent activation function is provided in Prelude. Here
+-- we provide the derivative
 -- As with the sigmoid function, the derivative of tanh can be computed in
 -- terms of tanh.
-logistic' :: (Floating a) => a -> a
-logistic' t = 1 - s ^ 2
-               where s = logistic t
+tanh' :: (Floating a) => a -> a
+tanh' t = 1 - s ^ 2
+               where s = tanh t
 
 -- The rectified linear activation function. This is a more "biologically
 -- accurate" activation function that still retains differentiability.
@@ -77,3 +73,7 @@ reclu t = log (1 + exp t)
 -- sigmoid.
 reclu' :: (Floating a) => a -> a
 reclu' t = sigmoid t
+
+-- Input neurons
+input :: (Floating a) => a -> a
+input t = t
