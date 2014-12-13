@@ -15,7 +15,10 @@ import Network.Neuron
 import Linear
 import System.Random
 
-data LayerDefinition a = LayerDefinition (Neuron a) Int (Connectivity a)
+data LayerDefinition a = LayerDefinition { neuron :: (Neuron a)
+                                         , neuronCount :: Int
+                                         , connect :: (Connectivity a)
+                                         }
 
 type RandomTransform a = [a] -> [a]
 type Connectivity a = Int -> Int -> Matrix a
