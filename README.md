@@ -32,6 +32,7 @@ Takes a vector of layer config objects and a weight initialization function key 
 ```
 Takes a vector of weight matrices, a list of training inputs, and a list of expected outputs. Returns a trained vector of weight matrices.
 
+```
 /evaluate
 ```
 Takes a vector of weight matrices and input data and returns the result of running the input data through the network represented by the vector of weight matrices.
