@@ -12,8 +12,6 @@ import Linear
 
 data LayerDefinition a = LayerDefinition (Neuron a) Int (Connectivity a)
 
-type Layer a = (Matrix a)
-
 type Connectivity a = Int -> Int -> Matrix a
 
 -- connectFully
