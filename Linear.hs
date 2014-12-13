@@ -1,6 +1,7 @@
 module Linear
 ( Matrix
 , Vector
+, RandomTransform
 
 , dot
 , mMult
@@ -11,6 +12,8 @@ module Linear
 , normals
 , uniforms
 ) where
+
+import System.Random
 
 type Vector a = [a]
 type Matrix a = [[a]]
@@ -31,6 +34,10 @@ hadamard m n = zipWith (zipWith (*)) m n
 reshape :: (Num a) => Int -> [a] -> Matrix a
 reshape j [] = []
 reshape j list = [(take j list)] ++ reshape j (drop j list)
+
+-- Random Stuff
+
+type RandomTransform a = [a] -> [a]
 
 -- Initialize an infinite random list list with:
 randomList :: (RandomGen g, Random a, Floating a) => RandomTransform a -> g -> [a]
