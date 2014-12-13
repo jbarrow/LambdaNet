@@ -8,6 +8,7 @@ import Network.Neuron
 import Network.Layer
 import Network.Trainer
 import Linear
+import System.Random
 
 -- Networks are constructed front to back. Start by adding an input layer,
 -- then each hidden layer, and finally an output layer.
@@ -15,11 +16,13 @@ import Linear
 
 type Network a = [(Matrix a, Matrix a)]
 
-createNetwork :: (Floating a) => [LayerDefinition a] -> Network a
-createNetwork [] = []
-createNetwork (layerDef : []) = []
-createNetwork (layerDef : (layerDef' : otherLayerDefs)) =
-  connectLayers layerDef layerDef' : createNetwork (layerDef' : otherLayerDefs)
+-- t is transform
+-- g is a random number generator
+createNetwork :: (RandomGen g, Floating a) => RandomTransform a -> g -> [LayerDefinition a] -> Network a
+createNetwork t g [] = []
+createNetwork t g (layerDef : []) = []
+createNetwork t g (layerDef : (layerDef' : otherLayerDefs)) =
+  connectLayers layerDef layerDef' : createNetwork t g (layerDef' : otherLayerDefs)
 
 -- returns
 --   a tuple of the weight matrix and the bias matrix
