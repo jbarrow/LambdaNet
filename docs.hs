@@ -1,4 +1,6 @@
 import Network.Neuron
+import Network.Layer
+import Network.Trainer
 import Network.Network
 import System.IO
 import Text.Printf
@@ -19,7 +21,7 @@ writeDat filename lst prec =
 -- Usage:
 --  > writeDat "docs/sigmoid.txt" (computeApproximation sigmoid) 5
 --  > writeDat "docs/reclu.txt" (computeApproximation reclu) 5
---  > writeDat "docs/tanh.txt" (computeApproximation logistic) 5
+--  > writeDat "docs/tanh.txt" (computeApproximation tanh) 5
 --  > writeDat "docs/derivative_sigmoid.txt" (computeApproximation sigmoid') 5
 --  > writeDat "docs/derivative_reclu.txt" (computeApproximation reclu') 5
---  > writeDat "docs/derivative_tanh.txt" (computeApproximation logistic') 5
+--  > writeDat "docs/derivative_tanh.txt" (computeApproximation tanh') 5
