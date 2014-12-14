@@ -24,11 +24,25 @@ type Matrix a = [[a]]
 dot :: (Num a) => Vector a -> Vector a -> a
 dot u v = sum $ zipWith (*) u v
 
-mMult :: (Num a) => Matrix a -> Vector a -> Vector a
-mMult m v = map (dot v) m
+vMult :: (Num a) => Matrix a -> Vector a -> Vector a
+vMult m v = map (dot v) m
+
+-- matrix multiplication m * n
+mMult :: (Num a) => Matrix a -> Matrix a -> Matrix a
+mMult [] n = []
+mMult m n = vMult (transpose n) (head m) : mMult (drop 1 m) n
 
 hadamard :: (Num a) => Matrix a -> Matrix a -> Matrix a
 hadamard m n = zipWith (zipWith (*)) m n
+
+-- Lovingly ripped from Data.List, type signature adjusted
+transpose :: (Num a) => Matrix a -> Matrix a
+transpose [] = []
+transpose ([]: xss) = transpose xss
+transpose ((x:xs) : xss) = (x : [h | (h:_) <- xss]) : transpose (xs : [ t | (_:t) <- xss])
+
+scalar :: (Num a) => Matrix a -> a -> Matrix a
+scalar mat n = map (map (* n)) mat
 
 -- parameters
 --   j is the number of columns of the resulting matrix
