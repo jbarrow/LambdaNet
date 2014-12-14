@@ -24,18 +24,20 @@ createNetwork t g [] = Network []
 createNetwork t g (layerDef : []) = Network []
 -- Return a layer ++ the rest of the network
 createNetwork t g (layerDef : (layerDef' : otherLayerDefs)) =
-  Network (createLayer t g layerDef layerDef' : layers (createNetwork t g (layerDef' : otherLayerDefs)))
+  Network (aLayer : layers restOfNetwork)
+  where aLayer = createLayer t g layerDef layerDef'
+        restOfNetwork = createNetwork t g (layerDef' : otherLayerDefs)
 
 createLayer :: (RandomGen g, Random a, Floating a) => RandomTransform a -> g -> LayerDefinition a -> LayerDefinition a -> Layer a
 createLayer t g layerDef layerDef' =
-  Layer (hadamard randomMatrix (connectFunc i j))
-        (hadamard randomMatrix' (connectFunc i j))
+  Layer (hadamard randomMatrix (connectivity i j))
+        (hadamard randomMatrix' (connectivity i j))
         (neuronDef layerDef)
   where randomMatrix = reshape j (take (i*j) (randomList t g))
         randomMatrix' = reshape j (take (i*j) (randomList t g))
         i = neuronCount layerDef
         j = neuronCount layerDef'
-        connectFunc = connect layerDef
+        connectivity = connect layerDef
 
 addLayerDefinition :: (Floating a) => LayerDefinition a -> [LayerDefinition a] -> [LayerDefinition a]
 addLayerDefinition layer layers = (layers ++ [layer])
