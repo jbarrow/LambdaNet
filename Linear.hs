@@ -4,8 +4,11 @@ module Linear
 , RandomTransform
 
 , dot
+, vMult
 , mMult
 , hadamard
+, transpose
+, scalar
 , reshape
 , randomList
 , boxMuller
