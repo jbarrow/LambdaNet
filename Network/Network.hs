@@ -17,7 +17,7 @@ import System.Random
 data Network a = Network { layers :: [Layer a] }
 
 -- t is transform
--- g is a random number generator
+-- g is a random number generator (ex mkStdGen 4)
 createNetwork :: (RandomGen g, Random a, Floating a) => RandomTransform a -> g -> [LayerDefinition a] -> Network a
 -- Base Cases
 createNetwork t g [] = Network []
