@@ -30,6 +30,11 @@ dot u v = sum $ zipWith (*) u v
 vMult :: (Num a) => Matrix a -> Vector a -> Vector a
 vMult m v = map (dot v) m
 
+-- matrix multiplication m * n
+mMult :: (Num a) => Matrix a -> Matrix a -> Matrix a
+mMult [] n = []
+mMult m n = vMult (transpose n) (head m) : mMult (drop 1 m) n
+
 hadamard :: (Num a) => Matrix a -> Matrix a -> Matrix a
 hadamard m n = zipWith (zipWith (*)) m n
 
