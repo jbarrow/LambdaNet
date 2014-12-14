@@ -1,6 +1,6 @@
 module Network.Layer
 ( LayerDefinition(..)
-
+, Layer(..)
 , Connectivity
 
 , connectFully
@@ -9,7 +9,7 @@ module Network.Layer
 import Network.Neuron
 import Linear
 
-data LayerDefinition a = LayerDefinition { neuron :: (Neuron a)
+data LayerDefinition a = LayerDefinition { neuronDef :: (Neuron a)
                                          , neuronCount :: Int
                                          , connect :: (Connectivity a)
                                          }

@@ -13,23 +13,25 @@ import System.Random
 -- Networks are constructed front to back. Start by adding an input layer,
 -- then each hidden layer, and finally an output layer.
 
-data Network a = Network [Layer]
+data Network a = Network { layers :: [Layer a] }
 
 -- t is transform
 -- g is a random number generator
 createNetwork :: (RandomGen g, Floating a) => RandomTransform a -> g -> [LayerDefinition a] -> Network a
-createNetwork t g [] = []
-createNetwork t g (layerDef : []) = []
+createNetwork t g [] = Network []
+createNetwork t g (layerDef : []) = Network []
 createNetwork t g (layerDef : (layerDef' : otherLayerDefs)) =
-  connectLayers layerDef layerDef' : createNetwork t g (layerDef' : otherLayerDefs)
+  Network (createLayer t g layerDef layerDef' : layers (createNetwork t g (layerDef' : otherLayerDefs)))
 
--- returns
---   a tuple of the weight matrix and the bias matrix
-connectLayers :: (Floating a) => LayerDefinition a -> LayerDefinition a -> Layer a
-connectLayers layerDef layerDef' =
-   (connect layerDef) (neuronCount layerDef) (neuronCount layerDef')
-   (connect layerDef) (neuronCount layerDef) (neuronCount layerDef')
-   (neuron layerDef)
+createLayer :: (RandomGen g, Floating a) => RandomTransform a -> g -> LayerDefinition a -> LayerDefinition a -> Layer a
+createLayer t g layerDef layerDef' =
+  Layer ((connect layerDef) (neuronCount layerDef) (neuronCount layerDef'))
+        ((connect layerDef) (neuronCount layerDef) (neuronCount layerDef'))
+        (neuronDef layerDef)
+
+-- randomizeValues :: (RandomGen g, Floating a) => RandomTransform a -> g -> Matrix a -> Matrix a
+-- randomizeValues t g matrix =
+--   take
 
 addLayerDefinition :: (Floating a) => LayerDefinition a -> [LayerDefinition a] -> [LayerDefinition a]
 addLayerDefinition layer layers = (layers ++ [layer])
