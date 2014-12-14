@@ -16,7 +16,11 @@ started building networks for use on real data sets.
 
 ## Using LambdaNet
 
-TODO
+### Creating a New Network
+
+Networks are created with
+
+### Extending the Library
 
 # Neural Networks in the Browser
 

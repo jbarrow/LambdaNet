@@ -20,14 +20,17 @@ writeDat filename lst prec =
     let writeLine = hPrintf h $ "%." ++ show prec ++ "g\n" in
       mapM_ writeLine lst
 
--- Usage:
---  > writeDat "docs/sigmoid.txt" (computeApproximation sigmoid) 5
---  > writeDat "docs/reclu.txt" (computeApproximation reclu) 5
---  > writeDat "docs/tanh.txt" (computeApproximation tanh) 5
---  > writeDat "docs/derivative_sigmoid.txt" (computeApproximation sigmoid') 5
---  > writeDat "docs/derivative_reclu.txt" (computeApproximation reclu') 5
---  > writeDat "docs/derivative_tanh.txt" (computeApproximation tanh') 5
+main = do
+  putStr "Generating Activation Functions...\n"
+  writeDat "docs/sigmoid.txt" (computeApproximation sigmoid) 5
+  writeDat "docs/reclu.txt" (computeApproximation reclu) 5
+  writeDat "docs/tanh.txt" (computeApproximation tanh) 5
 
---  > let g = mkStdGen 4
---  > writeDat "docs/normal.txt" (take 20000 (randomList normals g)) 5
---- > writeDat "docs/uniform.txt" (take 20000 (randomList uniforms g)) 5
+  putStr "Generating Activation Function Derivatives...\n"
+  writeDat "docs/derivative_sigmoid.txt" (computeApproximation sigmoid') 5
+  writeDat "docs/derivative_reclu.txt" (computeApproximation reclu') 5
+  writeDat "docs/derivative_tanh.txt" (computeApproximation tanh') 5
+
+--  putStr "Generating Distributions..."
+--  writeDat "docs/normal.txt" (take 20000 (randomList normals (mkStdGen 4))) 5
+--  writeDat "docs/uniform.txt" (take 20000 (randomList uniforms (mkStdGen 4))) 5
