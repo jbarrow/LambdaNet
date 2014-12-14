@@ -1,7 +1,24 @@
 LambdaNet
 =====
 
+LambdaNet is an attempt at a functional "box-of-LEGO" style neural network built around higher order
+functions. The goal is to provide a framework that promotes experimentation with neural networks by
+allowing users to define custom:
+  - Neuron types
+  - Layer connectivities
+  - Weight initialization functions
+  - Cost functions
+  - Regularization functions
+  - Trainers
+
+It comes with a pre-defined, and pretty standard, set of all of the above so you can quickly get
+started building networks for use on real data sets.
+
 ## Using LambdaNet
+
+TODO
+
+# Neural Networks in the Browser
 
 ## First Time Setup
 
@@ -10,8 +27,6 @@ Install [leiningen](http://leiningen.org).
   2. Place it on your $PATH where your shell can find it (eg. `~/bin`)
   3. Set it to be executable (`chmod a+x ~/bin/lein`)
   4. Run it (`./lein`) and it will download the self-install package
-
-## Documentation
 
 ### Build and run frontend
 ```
@@ -37,15 +52,26 @@ Takes a vector of weight matrices, a list of training inputs, and a list of expe
 ```
 Takes a vector of weight matrices and input data and returns the result of running the input data through the network represented by the vector of weight matrices.
 
-__Generating the Documentation Images:__
+# Documentation
+
+The in-depth documentation covering much of the math behind the network can be found at
+
+## Generating the Documentation Images:
 
 All the documentation for the network was generated in the following manner. First, from the Haskell REPL, use the following commands:
 
 ```
   :l docs.hs
-  writeDat "docs/sigmoid.txt" (computeApproximation (evaluate Sigmoid)) 5
-  writeDat "docs/reclu.txt" (computeApproximation (evaluate Reclu)) 5
-  writeDat "docs/logistic.txt" (computeApproximation (evaluate Logistic)) 5
+  writeDat "docs/sigmoid.txt" (computeApproximation sigmoid) 5
+  writeDat "docs/reclu.txt" (computeApproximation reclu) 5
+  writeDat "docs/tanh.txt" (computeApproximation tanh) 5
+  writeDat "docs/derivative_sigmoid.txt" (computeApproximation sigmoid') 5
+  writeDat "docs/derivative_reclu.txt" (computeApproximation reclu') 5
+  writeDat "docs/derivative_tanh.txt" (computeApproximation tanh') 5
+
+  let g = mkStdGen 4
+  writeDat "docs/normal.txt" (take 20000 (randomList normals g)) 5
+  writeDat "docs/uniform.txt" (take 20000 (randomList uniforms g)) 5
 ```
 
 Then, in the docs folder, run:
