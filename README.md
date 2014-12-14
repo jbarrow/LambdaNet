@@ -56,6 +56,8 @@ Then, in the docs folder, run:
 
 ### Building a Network
 
+In the Haskell REPL ```ghci``` in the main directory,
+
 ```
   :l docs.hs
   let g = mkStdGen 4
