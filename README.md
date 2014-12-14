@@ -54,6 +54,17 @@ Then, in the docs folder, run:
   python analysis.py
 ```
 
+### Building a Network
+
+```
+  :l docs.hs
+  let g = mkStdGen 4
+  let l = LayerDefinition sigmoidNeuron 3 connectFully
+  let l' = LayerDefinition sigmoidNeuron 4 connectFully
+  let l'' = LayerDefinition sigmoidNeuron 2 connectFully
+  let network = createNetwork normals g [l, l'', l''']
+```
+
 ## Our fearless leader
 <p>
   <img src="http://fc07.deviantart.net/fs71/f/2013/009/f/a/gabe_newell__the_hero_of_us_all_by_radulfgreyhammer-d5r0ecr.jpg?raw=true" alt="Our fearless leader" height="250"/>
