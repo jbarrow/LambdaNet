@@ -1,6 +1,7 @@
 module Network.Network
 ( Network(..)
 
+, createLayer
 , createNetwork
 ) where
 
@@ -17,21 +18,24 @@ data Network a = Network { layers :: [Layer a] }
 
 -- t is transform
 -- g is a random number generator
-createNetwork :: (RandomGen g, Floating a) => RandomTransform a -> g -> [LayerDefinition a] -> Network a
+createNetwork :: (RandomGen g, Random a, Floating a) => RandomTransform a -> g -> [LayerDefinition a] -> Network a
+-- Base Cases
 createNetwork t g [] = Network []
 createNetwork t g (layerDef : []) = Network []
+-- Return a layer ++ the rest of the network
 createNetwork t g (layerDef : (layerDef' : otherLayerDefs)) =
   Network (createLayer t g layerDef layerDef' : layers (createNetwork t g (layerDef' : otherLayerDefs)))
 
-createLayer :: (RandomGen g, Floating a) => RandomTransform a -> g -> LayerDefinition a -> LayerDefinition a -> Layer a
+createLayer :: (RandomGen g, Random a, Floating a) => RandomTransform a -> g -> LayerDefinition a -> LayerDefinition a -> Layer a
 createLayer t g layerDef layerDef' =
-  Layer ((connect layerDef) (neuronCount layerDef) (neuronCount layerDef'))
-        ((connect layerDef) (neuronCount layerDef) (neuronCount layerDef'))
+  Layer (hadamard randomMatrix (connectFunc i j))
+        (hadamard randomMatrix' (connectFunc i j))
         (neuronDef layerDef)
-
--- randomizeValues :: (RandomGen g, Floating a) => RandomTransform a -> g -> Matrix a -> Matrix a
--- randomizeValues t g matrix =
---   take
+  where randomMatrix = reshape j (take (i*j) (randomList t g))
+        randomMatrix' = reshape j (take (i*j) (randomList t g))
+        i = neuronCount layerDef
+        j = neuronCount layerDef'
+        connectFunc = connect layerDef
 
 addLayerDefinition :: (Floating a) => LayerDefinition a -> [LayerDefinition a] -> [LayerDefinition a]
 addLayerDefinition layer layers = (layers ++ [layer])
