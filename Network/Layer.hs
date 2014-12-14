@@ -3,11 +3,13 @@ module Network.Layer
 , Layer(..)
 , Connectivity
 
+, createLayer
 , connectFully
 ) where
 
 import Network.Neuron
 import Linear
+import System.Random
 
 data LayerDefinition a = LayerDefinition { neuronDef :: (Neuron a)
                                          , neuronCount :: Int
@@ -21,12 +23,33 @@ data Layer a = Layer { weightMatrix :: (Matrix a)
 
 type Connectivity a = Int -> Int -> Matrix a
 
+-- createLayer
+--   creates a layer from two layer definitions
+-- parameters
+--   t = transform function (e.g. uniforms, normals)
+--   g = random generator (e.g. mkStdGen 4)
+--   layerDef = LayerDefinition
+--   layerDef' = another LayerDefinition
+-- returns
+--   a layer defined by layerDef
+--   with connections from layerDef to layerDef'
+createLayer :: (RandomGen g, Random a, Floating a) => RandomTransform a -> g -> LayerDefinition a -> LayerDefinition a -> Layer a
+createLayer t g layerDef layerDef' =
+  Layer (hadamard randomMatrix (connectivity i j))
+        (hadamard randomMatrix' (connectivity i j))
+        (neuronDef layerDef)
+  where randomMatrix = reshape j (take (i*j) (randomList t g))
+        randomMatrix' = reshape j (take (i*j) (randomList t g))
+        i = neuronCount layerDef
+        j = neuronCount layerDef'
+        connectivity = connect layerDef
+
 -- connectFully
 --   a connectivity function that fully connects input neurons
 --   to the output neurons
 -- parameters
---   i is the count of input neurons for a layer
---   j is the count of the output neurons for a layer
+--   i = the count of input neurons for a layer
+--   j = the count of the output neurons for a layer
 -- returns
 --   a i by j connectivity matrix
 --   elements of matrix in {0, 1}

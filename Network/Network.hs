@@ -1,7 +1,6 @@
 module Network.Network
 ( Network(..)
 
-, createLayer
 , createNetwork
 ) where
 
@@ -16,8 +15,14 @@ import System.Random
 
 data Network a = Network { layers :: [Layer a] }
 
--- t is transform
--- g is a random number generator (ex mkStdGen 4)
+-- createNetwork
+--   creates a neural network
+-- parameters
+--   t = transform function (e.g. uniforms, normals)
+--   g = random generator (e.g. mkStdGen 4)
+--   layers = a list of LayerDefinitions
+-- returns
+--   a network with layers defined by the list of layer definitions
 createNetwork :: (RandomGen g, Random a, Floating a) => RandomTransform a -> g -> [LayerDefinition a] -> Network a
 -- Base Cases
 createNetwork t g [] = Network []
@@ -28,19 +33,8 @@ createNetwork t g (layerDef : (layerDef' : otherLayerDefs)) =
   where aLayer = createLayer t g layerDef layerDef'
         restOfNetwork = createNetwork t g (layerDef' : otherLayerDefs)
 
-createLayer :: (RandomGen g, Random a, Floating a) => RandomTransform a -> g -> LayerDefinition a -> LayerDefinition a -> Layer a
-createLayer t g layerDef layerDef' =
-  Layer (hadamard randomMatrix (connectivity i j))
-        (hadamard randomMatrix' (connectivity i j))
-        (neuronDef layerDef)
-  where randomMatrix = reshape j (take (i*j) (randomList t g))
-        randomMatrix' = reshape j (take (i*j) (randomList t g))
-        i = neuronCount layerDef
-        j = neuronCount layerDef'
-        connectivity = connect layerDef
-
-addLayerDefinition :: (Floating a) => LayerDefinition a -> [LayerDefinition a] -> [LayerDefinition a]
-addLayerDefinition layer layers = (layers ++ [layer])
+-- addLayerDefinition :: (Floating a) => LayerDefinition a -> [LayerDefinition a] -> [LayerDefinition a]
+-- addLayerDefinition layer layers = (layers ++ [layer])
 
 predict :: (Floating a) => Vector a -> Network a -> Vector a
 predict input network = input
