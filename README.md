@@ -18,9 +18,47 @@ started building networks for use on real data sets.
 
 ### Creating a New Network
 
-Networks are created with
+The process of creating a new neural network is quite simple:
+  - Create a list of layer definitions with a neuron type, neuron count, and connectivity function
+  - Pass that list of layer definitions into the createNetwork function, along with the weight initialization function and an entropy generator of choice
+
+We'll go into a little more detail about each of these elements a bit later. But the entire process can be done in the Haskell REPL ```ghci``` in the main directory:
+
+```
+  :l docs.hs
+  let g = mkStdGen 4
+  let l = LayerDefinition sigmoidNeuron 3 connectFully
+  let l' = LayerDefinition sigmoidNeuron 4 connectFully
+  let l'' = LayerDefinition sigmoidNeuron 2 connectFully
+  let network = createNetwork normals g [l, l'', l''']
+```
+
+Note, the mkStdGen is our (very random) source of entropy. Feel free to exchange it with your favorite entropy
+generator of choice.
+
+Et voila, you have a functioning neural network that simply needs to be trained.
+
+### Training the Network
+
+### Using the Network
 
 ### Extending the Library
+
+The entire library is mean to be as extensible as possible and to allow you to create new types of, well, anything.
+To get started, let's look at how we would create a sigmoid neuron if it weren't already defined in the library:
+
+__Creating a Sigmoid Neuron__
+
+First of all, what is a sigmoid neuron? Well, it's a neuron whose activation function is defined by a logistic
+curve (sigmoid) which is bounded between 0 and 1:
+
+<img src="https://github.com/jbarrow/LambdaNet/blob/master/docs/images/sigmoid.png" style="width: 200px;margin:0 auto" />
+
+__Initialization Functions__
+
+__Connectivity Functions__
+
+__Trainers__
 
 # Neural Networks in the Browser
 
@@ -56,10 +94,6 @@ Takes a vector of weight matrices, a list of training inputs, and a list of expe
 ```
 Takes a vector of weight matrices and input data and returns the result of running the input data through the network represented by the vector of weight matrices.
 
-# Documentation
-
-The in-depth documentation covering much of the math behind the network can be found at
-
 ## Generating the Documentation Images:
 
 All the documentation for the network was generated in the following manner. First, from the Haskell REPL, use the following commands:
@@ -82,19 +116,6 @@ Then, in the docs folder, run:
 
 ```
   python analysis.py
-```
-
-### Building a Network
-
-In the Haskell REPL ```ghci``` in the main directory,
-
-```
-  :l docs.hs
-  let g = mkStdGen 4
-  let l = LayerDefinition sigmoidNeuron 3 connectFully
-  let l' = LayerDefinition sigmoidNeuron 4 connectFully
-  let l'' = LayerDefinition sigmoidNeuron 2 connectFully
-  let network = createNetwork normals g [l, l'', l''']
 ```
 
 ## Our fearless leader
