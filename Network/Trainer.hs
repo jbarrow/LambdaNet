@@ -14,5 +14,13 @@ type CostFunction' a = a -> a
 
 type TrainingData a = Map.Map (Vector a) (Vector a)
 
+data BackpropTrainer a = BackpropTrainer { eta :: a
+                                         , cost :: CostFunction a
+                                         , cost' :: CostFunction' a
+                                         }
+
 class Trainer a where
-  train :: Network a -> TrainingData a -> Network a
+  train :: (Floating b) => a -> Network b -> TrainingData b -> Network b
+
+instance (Floating a) => Trainer (BackpropTrainer a) where
+  train trainer network goals = network
