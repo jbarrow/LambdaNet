@@ -105,6 +105,7 @@
          [:p "Layers:" (for [[i layer] indexed]
                          (neuron-config layer i))])
        [:code (:layer-text @app-state)]
+       [viz/draw {} network]])))
 ;; -------------------------
 ;; Initialize app
 
