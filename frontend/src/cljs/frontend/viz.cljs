@@ -3,20 +3,37 @@
             [frontend.components :as c]
             [goog.events :as events]))
 
-(defn draw-layer [layer]
-  (let [count (first (first layer))
-        elements (apply vector
-                        (conj [:g] (map-indexed (fn [i weight]
-                                                  [c/rect 200 (+ 20 (* i 50))])
-                                                (first layer))))]
-    elements))
+(defn neuron-position [x y]
+  {:x (+ 40 (* x 100))
+   :y (+ 40 (* y 50))})
+
+(defn draw-layer-neurons [layer x]
+  [:g.layer
+   (for [[y weight] (map vector (iterate inc 0) (first layer))] 
+     [:g.neuron
+      [c/rect (neuron-position x y)]
+      [neuron-connections layer x (neuron-position x y)]])])
+
+(defn to-right-side [pos]
+  (let [x (+ (:x pos) 40)
+        y (+ (:y pos) 10)]
+    {:x x :y y}))
+
+(defn to-left-side [pos]
+  (let [y (+ (:y pos) 10)]
+    {:x (:x pos) :y y}))
+
+(defn neuron-connections [layer x start-pos]
+  [:g.connections
+   (for [[y weight] (map vector (iterate inc 0) layer)]
+     [c/segment (to-right-side start-pos)
+      (to-left-side (neuron-position (inc x) y))])])
 
 (defn draw-network [network]
-  (println network)
-  [:g
-   [c/rect 20 20]
-   (for [layer network]
-     [draw-layer layer])])
+  [:g.network
+   (for [[x layer] (map vector (iterate inc 0) network)]
+     [draw-layer-neurons layer x])
+   [c/rect (neuron-position (count network) 0)]])
 
 (defn draw [{:keys [width height]} network]
   [:svg

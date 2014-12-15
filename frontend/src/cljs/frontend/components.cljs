@@ -4,7 +4,7 @@
 (def point-defaults
   {:stroke "black"
    :stroke-width 2
-   :fill "grey"
+   :fill "white"
    :r 5})
 
 (def rect-defaults
@@ -27,11 +27,9 @@
 (defn segment [from to]
   [:line
    (merge segment-defaults
-          {:x1 (x from) :y1 (y from)
-           :x2 (x to) :y2 (y to)})])
+          {:x1 (:x from) :y1 (:y from)
+           :x2 (:x to) :y2 (:y to)})])
 
-(defn rect [x y]
+(defn rect [pos]
   [:rect
-   (merge rect-defaults
-          {:x x
-           :y y})]) 
+   (merge rect-defaults pos)]) 
