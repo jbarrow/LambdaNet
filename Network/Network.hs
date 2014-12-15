@@ -6,7 +6,6 @@ module Network.Network
 
 import Network.Neuron
 import Network.Layer
-import Network.Trainer
 import Linear
 import System.Random
 

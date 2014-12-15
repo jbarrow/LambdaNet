@@ -18,9 +18,6 @@ module Linear
 
 import System.Random
 
--- BEGIN : TO BE FIXED BY ALEX
--- Just keep the same type signatures and make a note if you
--- change the names
 type Vector a = [a]
 type Matrix a = [[a]]
 
@@ -54,8 +51,6 @@ scalar mat n = map (map (* n)) mat
 reshape :: (Num a) => Int -> [a] -> Matrix a
 reshape j [] = []
 reshape j list = [(take j list)] ++ reshape j (drop j list)
-
--- END : TO BE FIXED BY ALEX
 
 -- Random Transformations
 
