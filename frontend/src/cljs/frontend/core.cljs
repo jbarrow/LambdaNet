@@ -1,12 +1,14 @@
 (ns frontend.core
     (:require [reagent.core :as reagent :refer [atom]]
-              [goog.events :as events])
+              [frontend.viz :as viz]
+              [goog.events :as events]
+              [frontend.http :as http])
     (:import goog.History))
 
 ;; -------------------------
 ;; State
 
-(defonce app-state (atom {:layers [] :init-fn "normal" :layer-text ""}))
+(defonce app-state (atom {:layers [] :init-type "normal" :layer-text ""}))
 
 (defn get-state [k & [default]]
   (clojure.core/get @app-state k default))
@@ -54,12 +56,12 @@
 (defn remove-layer [layer]
   (put! :layers (filter #(not= (:id %) (:id layer)) (get-state :layers))))
 
-(defn export [] (put! :layer-text
-                      (str "Initialize using "
-                           (:init-fn @app-state)
-                           " distribution, with the following layers: "
-                           (:layers @app-state))))
-
+(defn export [] (do (http/create (:init-type @app-state) (:layers @app-state))
+                    (put! :layer-text
+                          (str "Initialize using "
+                               (:init-type @app-state)
+                               " distribution, with the following layers: "
+                               (:layers @app-state)))))
 
 ;; -------------------------
 ;; View
@@ -76,7 +78,7 @@
                          :on-change #(put-in! k (keyword (-> % .-target .-value)))} 
    (for [item items]
      [:option {:value (:key item)}
-       (:label item)])])
+      (:label item)])])
 
 (defn neuron-config [layer i] 
   [:div
@@ -85,23 +87,24 @@
    [atom-input layer [:layers i :neuron-count] "number"]
    ;; [:div (layer :id)]
    [:button {:on-click #(remove-layer layer)}
-    "x"]])
+    "remove"]])
 
 (defn main-page []
   (let [training-data (atom "[]")
-        test-data (atom "[]")] 
+        test-data (atom "[]")
+        network [[[ 1.0, 1.0, 1.0]  [1.0, 1.0, 1.0]], [[1.0, 1.0, 1.0]]]] 
     (fn []
       [:div
        [:p "Training Data" [atom-input training-data]]
        [:button {:on-click create-layer}
-        "Create new layer."]
-       [selection-list [:init-fn] init-types]
+        "Create new layer, fool."]
+       [selection-list [:init-type] init-types]
        [:button {:on-click export}
         "Export"]
        (let [indexed (map-indexed vector (get-state :layers))]
          [:p "Layers:" (for [[i layer] indexed]
                          (neuron-config layer i))])
-       [:code (:layer-text @app-state)]])))
+       [:code (:layer-text @app-state)]
 ;; -------------------------
 ;; Initialize app
 
