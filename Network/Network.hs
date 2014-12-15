@@ -1,5 +1,10 @@
 module Network.Network
 ( Network(..)
+, Trainer(..)
+
+, CostFunction
+, CostFunction'
+, TrainingData
 
 , createNetwork
 ) where
@@ -8,6 +13,7 @@ import Network.Neuron
 import Network.Layer
 import Linear
 import System.Random
+import qualified Data.Map as Map
 
 -- Networks are constructed front to back. Start by adding an input layer,
 -- then each hidden layer, and finally an output layer.
@@ -37,3 +43,24 @@ createNetwork t g (layerDef : (layerDef' : otherLayerDefs)) =
 
 predict :: (Floating a) => Vector a -> Network a -> Vector a
 predict input network = input
+
+fit :: (Floating a, Trainer t) => t -> [TrainingData a] -> Network a -> Network a
+fit t (h:ts) network = train t network h
+
+-- Training a network
+
+type CostFunction a = a -> a
+type CostFunction' a = a -> a
+
+type TrainingData a = Map.Map (Vector a) (Vector a)
+
+data BackpropTrainer a = BackpropTrainer { eta :: a
+                                         , cost :: CostFunction a
+                                         , cost' :: CostFunction' a
+                                         }
+
+class Trainer a where
+  train :: (Floating b) => a -> Network b -> TrainingData b -> Network b
+
+instance (Floating a) => Trainer (BackpropTrainer a) where
+  train trainer network trainData = network

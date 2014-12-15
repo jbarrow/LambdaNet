@@ -1,6 +1,5 @@
 import Network.Neuron
 import Network.Layer
-import Network.Trainer
 import Network.Network
 import System.IO
 import Text.Printf
