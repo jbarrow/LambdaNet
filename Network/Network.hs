@@ -1,10 +1,12 @@
 module Network.Network
 ( Network(..)
 , Trainer(..)
-, BackpropTrainer(..)
+-- , BackpropTrainer(..)
 , CostFunction
 , CostFunction'
 , TrainingData
+
+, getXORNetwork
 
 , feedLayer
 , createNetwork
@@ -54,6 +56,12 @@ createNetwork t g (layerDef : (layerDef' : otherLayerDefs)) =
   where aLayer = createLayer t g layerDef layerDef'
         restOfNetwork = createNetwork t g (layerDef' : otherLayerDefs)
 
+getXORNetwork :: (Floating a) => Network a
+getXORNetwork = Network [l, l']
+  where l = Layer [[-11.62, 12.88], [10.99, -13.13]] [[-6.06, -7.19]] sigmoidNeuron
+        l' = Layer [[13.34], [13.13]] [[-6.56]] sigmoidNeuron
+
+
 -- Using a scikit-learn-esque naming scheme - predict to classify data
 -- and fit to train the network.
 
@@ -75,10 +83,10 @@ predictWithState input network =
   if null (layers network)
     then [input]
     else input : (predictWithState input' restOfNetwork)
-      where input' = feedLayerWithoutActivation input (head (layers network))
+      where input' = feedLayer input (head (layers network))
             restOfNetwork = Network (tail (layers network))
 
-deltas :: (Floating a) => Network a -> [TrainingData a] -> [(Matrix a, Matrix a)]
+-- deltas :: (Floating a) => Network a -> [TrainingData a] -> [(Matrix a, Matrix a)]
 
 updateNetwork :: (Floating a) => [(Matrix a, Matrix a)] -> Network a -> Network a
 updateNetwork [] network = network
@@ -95,9 +103,9 @@ updateLayer (weightUpdate, biasUpdate) layer =
         newBiases = add (biasMatrix layer) biasUpdate
 
 
-backprop :: (Floating a, Trainer t) => t -> Network a -> [TrainingData a] -> [(Matrix a, Matrix a)] -> [(Matrix a, Matrix a)]
-backprop trainer network [] updates = updateNetwork updates network
-backprop trainer network (d:ds) updates = backprop trainer network ds (updateLayer updates (deltas network d))
+-- backprop :: (Floating a, Trainer t) => t -> Network a -> [TrainingData a] -> [(Matrix a, Matrix a)] -> [(Matrix a, Matrix a)]
+-- backprop trainer network [] updates = updateNetwork updates network
+-- backprop trainer network (d:ds) updates = backprop trainer network ds (updateLayer updates (deltas network d))
 
 -- feedLayer
 --   feeds an input through one layer
@@ -128,13 +136,13 @@ epoch t batch trainData network = epoch t batch tails (train t network miniBatch
 
 -- Training a network
 
-data BackpropTrainer a = BackpropTrainer { eta :: a
-                                         , cost :: CostFunction a
-                                         , cost' :: CostFunction' a
-                                         }
-
-instance (Floating a) => Trainer (BackpropTrainer a) where
-  train trainer network trainData = backprop -- something -- trainer network trainData
+-- data BackpropTrainer a = BackpropTrainer { eta :: a
+--                                          , cost :: CostFunction a
+--                                          , cost' :: CostFunction' a
+--                                          }
+--
+-- instance (Floating a) => Trainer (BackpropTrainer a) where
+--   train trainer network trainData = backprop -- something -- trainer network trainData
 
 -- So far we provide one defined cost function, the quadratic cost. Eventually
 -- we will add more cost functions.

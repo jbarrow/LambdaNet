@@ -61,7 +61,7 @@ scalar :: (Num a) => Matrix a -> a -> Matrix a
 scalar mat n = map (map (* n)) mat
 
 combine:: (Num a) => Matrix a -> Matrix a -> Matrix a
-combine m n 
+combine m n
     | cols m == cols n = m ++ n
     | rows m == rows n = zipWith (++) m n
     | otherwise = m
@@ -100,5 +100,5 @@ uniforms xs = xs
 -- grabs random permutation of list
 -- order is strictly and consistently mapped
 -- providing the same random number yields the same permutation
-randomShuffle :: [a] -> a -> [a]
-randomShuffle n r = permutations n !! r
+-- randomShuffle :: [a] -> a -> [a]
+-- randomShuffle n r = permutations n !! r
