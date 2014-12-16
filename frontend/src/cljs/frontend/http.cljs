@@ -15,8 +15,8 @@
 
 (defn create [init-type layers app-state]
   (go (let [response (<! (http/post (str root "/create")
-                                    {:json-params {:init init-type
-                                                   :layers layers}}))]
+                                    {:json-params {:initDist init-type
+                                                   :layerDefs layers}}))]
         (let [body (json-parse (:body response))]
           (if (not= body []) (do (swap! app-state assoc :initialized true)
                                  ;; (swap! app-state assoc :network body)
