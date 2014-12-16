@@ -1,24 +1,37 @@
 module Network.Network
 ( Network(..)
---, Trainer(..)
+, Trainer(..)
+, BackpropTrainer(..)
 
+, feedLayer
 , CostFunction
 , CostFunction'
---, TrainingData
+, TrainingData
 
 , createNetwork
+, fit
+, predict
+, quadraticCost
+, quadraticCost'
 ) where
 
 import Network.Neuron
 import Network.Layer
 import Linear
 import System.Random
-import qualified Data.Map as Map
 
 -- Networks are constructed front to back. Start by adding an input layer,
 -- then each hidden layer, and finally an output layer.
 
 data Network a = Network { layers :: [Layer a] }
+
+type CostFunction a = Matrix a -> Matrix a -> a
+type CostFunction' a = Matrix a -> Matrix a -> Matrix a
+
+type TrainingData a = (Matrix a, Matrix a)
+
+class Trainer a where
+  train :: (Floating b) => a -> Network b -> [TrainingData b] -> Network b
 
 -- createNetwork
 --   creates a neural network
@@ -49,26 +62,44 @@ createNetwork t g (layerDef : (layerDef' : otherLayerDefs)) =
 predict :: (Floating a) => Matrix a -> Network a -> Matrix a
 predict input network = input
 
+-- feedLayer
+--   feeds an input through one layer
+feedLayer :: (Floating a) => Matrix a -> Layer a -> Matrix a
+feedLayer input layer = [map sum ((map.map) a z)]
+  where a = activation (neuron layer)
+        z = add (mult (transpose w) input) b
+        b = biasMatrix layer
+        w = weightMatrix layer
+
 statefulPredict :: (Floating a) => Matrix a -> Network a -> [Matrix a]
 statefulPredict input network = [input]
 
-fit :: (Floating a, Trainer t) => t -> Int -> [TrainingData a] -> Network a -> Network a
-fit t batch (h:ts) network = train t network h
+-- Fits the data for a given number of epochs
+fit :: (Floating a, Trainer t) => Int ->  t -> Int -> [TrainingData a] -> Network a -> Network a
+fit 0 t batch trainData network = network
+fit n t batch trainData network = fit (n - 1) t batch trainData (epoch t batch trainData network)
+
+-- Runs through all of the data minibatch by minibatch calling the trainer's train function
+epoch :: (Floating a, Trainer t) => t -> Int -> [TrainingData a] -> Network a -> Network a
+epoch t batch [] network = network
+epoch t batch trainData network = epoch t batch tails (train t network miniBatch)
+  where miniBatch = take batch trainData
+        tails = drop batch trainData
 
 -- Training a network
-
-type CostFunction a = a -> a
-type CostFunction' a = a -> a
-
-type TrainingData a = Map.Map (Matrix a) (Matrix a)
 
 data BackpropTrainer a = BackpropTrainer { eta :: a
                                          , cost :: CostFunction a
                                          , cost' :: CostFunction' a
                                          }
 
-class Trainer a where
-  train :: (Floating b) => a -> Network b -> TrainingData b -> Network b
-
 instance (Floating a) => Trainer (BackpropTrainer a) where
   train trainer network trainData = network
+
+-- So far we provide one defined cost function, the quadratic cost. Eventually
+-- we will add more cost functions.
+quadraticCost :: (Floating a) => Matrix a -> Matrix a -> a
+quadraticCost y a = 0.5 * (sum $ map sum $ (map . map) (^2) $ sub y a)
+
+quadraticCost' :: (Floating a) => Matrix a -> Matrix a -> Matrix a
+quadraticCost' y a = sub y a

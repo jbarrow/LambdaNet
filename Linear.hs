@@ -5,6 +5,8 @@ module Linear
 , rows
 , cols
 , dot
+, add
+, sub
 , mult
 , hadamard
 , transpose
@@ -32,6 +34,14 @@ dot :: (Num a) => Matrix a -> Matrix a -> a
 dot [u] [v] = sum $ zipWith (*) u v
 dot u v = 0
 
+-- matrix addition
+add :: (Num a) => Matrix a -> Matrix a -> Matrix a
+add m n = zipWith (zipWith (+)) m n
+
+-- matrix subtraction
+sub :: (Num a) => Matrix a -> Matrix a -> Matrix a
+sub m n = zipWith (zipWith (-)) m n
+
 -- matrix multiplication m * n
 mult :: (Num a) => Matrix a -> Matrix a -> Matrix a
 mult [] n = []
@@ -50,11 +60,11 @@ scalar :: (Num a) => Matrix a -> a -> Matrix a
 scalar mat n = map (map (* n)) mat
 
 combine:: (Num a) => Matrix a -> Matrix a -> Matrix a
-combine m n = if (cols m == cols n)
-               then zipWith (++) m n
-               else if (rows m == rows n)
-                      then m ++ n
-                      else m
+combine m n 
+    | cols m == cols n = m ++ n
+    | rows m == rows n = zipWith (++) m n
+    | otherwise = m
+
 -- parameters
 --   j is the number of columns of the resulting matrix
 -- returns
