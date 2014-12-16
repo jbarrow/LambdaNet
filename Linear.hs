@@ -3,6 +3,8 @@ module Linear
 , Vector
 , RandomTransform
 
+, rows
+, cols
 , dot
 , vMult
 , mMult
@@ -21,11 +23,17 @@ import System.Random
 type Vector a = [a]
 type Matrix a = [[a]]
 
+rows :: (Num a) => Matrix a -> Int
+rows = length
+
+cols :: (Num a) => Matrix a -> Int
+cols = length . head
+
 dot :: (Num a) => Vector a -> Vector a -> a
 dot u v = sum $ zipWith (*) u v
 
-vMult :: (Num a) => Vector a -> Matrix a -> Vector a
-vMult v m = map (dot v) m
+vMult :: (Num a) => Matrix a -> Vector a -> Vector a
+vMult m v = map (dot v) m
 
 -- matrix multiplication m * n
 mMult :: (Num a) => Matrix a -> Matrix a -> Matrix a
