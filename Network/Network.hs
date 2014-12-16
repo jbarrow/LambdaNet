@@ -60,19 +60,24 @@ createNetwork t g (layerDef : (layerDef' : otherLayerDefs)) =
 -- and then applies the neuron activation function via a map to the entire output
 -- vector.
 predict :: (Floating a) => Matrix a -> Network a -> Matrix a
-predict input network = input
+predict input network =
+  if null (layers network)
+    then input
+    else predict input' restOfNetwork
+      where input' = feedLayer input (head (layers network))
+            restOfNetwork = Network (drop 1 (layers network))
+
+statefulPredict :: (Floating a) => Matrix a -> Network a -> [Matrix a]
+statefulPredict input network = [input]
 
 -- feedLayer
 --   feeds an input through one layer
 feedLayer :: (Floating a) => Matrix a -> Layer a -> Matrix a
-feedLayer input layer = [map sum ((map.map) a z)]
+feedLayer input layer = add ((map . map) a z) b
   where a = activation (neuron layer)
-        z = add (mult (transpose w) input) b
+        z = mult input w
         b = biasMatrix layer
         w = weightMatrix layer
-
-statefulPredict :: (Floating a) => Matrix a -> Network a -> [Matrix a]
-statefulPredict input network = [input]
 
 -- Fits the data for a given number of epochs
 fit :: (Floating a, Trainer t) => Int ->  t -> Int -> [TrainingData a] -> Network a -> Network a
