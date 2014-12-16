@@ -4,22 +4,18 @@ module Main where
 
 import Web.Scotty
 
-import Control.Monad.IO.Class
 import Control.Applicative ((<$>), (<*>), empty)
         
 import Data.Default (def)
-import Data.Typeable
 import Data.Aeson
-import qualified Data.Map as Map
-import qualified Data.ByteString as BS
-import qualified Data.ByteString.Lazy as BSL
-import qualified Data.Text.Lazy as T
 import Data.Text.Lazy.Encoding
         
 
 -- Network
 import Network.Wai.Handler.Warp (settingsPort)
 import Network.HTTP.Types  (status404, status200)
+import Network.Layer
+import Parse
 
 ------------------------------------------------------------------------------
 
@@ -40,13 +36,16 @@ instance FromJSON Coord where
 
 mirror = do
   wb <- body
-  text $ decodeASCII wb
+  text $ decodeUtf8 wb
 
 main :: IO ()
 main = do
     putStrLn "Starting HTTP Server."
-    let req = decode "{\"x\":3.0,\"y\":-1.0}" :: Maybe Coord
-    print req
+    -- let req = decode "{\"x\":3.0,\"y\":-1.0}" :: Maybe Coord
+    let ld = decode "{\"count\":3,\"connect\":\"fully\",\"neuronType\":\"sigmoid\"}" :: Maybe LayerParseDefinition
+    print ld
+    let nd = decode "{\"layers\": [{\"count\":3,\"connect\":\"fully\",\"neuronType\":\"sigmoid\"}], \"init\": \"normal\"" :: Maybe NetworkParseDefinition
+    print nd
     scottyOpts config $ do
         -- /create {layers: [LayerDefinition], init: String}
         post "/create/" $ mirror
