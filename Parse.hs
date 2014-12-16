@@ -11,6 +11,7 @@ import Network.Network
 import Data.Aeson
 import GHC.Generics
 import Linear
+import System.Random
 
 data LayerParseDefinition = LayerParseDefinition { ntype :: String
                                          , ncount :: Int
@@ -28,18 +29,18 @@ toLayerDefinition LayerParseDefinition {ntype=neuron, ncount=count, connectivity
     | neuron == "sigmoidNeuron" = LayerDefinition {neuronDef=sigmoidNeuron, neuronCount=count, connect=conn}
     | otherwise = LayerDefinition {neuronDef=sigmoidNeuron, neuronCount=count, connect=conn}
 
-data NetworkParseDefinition = NetworkParseDefinition { layers :: [LayerParseDefinition]
-                                                     , init :: String
+data NetworkParseDefinition = NetworkParseDefinition { layerDefs :: [LayerParseDefinition]
+                                                     , initDist :: String
                                          } deriving (Generic, Show)
 
 instance FromJSON NetworkParseDefinition
 instance ToJSON NetworkParseDefinition
 
 toNetwork :: NetworkParseDefinition -> Network a
-toNetwork NetworkParseDefinition {layers=layerDefs, init=initDistribution}
-    | init == "normals" = createNetwork normals (mkStdGen 4) (map toLayerDefinition layers)
-    | init == "uniforms" = createNetwork uniforms (map toLayerDefinition layers)
-    | otherwise = createNetwork uniforms (map toLayerDefinition layers)
+toNetwork NetworkParseDefinition {layerDefs=layerDefs, initDist=initDistribution}
+    | initDistribution == "normals" = createNetwork normals (mkStdGen 4) (map toLayerDefinition layerDefs)
+    | initDistribution == "uniforms" = createNetwork uniforms (map toLayerDefinition layerDefs)
+    | otherwise = createNetwork uniforms (map toLayerDefinition layerDefs)
 
 data TrainingParseDefinition = TrainingParseDefinition { trainingdata :: [(Matrix Float, Matrix Float)]
                                                        , nw :: [Matrix Float]

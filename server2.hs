@@ -35,7 +35,10 @@ create = do
   let d  = decode wb :: Maybe NetworkParseDefinition 
   -- take d, a NetworkParseDefinition, and turn it into a Network Definition, then run it through createNetwork.
   -- finally, return `text $ decodeUtf8 $ encode newly_created_network`.
-  text $ decodeUtf8 $ encode d
+  let net = case d of
+              Just value -> definitionToNetwork $ nw value
+              Nothing    -> [] 
+  text $ decodeUtf8 $ encode net
 
 train = do
   wb <- body
