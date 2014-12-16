@@ -22,29 +22,12 @@ data LayerParseDefinition = LayerParseDefinition { ntype :: String
 instance FromJSON LayerParseDefinition
 instance ToJSON LayerParseDefinition
 
--- to extend for other types of neurons, pattern match on neuron
--- TODO: change result of otherwise to something more error-like
-toLayerDefinition :: LayerParseDefinition -> LayerDefinition a
-toLayerDefinition LayerParseDefinition {ntype=neuron, ncount=count, connectivity=conn}
-    | neuron == "sigmoidNeuron" = LayerDefinition {neuronDef=sigmoidNeuron, neuronCount=count, connect=conn}
-    | otherwise = LayerDefinition {neuronDef=sigmoidNeuron, neuronCount=count, connect=conn}
-
 data NetworkParseDefinition = NetworkParseDefinition { layerDefs :: [LayerParseDefinition]
                                                      , initDist :: String
                                          } deriving (Generic, Show)
 
 instance FromJSON NetworkParseDefinition
 instance ToJSON NetworkParseDefinition
-
-toNetwork :: NetworkParseDefinition -> Network a
-<<<<<<< HEAD
-toNetwork NetworkParseDefinition {layerDefs=layerDefs, initDist=initDistribution}
-=======
-toNetwork NetworkParseDefinition {layers=layerDefs, init=initDistribution}
->>>>>>> 1b171a4ac206bf2abe17aaea73466f95e4f23a40
-    | initDistribution == "normals" = createNetwork normals (mkStdGen 4) (map toLayerDefinition layerDefs)
-    | initDistribution == "uniforms" = createNetwork uniforms (map toLayerDefinition layerDefs)
-    | otherwise = createNetwork uniforms (map toLayerDefinition layerDefs)
 
 data TrainingParseDefinition = TrainingParseDefinition { trainingdata :: [(Matrix Float, Matrix Float)]
                                                        , nw :: [Matrix Float]

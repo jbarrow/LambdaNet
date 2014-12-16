@@ -35,10 +35,7 @@ create = do
   let d  = decode wb :: Maybe NetworkParseDefinition 
   -- take d, a NetworkParseDefinition, and turn it into a Network Definition, then run it through createNetwork.
   -- finally, return `text $ decodeUtf8 $ encode newly_created_network`.
-  let net = case d of
-              Just value -> definitionToNetwork $ nw value
-              Nothing    -> [] 
-  text $ decodeUtf8 $ encode net
+  text $ decodeUtf8 $ encode d
 
 train = do
   wb <- body
@@ -60,15 +57,6 @@ eval = do
 main :: IO ()
 main = do
     putStrLn "Starting HTTP Server."
-    -- let req = decode "{\"x\":3.0,\"y\":-1.0}" :: Maybe Coord
-    let ld = decode "{\"ncount\":3,\"connectivity\":\"fully-connected\",\"ntype\":\"sigmoid\",\"id\":\"tnser\"}" :: Maybe LayerParseDefinition
-    print ld
-    let nd = decode "{\"layers\": [{\"id\": \"abc\",\"ncount\":3,\"connectivity\":\"fully-connected\",\"ntype\":\"sigmoid\"}], \"init\": \"normal\"}" :: Maybe NetworkParseDefinition
-    print nd
-    let td = decode "{\"trainingdata\": [[[[1.0, 0.0]], [[1.0]]], [[[1.0, 1.0]], [[0.0]]], [[[0.0, 1.0]], [[1.0]]], [[[0.0, 0.0]], [[0.0]]]], \"nw\":[[[0.5,0,1],[0.5,1,0]],[[1,1,1]]]}" :: Maybe TrainingParseDefinition
-    print td
-    let id = decode "{\"inputs\": [1.0, 0.0], \"network\":[[[0.5,0,1],[0.5,1,0]],[[1,1,1]]]}" :: Maybe InputParseDefinition
-    print id
     scottyOpts config $ do
         -- /create {layers: [LayerDefinition], init: String}
         post "/create/" create
