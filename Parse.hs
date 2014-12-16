@@ -10,7 +10,7 @@ import Data.Aeson
 import GHC.Generics
 import Linear
 
-data LayerParseDefinition = LayerParseDefinition { ntype :: String 
+data LayerParseDefinition = LayerParseDefinition { ntype :: String
                                          , ncount :: Int
                                          , connectivity :: String
                                          , id :: String
