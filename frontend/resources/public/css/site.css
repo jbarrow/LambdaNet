@@ -1,6 +1,6 @@
 body {
   font-family: 'Helvetica Neue', Verdana, Helvetica, Arial, sans-serif;
-  max-width: 600px;
+  max-width: 800px;
   margin: 0 auto;
   padding-top: 72px;
   -webkit-font-smoothing: antialiased;
@@ -10,7 +10,7 @@ body {
 }
 
 .container {
-    width: 600px;
+    width: 800px;
     margin: 0 auto;
 }
 
@@ -59,4 +59,30 @@ textarea {
 svg {
     margin-top: 20px;
     width: 100%;
+}
+
+button.form-control {
+    display: inline-block;
+    margin-left: 35px;
+    width: 150px
+}
+
+input.form-control {
+    width: 80px;
+    display:inline-block;
+    margin-left: 35px
+}
+
+select.form-control {
+    display:inline-block;
+    width: 200px;
+    margin-left: 35px;
+}
+select.inline.form-control, .form-control option{
+    width: auto;
+    padding: 3px 4px;
+}
+
+textarea {
+    margin: 10px 0;
 }
