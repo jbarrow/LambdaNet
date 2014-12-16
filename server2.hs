@@ -36,7 +36,7 @@ create = do
   -- take d, a NetworkParseDefinition, and turn it into a Network Definition, then run it through createNetwork.
   -- finally, return `text $ decodeUtf8 $ encode newly_created_network`.
   let net = case d of
-              Just value -> definitionToNetwork $ nw value
+              Just value -> toNetwork $ nw value
               Nothing    -> [] 
   text $ decodeUtf8 $ encode net
 
