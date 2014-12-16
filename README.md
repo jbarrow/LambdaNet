@@ -1,7 +1,7 @@
 LambdaNet
 =====
 
-LambdaNet is an attempt at a functional "box-of-LEGO" style neural network built around higher order
+LambdaNet is an _in progress_ attempt at a functional "box-of-LEGO" style neural network built around higher order
 functions. The goal is to provide a framework that promotes experimentation with neural networks by
 allowing users to define custom:
   - Neuron types
