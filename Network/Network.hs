@@ -8,14 +8,14 @@ module Network.Network
 
 , feedLayer
 , createNetwork
-, fit
+--, fit
 , predict
-, predictWithState
-, updateNetwork
-, updateLayer
+--, predictWithState
+--, updateNetwork
+--, updateLayer
 , quadraticCost
 , quadraticCost'
-, epoch
+--, epoch
 ) where
 
 import Network.Neuron
@@ -70,37 +70,67 @@ predict input network =
       where input' = feedLayer input (head (layers network))
             restOfNetwork = Network (tail (layers network))
 
-predictWithState :: (Floating a) => Matrix a -> Network a -> [Matrix a]
-predictWithState input network =
-  if null (layers network)
-    then [input]
-    else input : (predictWithState input' restOfNetwork)
-      where input' = feedLayerWithoutActivation input (head (layers network))
-            restOfNetwork = Network (tail (layers network))
+-- predictWithState :: (Floating a) => Matrix a -> Network a -> [Matrix a]
+-- predictWithState input network =
+--   if null (layers network)
+--     then [input]
+--     else input : (predictWithState input' restOfNetwork)
+--       where input' = feedLayerWithoutActivation input (head (layers network))
+--             restOfNetwork = Network (tail (layers network))
 
--- deltas :: (Floating a) => Network a -> [TrainingData a] -> [(Matrix a, Matrix a)]
+-- deltas :: (Floating a, Trainer t) => t -> Network a -> TrainingData a -> [(Matrix a, Matrix a)]
+-- deltas trainer network trainData = (reverse $ getNablas states (reverse network))
+--   where states = reverse $ predictWithState (fst trainData) network
 
-updateNetwork :: (Floating a) => [(Matrix a, Matrix a)] -> Network a -> Network a
-updateNetwork [] network = network
-updateNetwork (update: restOfUpdates) network =
-  Network (updatedLayer : layers restOfUpdatedNetwork)
-  where updatedLayer = updateLayer update (head (layers network))
-        restOfUpdatedNetwork = updateNetwork restOfUpdates restOfNetwork
-        restOfNetwork = Network (drop 1 (layers network))
+-- deltasOutputs :: (Floating a, Trainer t) => t -> Network a -> TrainingData a -> [Matrix a]
+-- deltasOutputs trainer network trainData inputs =
+--   (deltaBias, deltaWeights) : deltasHidden network d (tail inputs)
+--   where deltaBias = d
+--         deltaWeights =
+--         a = predict (fst trainData) network
+--         y = snd trainData
+--
 
-updateLayer :: (Floating a) => (Matrix a, Matrix a) -> Layer a -> Layer a
-updateLayer (weightUpdate, biasUpdate) layer =
-  Layer newWeights newBiases (neuron layer)
-  where newWeights = add (weightMatrix layer) weightUpdate
-        newBiases = add (biasMatrix layer) biasUpdate
+-- parameters
+--   the network
+--   delta from l+1 layer
+--   inputs
+-- deltasHidden :: (Floating a) => Network a -> Matrix a -> [Matrix a] -> [(Matrix a, Matrix a)]
+-- deltasHidden network d inputs =
+--   if null (layers network)
+--   then []
+--   else (deltaBias, deltaWeights) : deltasHidden restOfNetwork d' inputs'
+--   where deltaBias = d'
+--         deltaWeights = mult outputs d'
+--         ouputs =
+--         d' = hadamard (mult weights d) (a' inputs)
+--         weights = weightMatrix topLayer
+--         a' = activation' (neuron topLayer)
+--         topLayer = head (layers network)
+--         restOfNetwork = Network (tail (layers network))
+--         inputs' = tail inputs
 
-
+-- updateNetwork :: (Floating a) => [(Matrix a, Matrix a)] -> Network a -> Network a
+-- updateNetwork [] network = network
+-- updateNetwork (update: restOfUpdates) network =
+--   Network (updatedLayer : layers restOfUpdatedNetwork)
+--   where updatedLayer = updateLayer update (head (layers network))
+--         restOfUpdatedNetwork = updateNetwork restOfUpdates restOfNetwork
+--         restOfNetwork = Network (tail (layers network))
+--
+-- updateLayer :: (Floating a) => (Matrix a, Matrix a) -> Layer a -> Layer a
+-- updateLayer (weightUpdate, biasUpdate) layer =
+--   Layer newWeights newBiases (neuron layer)
+--   where newWeights = add (weightMatrix layer) weightUpdate
+--         newBiases = add (biasMatrix layer) biasUpdate
+--
 -- backprop :: (Floating a, Trainer t) => t -> Network a -> [TrainingData a] -> [(Matrix a, Matrix a)] -> [(Matrix a, Matrix a)]
 -- backprop trainer network [] updates = updateNetwork updates network
--- backprop trainer network (d:ds) updates = backprop trainer network ds (updateLayer updates (deltas network d))
+-- backprop trainer network (d:ds) updates = backprop trainer network ds (updateLayer updates (deltas t network d))
+--
+-- -- feedLayer
+-- --   feeds an input through one layer
 
--- feedLayer
---   feeds an input through one layer
 feedLayer :: (Floating a) => Matrix a -> Layer a -> Matrix a
 feedLayer input layer = (map . map) a (add z b)
   where a = activation (neuron layer)
@@ -108,26 +138,26 @@ feedLayer input layer = (map . map) a (add z b)
         b = biasMatrix layer
         w = weightMatrix layer
 
-feedLayerWithoutActivation :: (Floating a) => Matrix a -> Layer a -> Matrix a
-feedLayerWithoutActivation input layer = add z b
-  where z = mult input w
-        b = biasMatrix layer
-        w = weightMatrix layer
-
--- Fits the data for a given number of epochs
-fit :: (Floating a, Trainer t) => Int ->  t -> Int -> [TrainingData a] -> Network a -> Network a
-fit 0 t batch trainData network = network
-fit n t batch trainData network = fit (n - 1) t batch trainData (epoch t batch trainData network)
-
--- Runs through all of the data minibatch by minibatch calling the trainer's train function
-epoch :: (Floating a, Trainer t) => t -> Int -> [TrainingData a] -> Network a -> Network a
-epoch t batch [] network = network
-epoch t batch trainData network = epoch t batch tails (train t network miniBatch)
-  where miniBatch = take batch trainData
-        tails = drop batch trainData
-
--- Training a network
-
+-- feedLayerWithoutActivation :: (Floating a) => Matrix a -> Layer a -> Matrix a
+-- feedLayerWithoutActivation input layer = add z b
+--   where z = mult input w
+--         b = biasMatrix layer
+--         w = weightMatrix layer
+--
+-- -- Fits the data for a given number of epochs
+-- fit :: (Floating a, Trainer t) => Int ->  t -> Int -> [TrainingData a] -> Network a -> Network a
+-- fit 0 t batch trainData network = network
+-- fit n t batch trainData network = fit (n - 1) t batch trainData (epoch t batch trainData network)
+--
+-- -- Runs through all of the data minibatch by minibatch calling the trainer's train function
+-- epoch :: (Floating a, Trainer t) => t -> Int -> [TrainingData a] -> Network a -> Network a
+-- epoch t batch [] network = network
+-- epoch t batch trainData network = epoch t batch tails (train t network miniBatch)
+--   where miniBatch = take batch trainData
+--         tails = drop batch trainData
+--
+-- -- Training a network
+--
 -- data BackpropTrainer a = BackpropTrainer { eta :: a
 --                                          , cost :: CostFunction a
 --                                          , cost' :: CostFunction' a
