@@ -46,8 +46,8 @@ data TrainingParseDefinition = TrainingParseDefinition { trainingdata :: [(Matri
 instance FromJSON TrainingParseDefinition
 instance ToJSON TrainingParseDefinition
 
-toTrainingDefinition :: TrainingParseDefinition -> TrainingData a
-toTrainingDefinition d {trainingdata=data,
+--toTrainingDefinition :: TrainingParseDefinition -> TrainingData a
+--toTrainingDefinition d {trainingdata=data,nw=network} = 
 
 data InputParseDefinition = InputParseDefinition { inputs :: [Float]
                                                  , network :: [Matrix Float]
