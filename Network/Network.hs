@@ -11,6 +11,8 @@ module Network.Network
 , fit
 , predict
 , predictWithState
+, updateNetwork
+, updateLayer
 , quadraticCost
 , quadraticCost'
 , epoch
@@ -83,15 +85,18 @@ deltas :: (Floating a) => Network a -> [TrainingData a] -> [(Matrix a, Matrix a)
 
 updateNetwork :: (Floating a) => [(Matrix a, Matrix a)] -> Network a -> Network a
 updateNetwork [] network = network
-updateNetwork ((weightUpdate, biasUpdate): restOfUpdates) network =
-  updateNetwork restOfUpdates network'
-  where network' = Network (newLayer : restOfLayers)
-        restOfLayers = tail (layers network)
-        newLayer = Layer newWeights newBiases neuronType
-        newWeights = add (weightMatrix oldLayer) weightUpdate
-        newBiases = add (biasMatrix oldLayer) biasUpdate
-        neuronType = neuron oldLayer
-        oldLayer = head (layers network)
+updateNetwork (update: restOfUpdates) network =
+  Network (updatedLayer : layers restOfUpdatedNetwork)
+  where updatedLayer = updateLayer update (head (layers network))
+        restOfUpdatedNetwork = updateNetwork restOfUpdates restOfNetwork
+        restOfNetwork = Network (drop 1 (layers network))
+
+updateLayer :: (Floating a) => (Matrix a, Matrix a) -> Layer a -> Layer a
+updateLayer (weightUpdate, biasUpdate) layer =
+  Layer newWeights newBiases (neuron layer)
+  where newWeights = add (weightMatrix layer) weightUpdate
+        newBiases = add (biasMatrix layer) biasUpdate
+
 
 backprop :: (Floating a, Trainer t) => t -> Network a -> [TrainingData a] -> [(Matrix a, Matrix a)] -> [(Matrix a, Matrix a)]
 backprop trainer network [] updates = updateNetwork updates network
