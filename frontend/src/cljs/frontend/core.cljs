@@ -123,8 +123,9 @@
        [:p "Inputs" [:br] [atom-textarea inputs]]
        [:button {:on-click (partial evaluate @inputs)}
         "Evaluate Inputs"]
-       [:code (:layer-text @app-state) (str (:network @app-state))]
-       [viz/draw {} (get-state :network)]])))
+       [viz/draw {} (get-state :network)]
+       [:code {:class (if (get-state :result) "visible" "hidden")}
+        (str (:result @app-state))]])))
 ;; -------------------------
 ;; Initialize app
 
