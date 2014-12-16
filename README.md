@@ -76,9 +76,9 @@ That's all there is to it. Pass in a vector (which, in this library is a matrix)
 
 The entire library is mean to be as extensible as possible and to allow you to create new types of, well, anything.
 
-# Neural Networks in the Browser
+## Neural Networks in the Browser
 
-## First Time Setup
+### First Time Setup
 
 Install [leiningen](http://leiningen.org).
   1. Download the [lein script](https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein)
