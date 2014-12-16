@@ -13,6 +13,8 @@ module Network.Network
 , predict
 , quadraticCost
 , quadraticCost'
+, inputs
+, epoch
 ) where
 
 import Network.Neuron
@@ -67,15 +69,26 @@ predict input network =
       where input' = feedLayer input (head (layers network))
             restOfNetwork = Network (drop 1 (layers network))
 
-statefulPredict :: (Floating a) => Matrix a -> Network a -> [Matrix a]
-statefulPredict input network = [input]
+inputs :: (Floating a) => Matrix a -> Network a -> [Matrix a]
+inputs input network =
+  if null (layers network)
+    then [input]
+    else [input] ++ (inputs input' restOfNetwork)
+      where input' = feedLayer input (head (layers network))
+            restOfNetwork = Network (drop 1 (layers network))
 
 -- feedLayer
 --   feeds an input through one layer
 feedLayer :: (Floating a) => Matrix a -> Layer a -> Matrix a
-feedLayer input layer = add ((map . map) a z) b
+feedLayer input layer = (map . map) a (add z b)
   where a = activation (neuron layer)
         z = mult input w
+        b = biasMatrix layer
+        w = weightMatrix layer
+
+feedLayerWithoutActivation :: (Floating a) => Matrix a -> Layer a -> Matrix a
+feedLayerWithoutActivation input layer = add z b
+  where z = mult input w
         b = biasMatrix layer
         w = weightMatrix layer
 
