@@ -5,6 +5,8 @@ module Linear
 , rows
 , cols
 , dot
+, add
+, sub
 , mult
 , hadamard
 , transpose
@@ -31,6 +33,14 @@ cols = length . head
 dot :: (Num a) => Matrix a -> Matrix a -> a
 dot [u] [v] = sum $ zipWith (*) u v
 dot u v = 0
+
+-- matrix addition
+add :: (Num a) => Matrix a -> Matrix a -> Matrix a
+add m n = zipWith (zipWith (+)) m n
+
+-- matrix subtraction
+sub :: (Num a) => Matrix a -> Matrix a -> Matrix a
+sub m n = zipWith (zipWith (-)) m n
 
 -- matrix multiplication m * n
 mult :: (Num a) => Matrix a -> Matrix a -> Matrix a
