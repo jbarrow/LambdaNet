@@ -38,14 +38,14 @@ createNetwork t g (layerDef : (layerDef' : otherLayerDefs)) =
   where aLayer = createLayer t g layerDef layerDef'
         restOfNetwork = createNetwork t g (layerDef' : otherLayerDefs)
 
--- addLayerDefinition :: (Floating a) => LayerDefinition a -> [LayerDefinition a] -> [LayerDefinition a]
--- addLayerDefinition layer layers = (layers ++ [layer])
-
+-- Using a scikit-learn-esque naming scheme - predict to classify data
+-- and fit to train the network.
 predict :: (Floating a) => Vector a -> Network a -> Vector a
 predict input network = input
 
-fit :: (Floating a, Trainer t) => t -> [TrainingData a] -> Network a -> Network a
-fit t (h:ts) network = train t network h
+
+fit :: (Floating a, Trainer t) => t -> Int -> [TrainingData a] -> Network a -> Network a
+fit t batch (h:ts) network = train t network h
 
 -- Training a network
 

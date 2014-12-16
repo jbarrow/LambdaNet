@@ -36,7 +36,8 @@ We'll go into a little more detail about each of these elements a bit later. But
 Note, the mkStdGen is our (very random) source of entropy. Feel free to exchange it with your favorite entropy
 generator of choice.
 
-Et voila, you have a functioning neural network that simply needs to be trained.
+Et voila, you have a functioning neural network that simply needs to be trained. The network created above has three layers, the first
+with three neurons, the second with 4, and the output with 2.
 
 ### Training the Network
 
@@ -52,7 +53,7 @@ __Creating a Sigmoid Neuron__
 First of all, what is a sigmoid neuron? Well, it's a neuron whose activation function is defined by a logistic
 curve (sigmoid) which is bounded between 0 and 1:
 
-<img src="https://github.com/jbarrow/LambdaNet/blob/master/docs/images/sigmoid.png" style="width: 200px;margin:0 auto" />
+<img src="https://github.com/jbarrow/LambdaNet/blob/master/docs/images/sigmoid.png" style="margin:0 auto;" height="250" />
 
 __Initialization Functions__
 

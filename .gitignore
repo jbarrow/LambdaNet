@@ -21,3 +21,4 @@ docs/*.txt
 
 .hc
 .o
+lein
