@@ -26,7 +26,6 @@
   {:stroke-width (* weight 4)})
 
 (defn neuron-connections [layer start-x start-y]
-  (println start-x start-y)
   [:g.connections
    (for [[y weights] (map vector (iterate inc 0) layer)]
      [c/segment (to-right-side (neuron-position start-x start-y))

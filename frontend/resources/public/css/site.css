@@ -42,3 +42,11 @@ rect {
 line {
     stroke: #27ae60;
 }
+
+textarea {
+    width: 600px
+}
+
+.hidden {
+    display: none;
+}

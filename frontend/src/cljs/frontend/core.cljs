@@ -66,6 +66,14 @@
 ;; -------------------------
 ;; View
 
+(defn atom-textarea [v ks type]
+  [:textarea {:rows 4
+              :columns 80
+              :value (if ks (get-in @app-state ks) @v)
+              :on-change #(let [text (-> % .-target .-value)]
+                            (if ks (put-in! ks text) 
+                                (reset! v text)))}])
+
 (defn atom-input [v ks type]
   [:input {:type (if type type "text")
            :value (if ks (get-in @app-state ks) @v)
@@ -90,20 +98,25 @@
     "remove"]])
 
 (defn main-page []
-  (let [training-data (atom "[]")
-        test-data (atom "[]")
+  (let [training-data (atom (str "[[[[1.0, 0.0]], [[1.0]]], \n"
+                                 "[[[1.0, 1.0]], [[0.0]]], \n"
+                                 "[[[0.0, 1.0]], [[1.0]]], \n"
+                                 "[[[0.0, 0.0]], [[0.0]]]]"))
+        inputs (atom "[1, 1]")
         network [[[ 0.5, 0.0, 1.0]  [0.5, 1.0, 0.0]], [[1.0, 1.0, 1.0]]]] 
     (fn []
       [:div
-       [:p "Training Data" [atom-input training-data]]
        [:button {:on-click create-layer}
-        "Create new layer, fool."]
-       [selection-list [:init-type] init-types]
+        "Create layer."]
        [:button {:on-click export}
-        "Export"]
+        "Initialize Network"]
+       [selection-list [:init-type] init-types]
        (let [indexed (map-indexed vector (get-state :layers))]
-         [:p "Layers:" (for [[i layer] indexed]
-                         (neuron-config layer i))])
+         [:p {:class (if (< 0 (count (get-state :layers))) "visible" "hidden")}
+          "Layers:" (for [[i layer] indexed]
+                      (neuron-config layer i))])
+       [:p "Training Data" [:br] [atom-textarea training-data]]
+       [:p "Inputs" [:br] [atom-textarea inputs]]
        [:code (:layer-text @app-state)]
        [viz/draw {} network]])))
 ;; -------------------------
