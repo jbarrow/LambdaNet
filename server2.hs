@@ -38,16 +38,22 @@ instance FromJSON Coord where
 
 ------------------------------------------------------------------------------
 
+mirror = do
+  wb <- body
+  text $ decodeASCII wb
+
 main :: IO ()
 main = do
     putStrLn "Starting HTTP Server."
     let req = decode "{\"x\":3.0,\"y\":-1.0}" :: Maybe Coord
     print req
     scottyOpts config $ do
-        post "/create/" $
-             do
-               wb <- body
-               text $ decodeASCII wb
+        -- /create {layers: [LayerDefinition], init: String}
+        post "/create/" $ mirror
+        -- /train {data: training data (not sure what form), network: Network}
+        post "/train/" $ mirror
+        -- /eval {inputs: [Int?], network: Network}
+        post "/eval" $ mirror
 
 
 ------------------------------------------------------------------------------
