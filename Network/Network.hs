@@ -65,9 +65,9 @@ predict input network = input
 -- feedLayer
 --   feeds an input through one layer
 feedLayer :: (Floating a) => Matrix a -> Layer a -> Matrix a
-feedLayer input layer = [map sum ((map.map) a z)]
+feedLayer input layer = add ((map . map) a z) b
   where a = activation (neuron layer)
-        z = add (mult (transpose w) input) b
+        z = mult input w
         b = biasMatrix layer
         w = weightMatrix layer
 
