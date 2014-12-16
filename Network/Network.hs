@@ -11,9 +11,9 @@ module Network.Network
 , createNetwork
 , fit
 , predict
+, predictWithState
 , quadraticCost
 , quadraticCost'
-, inputs
 , epoch
 ) where
 
@@ -69,11 +69,11 @@ predict input network =
       where input' = feedLayer input (head (layers network))
             restOfNetwork = Network (drop 1 (layers network))
 
-inputs :: (Floating a) => Matrix a -> Network a -> [Matrix a]
-inputs input network =
+predictWithState :: (Floating a) => Matrix a -> Network a -> [Matrix a]
+predictWithState input network =
   if null (layers network)
     then [input]
-    else [input] ++ (inputs input' restOfNetwork)
+    else input : (predictWithState input' restOfNetwork)
       where input' = feedLayer input (head (layers network))
             restOfNetwork = Network (drop 1 (layers network))
 
