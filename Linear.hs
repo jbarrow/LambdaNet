@@ -9,6 +9,7 @@ module Linear
 , hadamard
 , transpose
 , scalar
+, combine
 , reshape
 , randomList
 , boxMuller
