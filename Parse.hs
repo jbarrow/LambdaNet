@@ -33,8 +33,8 @@ data NetworkParseDefinition = NetworkParseDefinition { layers :: [LayerParseDefi
 instance FromJSON NetworkParseDefinition
 instance ToJSON NetworkParseDefinition
 
-toNetworkDefinition :: NetworkParseDefinition -> Network a
-toNetworkDefinition d {layers=layerDefs, init=initDistribution}
+toNetwork :: NetworkParseDefinition -> Network a
+toNetwork {layers=layerDefs, init=initDistribution}
     | init == "normals" = createNetwork normals (mkStdGen 4) (map toLayerDefinition layers)
     | init == "uniforms" = createNetwork uniforms (map toLayerDefinition layers)
     | otherwise = createNetwork uniforms (map toLayerDefinition layers)
@@ -45,6 +45,9 @@ data TrainingParseDefinition = TrainingParseDefinition { trainingdata :: [(Matri
 
 instance FromJSON TrainingParseDefinition
 instance ToJSON TrainingParseDefinition
+
+toTrainingDefinition :: TrainingParseDefinition -> TrainingData a
+toTrainingDefinition d {trainingdata=data,
 
 data InputParseDefinition = InputParseDefinition { inputs :: [Float]
                                                  , network :: [Matrix Float]
