@@ -11,8 +11,8 @@
   {:stroke "blue"
    :stroke-width 2
    :fill "grey"
-   :height 20
-   :width 40})
+   :height 30
+   :width 60})
 
 (defn point [x y]
   [:circle

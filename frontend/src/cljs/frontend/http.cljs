@@ -16,17 +16,22 @@
 (defn create [init-type layers app-state]
   (go (let [response (<! (http/post (str root "/create")
                                     {:json-params {:init init-type
-                                                   :layers layers}}))])))
+                                                   :layers layers}}))]
+        (let [body (json-parse (:body response))]
+          (if (not= body []) (do (swap! app-state assoc :initialized true)
+                                 ;; (swap! app-state assoc :network body)
+                                 ))))))
 (defn train [data network app-state]
   (go (let [response (<! (http/post (str root "/train")
                                     {:json-params {:trainingdata (input-to-vector data)
                                                    :nw network}}))]
         (let [body (json-parse (:body response))]
-              (if (not= body []) (swap! app-state assoc :network body))))))
+          (if (not= body []) (do (swap! app-state assoc :trained true)
+                                 (swap! app-state assoc :network body)))))))
 
 (defn eval [inputs network app-state]
   (go (let [response (<! (http/post (str root "/eval")
                                     {:json-params {:inputs (input-to-vector inputs)
                                                    :network network}}))]
         (let [body (json-parse (:body response))]
-              (if (not= body []) (swap! app-state assoc :result body))))))
+          (if (not= body []) (swap! app-state assoc :result body))))))

@@ -1,7 +1,7 @@
 module Network.Network
 ( Network(..)
 , Trainer(..)
-, BackpropTrainer(..)
+-- , BackpropTrainer(..)
 , CostFunction
 , CostFunction'
 , TrainingData
@@ -78,7 +78,7 @@ predictWithState input network =
       where input' = feedLayerWithoutActivation input (head (layers network))
             restOfNetwork = Network (tail (layers network))
 
-deltas :: (Floating a) => Network a -> [TrainingData a] -> [(Matrix a, Matrix a)]
+-- deltas :: (Floating a) => Network a -> [TrainingData a] -> [(Matrix a, Matrix a)]
 
 updateNetwork :: (Floating a) => [(Matrix a, Matrix a)] -> Network a -> Network a
 updateNetwork [] network = network
@@ -95,9 +95,9 @@ updateLayer (weightUpdate, biasUpdate) layer =
         newBiases = add (biasMatrix layer) biasUpdate
 
 
-backprop :: (Floating a, Trainer t) => t -> Network a -> [TrainingData a] -> [(Matrix a, Matrix a)] -> [(Matrix a, Matrix a)]
-backprop trainer network [] updates = updateNetwork updates network
-backprop trainer network (d:ds) updates = backprop trainer network ds (updateLayer updates (deltas network d))
+-- backprop :: (Floating a, Trainer t) => t -> Network a -> [TrainingData a] -> [(Matrix a, Matrix a)] -> [(Matrix a, Matrix a)]
+-- backprop trainer network [] updates = updateNetwork updates network
+-- backprop trainer network (d:ds) updates = backprop trainer network ds (updateLayer updates (deltas network d))
 
 -- feedLayer
 --   feeds an input through one layer
@@ -128,13 +128,13 @@ epoch t batch trainData network = epoch t batch tails (train t network miniBatch
 
 -- Training a network
 
-data BackpropTrainer a = BackpropTrainer { eta :: a
-                                         , cost :: CostFunction a
-                                         , cost' :: CostFunction' a
-                                         }
+-- data BackpropTrainer a = BackpropTrainer { eta :: a
+--                                          , cost :: CostFunction a
+--                                          , cost' :: CostFunction' a
+--                                          }
 
-instance (Floating a) => Trainer (BackpropTrainer a) where
-  train trainer network trainData = backprop -- something -- trainer network trainData
+-- instance (Floating a) => Trainer (BackpropTrainer a) where
+--   train trainer network trainData = backprop -- something -- trainer network trainData
 
 -- So far we provide one defined cost function, the quadratic cost. Eventually
 -- we will add more cost functions.

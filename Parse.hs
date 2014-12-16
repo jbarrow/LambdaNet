@@ -5,6 +5,8 @@ module Parse
 , TrainingParseDefinition(..)
 , InputParseDefinition(..)
                         ) where
+import Network.Layer
+import Network.Neuron
 import Network.Network
 import Data.Aeson
 import GHC.Generics
