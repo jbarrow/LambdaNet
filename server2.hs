@@ -48,6 +48,13 @@ create = do
 train = do
   wb <- body
   let d  = decode wb :: Maybe TrainingParseDefinition 
+  -- take d, a TrainingParseDefinition, turn it TrainingData type + Network Type, then run them through train.
+  -- finally, return `text $ decodeUtf8 $ encode result`.
+  text $ decodeUtf8 $ encode d
+
+eval = do
+  wb <- body
+  let d  = decode wb :: Maybe InputParseDefinition 
   text $ decodeUtf8 $ encode d
 
 main :: IO ()
@@ -68,7 +75,7 @@ main = do
         post "/train/" train
 
         -- /eval {inputs: [Int?], network: Network}
-        post "/eval" $ mirror
+        post "/eval/" $ eval
 
 
 ------------------------------------------------------------------------------
