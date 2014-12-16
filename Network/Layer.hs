@@ -14,7 +14,10 @@ import System.Random
 data LayerDefinition a = LayerDefinition { neuronDef :: (Neuron a)
                                          , neuronCount :: Int
                                          , connect :: (Connectivity a)
-                                         }
+                                         } deriving (Generic)
+
+instance FromJSON LayerDefinition
+instance ToJSON LayerDefinition
 
 data Layer a = Layer { weightMatrix :: (Matrix a)
                      , biasMatrix :: (Matrix a)
