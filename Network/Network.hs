@@ -79,13 +79,13 @@ predictWithState input network =
       where input' = feedLayer input (head (layers network))
             restOfNetwork = Network (drop 1 (layers network))
 
---deltas :: -- something --
+deltas :: -- something --
 
---updateNetwork :: -- something --
+updateNetwork :: -- something --
 
---backprop ::
---backprop trainer network [] = updateNetwork -- something --
---backprop trainer network (d:ds) = -- something -- backprop trainer network ds
+backprop :: -- something --
+backprop trainer network [] = updateNetwork -- something --
+backprop trainer network (d:ds) = backprop trainer network ds
 
 -- feedLayer
 --   feeds an input through one layer
@@ -121,8 +121,8 @@ data BackpropTrainer a = BackpropTrainer { eta :: a
                                          , cost' :: CostFunction' a
                                          }
 
---instance (Floating a) => Trainer (BackpropTrainer a) where
---  train trainer network trainData = backprop -- something -- trainer network trainData
+instance (Floating a) => Trainer (BackpropTrainer a) where
+  train trainer network trainData = backprop -- something -- trainer network trainData
 
 -- So far we provide one defined cost function, the quadratic cost. Eventually
 -- we will add more cost functions.
