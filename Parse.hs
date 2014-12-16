@@ -35,9 +35,9 @@ instance ToJSON NetworkParseDefinition
 
 toNetwork :: NetworkParseDefinition -> Network a
 toNetwork NetworkParseDefinition {layers=layerDefs, init=initDistribution}
-    | init == "normals" = createNetwork normals (mkStdGen 4) (map toLayerDefinition layers)
-    | init == "uniforms" = createNetwork uniforms (map toLayerDefinition layers)
-    | otherwise = createNetwork uniforms (map toLayerDefinition layers)
+    | initDistribution == "normals" = createNetwork normals (mkStdGen 4) (map toLayerDefinition layerDefs)
+    | initDistribution == "uniforms" = createNetwork uniforms (map toLayerDefinition layerDefs)
+    | otherwise = createNetwork uniforms (map toLayerDefinition layerDefs)
 
 data TrainingParseDefinition = TrainingParseDefinition { trainingdata :: [(Matrix Float, Matrix Float)]
                                                        , nw :: [Matrix Float]
