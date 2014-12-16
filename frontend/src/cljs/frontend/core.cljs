@@ -68,6 +68,7 @@
 (defn atom-textarea [v ks type]
   [:textarea {:rows 4
               :columns 80
+              :class "form-control"
               :value (if ks (get-in @app-state ks) @v)
               :on-change #(let [text (-> % .-target .-value)]
                             (if ks (put-in! ks text) 
@@ -76,12 +77,14 @@
 (defn atom-input [v ks type]
   [:input {:type (if type type "text")
            :value (if ks (get-in @app-state ks) @v)
+           :class "form-control"
            :on-change #(let [text (-> % .-target .-value)]
                          (if ks (put-in! ks text) 
                              (reset! v text)))}])
 
-(defn selection-list [k items]
+(defn selection-list [k items opt-class]
   [:select {:field :list :id :many-options
+                         :class (str opt-class " form-control")
                          :on-change #(put-in! k (keyword (-> % .-target .-value)))} 
    (for [item items]
      [:option {:value (:key item)}
@@ -89,8 +92,8 @@
 
 (defn neuron-config [layer i] 
   [:div
-   [selection-list [:layers i :ntype] neuron-types]
-   [selection-list [:layers i :connectivity] connectivity-types]
+   [selection-list [:layers i :ntype] neuron-types "inline"]
+   [selection-list [:layers i :connectivity] connectivity-types "inline"]
    [atom-input layer [:layers i :ncount] "number"]
    ;; [:div (layer :id)]
    [:button {:on-click #(remove-layer layer)}
@@ -104,27 +107,27 @@
         inputs (atom "[1, 1]")] 
     (fn []
       [:div.container
-       [:div.row
-        [:div.col-md-4
-         [:button {:on-click create-layer}
-          "Create layer."]]
-        [:div.col-md-4
-         [:button {:on-click export}
-          "Initialize Network"]]
-        [:div.col-md-4
-         [selection-list [:init-type] init-types]]]
+       [:h2 "1. Set up network."]
+         [:button {:on-click create-layer :class "form-control btn-default"}
+          "Create layer"]
+         [selection-list [:init-type] init-types]
+        [:button {:on-click export :class "form-control btn-primary"}
+          "Initialize Network"]
        (let [indexed (map-indexed vector (get-state :layers))]
-         [:p {:class (if (< 0 (count (get-state :layers))) "visible" "hidden")}
-          "Layers:" (for [[i layer] indexed]
-                      (neuron-config layer i))])
-       [:p "Training Data" [:br] [atom-textarea training-data]]
-       [:button {:on-click (partial train @training-data)}
-        "Train Network"]
-       [:p "Inputs" [:br] [atom-textarea inputs]]
-       [:button {:on-click (partial evaluate @inputs)}
-        "Evaluate Inputs"]
+         [:ol {:class (if (< 0 (count (get-state :layers))) "visible" "hidden")}
+          (for [[i layer] indexed]
+            [:li (neuron-config layer i)])])
+       [:h2 "2. Train network."]
+       [atom-textarea training-data]
+       [:button {:on-click (partial train @training-data) :class "form-control btn-default"}
+        "Train"]
+       [:h2 "3. Evaluate network."]
+       [atom-textarea inputs]
+       [:button {:on-click (partial evaluate @inputs)
+                 :class "form-control btn-default"}
+        "Evaluate"]
        [viz/draw {} (get-state :network)]
-       [:code {:class (if (get-state :result) "visible" "hidden")}
+       [:pre {:class (if (get-state :result) "visible" "hidden")}
         (str (:result @app-state))]])))
 ;; -------------------------
 ;; Initialize app

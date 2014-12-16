@@ -69,23 +69,33 @@ predict input network =
     then input
     else predict input' restOfNetwork
       where input' = feedLayer input (head (layers network))
-            restOfNetwork = Network (drop 1 (layers network))
+            restOfNetwork = Network (tail (layers network))
 
 predictWithState :: (Floating a) => Matrix a -> Network a -> [Matrix a]
 predictWithState input network =
   if null (layers network)
     then [input]
     else input : (predictWithState input' restOfNetwork)
-      where input' = feedLayer input (head (layers network))
-            restOfNetwork = Network (drop 1 (layers network))
+      where input' = feedLayerWithoutActivation input (head (layers network))
+            restOfNetwork = Network (tail (layers network))
 
---deltas :: -- something --
+deltas :: (Floating a) => Network a -> [TrainingData a] -> [(Matrix a, Matrix a)]
 
---updateNetwork :: -- something --
+updateNetwork :: (Floating a) => [(Matrix a, Matrix a)] -> Network a -> Network a
+updateNetwork [] network = network
+updateNetwork ((weightUpdate, biasUpdate): restOfUpdates) network =
+  updateNetwork restOfUpdates network'
+  where network' = Network (newLayer : restOfLayers)
+        restOfLayers = tail (layers network)
+        newLayer = Layer newWeights newBiases neuronType
+        newWeights = add (weightMatrix oldLayer) weightUpdate
+        newBiases = add (biasMatrix oldLayer) biasUpdate
+        neuronType = neuron oldLayer
+        oldLayer = head (layers network)
 
---backprop ::
---backprop trainer network [] = updateNetwork -- something --
---backprop trainer network (d:ds) = -- something -- backprop trainer network ds
+backprop :: (Floating a, Trainer t) => t -> Network a -> [TrainingData a] -> [(Matrix a, Matrix a)] -> [(Matrix a, Matrix a)]
+backprop trainer network [] updates = updateNetwork updates network
+backprop trainer network (d:ds) updates = backprop trainer network ds (updateLayer updates (deltas network d))
 
 -- feedLayer
 --   feeds an input through one layer
@@ -121,8 +131,8 @@ data BackpropTrainer a = BackpropTrainer { eta :: a
                                          , cost' :: CostFunction' a
                                          }
 
---instance (Floating a) => Trainer (BackpropTrainer a) where
---  train trainer network trainData = backprop -- something -- trainer network trainData
+instance (Floating a) => Trainer (BackpropTrainer a) where
+  train trainer network trainData = backprop -- something -- trainer network trainData
 
 -- So far we provide one defined cost function, the quadratic cost. Eventually
 -- we will add more cost functions.
