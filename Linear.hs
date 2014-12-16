@@ -60,11 +60,11 @@ scalar :: (Num a) => Matrix a -> a -> Matrix a
 scalar mat n = map (map (* n)) mat
 
 combine:: (Num a) => Matrix a -> Matrix a -> Matrix a
-combine m n = if (cols m == cols n)
-               then zipWith (++) m n
-               else if (rows m == rows n)
-                      then m ++ n
-                      else m
+combine m n 
+    | cols m == cols n = m ++ n
+    | rows m == rows n = zipWith (++) m n
+    | otherwise = m
+
 -- parameters
 --   j is the number of columns of the resulting matrix
 -- returns
