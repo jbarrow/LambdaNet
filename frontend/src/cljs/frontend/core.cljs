@@ -47,9 +47,9 @@
                          (take 8 (repeatedly #(get chars (rand-int num-chars)))))))
 
 (defn create-layer []
-  (let [new-layer {:connectivity-type :fully-connected
-                   :neuron-count 3
-                   :neuron-type :sigmoid
+  (let [new-layer {:connectivity :fully-connected
+                   :ncount 3
+                   :ntype :sigmoid
                    :id (rand-id)}]
     (put! :layers (conj (get-state :layers) new-layer))))
 
@@ -62,6 +62,13 @@
                                (:init-type @app-state)
                                " distribution, with the following layers: "
                                (:layers @app-state)))))
+
+(defn train [data network] (do (http/train data network)
+                   (put! :layer-text
+                         (str "Initialize using "
+                              (:init-type @app-state)
+                              " distribution, with the following layers: "
+                              (:layers @app-state)))))
 
 ;; -------------------------
 ;; View
@@ -82,7 +89,7 @@
                              (reset! v text)))}])
 
 (defn selection-list [k items]
-  [:select.form-control {:field :list :id :many-options
+  [:select {:field :list :id :many-options
                          :on-change #(put-in! k (keyword (-> % .-target .-value)))} 
    (for [item items]
      [:option {:value (:key item)}
@@ -90,35 +97,43 @@
 
 (defn neuron-config [layer i] 
   [:div
-   [selection-list [:layers i :neuron-type] neuron-types]
-   [selection-list [:layers i :connectivity-type] connectivity-types]
-   [atom-input layer [:layers i :neuron-count] "number"]
+   [selection-list [:layers i :ntype] neuron-types]
+   [selection-list [:layers i :connectivity] connectivity-types]
+   [atom-input layer [:layers i :ncount] "number"]
    ;; [:div (layer :id)]
    [:button {:on-click #(remove-layer layer)}
     "remove"]])
 
 (defn main-page []
-  (let [training-data (atom (str "[[[[1.0, 0.0]], [[1.0]]], \n"
-                                 "[[[1.0, 1.0]], [[0.0]]], \n"
-                                 "[[[0.0, 1.0]], [[1.0]]], \n"
+  (let [training-data (atom (str "[[[[1.0, 0.0]], [[1.0]]],"
+                                 "[[[1.0, 1.0]], [[0.0]]],"
+                                 "[[[0.0, 1.0]], [[1.0]]],"
                                  "[[[0.0, 0.0]], [[0.0]]]]"))
         inputs (atom "[1, 1]")
-        network [[[ 0.5, 0.0, 1.0]  [0.5, 1.0, 0.0]], [[1.0, 1.0, 1.0]]]] 
+        network (atom [[[ 0.5, 0.0, 1.0]  [0.5, 1.0, 0.0]], [[1.0, 1.0, 1.0]]])] 
     (fn []
-      [:div
-       [:button {:on-click create-layer}
-        "Create layer."]
-       [:button {:on-click export}
-        "Initialize Network"]
-       [selection-list [:init-type] init-types]
+      [:div.container
+       [:div.row
+        [:div.col-md-4
+         [:button {:on-click create-layer}
+          "Create layer."]]
+        [:div.col-md-4
+         [:button {:on-click export}
+          "Initialize Network"]]
+        [:div.col-md-4
+         [selection-list [:init-type] init-types]]]
        (let [indexed (map-indexed vector (get-state :layers))]
          [:p {:class (if (< 0 (count (get-state :layers))) "visible" "hidden")}
           "Layers:" (for [[i layer] indexed]
                       (neuron-config layer i))])
        [:p "Training Data" [:br] [atom-textarea training-data]]
+       [:button {:on-click (partial train @training-data @network)}
+        "Train Network"]
        [:p "Inputs" [:br] [atom-textarea inputs]]
+       [:button {:on-click evaluate}
+        "Evaluate Inputs"]
        [:code (:layer-text @app-state)]
-       [viz/draw {} network]])))
+       [viz/draw {} @network]])))
 ;; -------------------------
 ;; Initialize app
 

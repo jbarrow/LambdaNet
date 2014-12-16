@@ -9,6 +9,11 @@ body {
   line-height: 1.5em;
 }
 
+.container {
+    width: 600px;
+    margin: 0 auto;
+}
+
 h1, h2, h3 {
   color: #000;
 }
@@ -44,9 +49,14 @@ line {
 }
 
 textarea {
-    width: 600px
+    width: 100%
 }
 
 .hidden {
     display: none;
+}
+
+svg {
+    margin-top: 20px;
+    width: 100%;
 }
