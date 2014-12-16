@@ -4,7 +4,7 @@ module Parse
 , NetworkParseDefinition(..)
 , TrainingParseDefinition(..)
 , InputParseDefinition(..)
-
+, toMatrixFloat
 , toNetwork
                         ) where
 import Network.Layer
@@ -60,3 +60,7 @@ data InputParseDefinition = InputParseDefinition { inputs :: [Float]
 
 instance FromJSON InputParseDefinition
 instance ToJSON InputParseDefinition
+
+
+toMatrixFloat :: (Floating a) => Network a -> [Matrix a]
+toMatrixFloat n = zipWith combine (map weightMatrix (layers n)) (map biasMatrix (layers n)) 

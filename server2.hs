@@ -36,7 +36,7 @@ create = do
   -- take d, a NetworkParseDefinition, and turn it into a Network Definition, then run it through createNetwork.
   -- finally, return `text $ decodeUtf8 $ encode newly_created_network`.
   case d of
-    Just value -> text $ decodeUtf8 $ encode $ toNetwork $ value
+    Just value -> text $ decodeUtf8 $ encode $ toMatrixFloat $ toNetwork $ value
     Nothing    -> status status500
 
 train = do
@@ -45,7 +45,7 @@ train = do
   -- take d, a TrainingParseDefinition, turn it TrainingData type + Network Type, then run them through train.
   -- finally, return `text $ decodeUtf8 $ encode trained_network`.
   text $ decodeUtf8 $ encode $ case d of
-                                  Just value -> toMatrixFloat $ nw value
+                                  Just value -> nw value
                                   Nothing    -> [] :: [Matrix Float]
 
 eval = do

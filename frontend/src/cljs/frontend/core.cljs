@@ -105,9 +105,9 @@
     "remove"]])
 
 (defn main-page []
-  (let [training-data (atom (str "[[[[1.0, 0.0]], [[1.0]]],"
-                                 "[[[1.0, 1.0]], [[0.0]]],"
-                                 "[[[0.0, 1.0]], [[1.0]]],"
+  (let [training-data (atom (str "[[[[1.0, 0.0]], [[1.0]]],\n"
+                                 "[[[1.0, 1.0]], [[0.0]]],\n"
+                                 "[[[0.0, 1.0]], [[1.0]]],\n"
                                  "[[[0.0, 0.0]], [[0.0]]]]"))
         inputs (atom "[1, 1]")] 
     (fn []
@@ -122,16 +122,16 @@
         [:button {:on-click export :class "form-control btn-default"}
          "Initialize Network"]
         (let [indexed (map-indexed vector (get-state :layers))]
-          [:ol {:class (if (< 0 (count (get-state :layers))) "visible" "hidden")}
+          [:ol {:class (if (< 0 (count (get-state :layers))) "visible" "not-yet")}
            (for [[i layer] indexed]
              [:li (neuron-config layer i)])])]
-       [:div.section {:class (if (get-state :initialized) "visible" "hidden")} 
+       [:div.section {:class (if (get-state :initialized) "visible" "not-yet")} 
         [:h2 "2. Train network."]
         [atom-textarea training-data]
         [:button {:on-click (partial train @training-data) :class "form-control btn-default"}
          "Train"]
         ]
-       [:div.section {:class (if (get-state :trained) "visible" "hidden")} 
+       [:div.section {:class (if (get-state :trained) "visible" "not-yet")} 
         [:h2 "3. Evaluate network."]
         [atom-textarea inputs]
         [:button {:on-click (partial evaluate @inputs)

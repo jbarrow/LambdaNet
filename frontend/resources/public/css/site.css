@@ -6,6 +6,7 @@ body {
   -webkit-font-smoothing: antialiased;
   font-size: 1.125em;
   line-height: 1.5em;
+  margin-bottom: 50px;
 }
 
 .container {
@@ -59,17 +60,23 @@ textarea {
     display: none;
 }
 
+.not-yet {
+    opacity: .2;
+}
+
 svg {
     margin-top: 20px;
     width: 100%;
 }
 
-button.form-control {
+button.form-control, button.form-control:active, button.form-control:focus {
+    outline: none;
     display: inline-block;
     margin-left: 35px;
     width: 150px;
     border: 1px solid #8e44ad;
     color: #8e44ad;
+    background: white;
 }
 
 button.form-control:hover {
