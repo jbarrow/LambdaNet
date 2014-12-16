@@ -19,6 +19,13 @@ data LayerParseDefinition = LayerParseDefinition { ntype :: String
 instance FromJSON LayerParseDefinition
 instance ToJSON LayerParseDefinition
 
+-- to extend for other types of neurons, pattern match on neuron
+-- TODO: change result of otherwise to something more error-like
+toLayerDefinition :: LayerParseDefinition -> LayerDefinition a
+toLayerDefinition d {ntype=neuron, ncount=count, connectivity=conn}
+    | neuron == "sigmoidNeuron" = LayerDefinition {neuronDef=sigmoidNeuron, neuronCount=count, connect=conn}
+    | otherwise = LayerDefinition {neuronDef=sigmoidNeuron, neuronCount=count, connect=conn}
+
 data NetworkParseDefinition = NetworkParseDefinition { layers :: [LayerParseDefinition]
                                                      , init :: String
                                          } deriving (Generic, Show)
