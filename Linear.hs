@@ -100,5 +100,5 @@ uniforms xs = xs
 -- grabs random permutation of list
 -- order is strictly and consistently mapped
 -- providing the same random number yields the same permutation
--- randomShuffle :: [a] -> a -> [a]
--- randomShuffle n r = permutations n !! r
+--randomShuffle :: [a] -> b -> [a]
+--randomShuffle n r = permutations n !! r

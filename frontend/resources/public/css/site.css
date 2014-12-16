@@ -5,7 +5,6 @@ body {
   padding-top: 72px;
   -webkit-font-smoothing: antialiased;
   font-size: 1.125em;
-  color: #333;
   line-height: 1.5em;
 }
 
@@ -14,8 +13,12 @@ body {
     margin: 0 auto;
 }
 
+.section {
+    margin-bottom: 40px;
+}
+
 h1, h2, h3 {
-  color: #000;
+    color: #34495e
 }
 h1 {
   font-size: 2.5em
@@ -39,13 +42,13 @@ a:hover {
 }
 
 rect {
-    stroke: #2980b9;
+    stroke: #9b59b6;
     stroke-width: 2px;
-    fill: #3498db; 
+    fill: white; 
 }
 
 line {
-    stroke: #27ae60;
+    stroke: #9b59b6;
 }
 
 textarea {
@@ -64,25 +67,63 @@ svg {
 button.form-control {
     display: inline-block;
     margin-left: 35px;
-    width: 150px
+    width: 150px;
+    border: 1px solid #8e44ad;
+    color: #8e44ad;
+}
+
+button.form-control:hover {
+    background-color: #8e44ad;
+    color: white;
 }
 
 input.form-control {
     width: 80px;
-    display:inline-block;
+    display: inline-block;
+    border: 1px solid #9b59b6;
     margin-left: 35px
 }
 
 select.form-control {
     display:inline-block;
+    border: 1px solid #9b59b6;
     width: 200px;
     margin-left: 35px;
 }
+
 select.inline.form-control, .form-control option{
     width: auto;
     padding: 3px 4px;
 }
 
+select.inline.form-control.no-left {
+    /* hacks hacks hacks hacks */
+    margin-left: 0;
+}
+
 textarea {
+    border: 1px solid #9b59b6;
     margin: 10px 0;
+}
+
+.separator {
+    width: 100px;
+    height: 2px;
+    background: #9b59b6;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+ol {
+    margin-top: 20px;
+    border-left: 8px solid #D4B1E3;
+}
+
+li {
+    margin-top: 5px;
+    font-size: 20px;
+}
+
+pre {
+    margin-top: 30px;
 }

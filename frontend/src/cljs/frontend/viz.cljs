@@ -4,8 +4,8 @@
             [goog.events :as events]))
 
 (defn neuron-position [x y]
-  {:x (+ 40 (* x 100))
-   :y (+ 40 (* y 50))})
+  {:x (+ 60 (* x 140))
+   :y (+ 60 (* y 80))})
 
 (defn draw-layer-neurons [layer x]
   [:g.layer
@@ -15,12 +15,12 @@
       [c/rect (neuron-position x y)]])])
 
 (defn to-right-side [pos]
-  (let [x (+ (:x pos) 40)
-        y (+ (:y pos) 10)]
+  (let [x (+ (:x pos) 60)
+        y (+ (:y pos) 15)]
     {:x x :y y}))
 
 (defn to-left-side [pos]
-  (assoc pos :y (+ 10 (:y pos))))
+  (assoc pos :y (+ 15 (:y pos))))
 
 (defn thickness [weight]
   {:stroke-width (* weight 4)})
