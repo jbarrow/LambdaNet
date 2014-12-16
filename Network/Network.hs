@@ -2,12 +2,11 @@ module Network.Network
 ( Network(..)
 , Trainer(..)
 , BackpropTrainer(..)
-
-, feedLayer
 , CostFunction
 , CostFunction'
 , TrainingData
 
+, feedLayer
 , createNetwork
 , fit
 , predict
