@@ -92,7 +92,7 @@
 (defn main-page []
   (let [training-data (atom "[]")
         test-data (atom "[]")
-        network [[[ 1.0, 1.0, 1.0]  [1.0, 1.0, 1.0]], [[1.0, 1.0, 1.0]]]] 
+        network [[[ 0.5, 0.0, 1.0]  [0.5, 1.0, 0.0]], [[1.0, 1.0, 1.0]]]] 
     (fn []
       [:div
        [:p "Training Data" [atom-input training-data]]
