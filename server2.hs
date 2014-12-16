@@ -33,7 +33,7 @@ create = do
   wb <- body
   let d  = decode wb :: Maybe NetworkParseDefinition 
   -- take d, a NetworkParseDefinition, and turn it into a Network Definition, then run it through createNetwork.
-  -- finally, return `text $ decodeUtf8 $ encode result`.
+  -- finally, return `text $ decodeUtf8 $ encode newly_created_network`.
   text $ decodeUtf8 $ encode d
 
 train = do
@@ -46,6 +46,7 @@ train = do
 eval = do
   wb <- body
   let d  = decode wb :: Maybe InputParseDefinition 
+  -- take d and run the input through the provided network. Finally, return `text $ decodeUtf8 $ encode result`.
   text $ decodeUtf8 $ encode d
 
 main :: IO ()
