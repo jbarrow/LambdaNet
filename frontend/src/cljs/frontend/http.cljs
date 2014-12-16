@@ -21,10 +21,12 @@
   (go (let [response (<! (http/post (str root "/train")
                                     {:json-params {:trainingdata (input-to-vector data)
                                                    :nw network}}))]
-        (println response))))
+        (let [body (json-parse (:body response))]
+              (if (not= body []) (swap! app-state assoc :network body))))))
 
 (defn eval [inputs network app-state]
   (go (let [response (<! (http/post (str root "/eval")
                                     {:json-params {:inputs (input-to-vector inputs)
                                                    :network network}}))]
-        (println response))))
+        (let [body (json-parse (:body response))]
+              (if (not= body []) (swap! app-state assoc :result body))))))

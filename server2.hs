@@ -15,6 +15,7 @@ import Data.Text.Lazy.Encoding
 import Network.Wai.Handler.Warp (settingsPort)
 import Network.HTTP.Types  (status404, status200)
 import Network.Layer
+import Linear
 import Parse
 
 ------------------------------------------------------------------------------
@@ -40,14 +41,18 @@ train = do
   wb <- body
   let d  = decode wb :: Maybe TrainingParseDefinition 
   -- take d, a TrainingParseDefinition, turn it TrainingData type + Network Type, then run them through train.
-  -- finally, return `text $ decodeUtf8 $ encode result`.
-  text $ decodeUtf8 $ encode d
+  -- finally, return `text $ decodeUtf8 $ encode trained_network`.
+  text $ decodeUtf8 $ encode $ case d of
+                                  Just value -> nw value :: [Matrix Float]
+                                  Nothing    -> []
 
 eval = do
   wb <- body
   let d  = decode wb :: Maybe InputParseDefinition 
   -- take d and run the input through the provided network. Finally, return `text $ decodeUtf8 $ encode result`.
-  text $ decodeUtf8 $ encode d
+  text $ decodeUtf8 $ encode $ case d of
+                                  Just value -> inputs value :: [Float]
+                                  Nothing    -> []
 
 main :: IO ()
 main = do

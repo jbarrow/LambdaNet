@@ -8,7 +8,7 @@
 ;; -------------------------
 ;; State
 
-(defonce app-state (atom {:layers [] :init-type "normal" :layer-text ""}))
+(defonce app-state (atom {:layers [] :network [[[ 0.5, 0.0, 1.0]  [0.5, 1.0, 0.0]], [[1.0, 1.0, 1.0]]] :init-type "normal" :layer-text ""}))
 
 (defn get-state [k & [default]]
   (clojure.core/get @app-state k default))
@@ -58,9 +58,9 @@
                                " distribution, with the following layers: "
                                (:layers @app-state)))))
 
-(defn train [data network] (http/train data network))
+(defn train [data] (http/train data (get-state :network) app-state))
 
-(defn evaluate [inputs network] (http/eval inputs network))
+(defn evaluate [inputs] (http/eval inputs (get-state :network) app-state))
 
 ;; -------------------------
 ;; View
@@ -101,8 +101,7 @@
                                  "[[[1.0, 1.0]], [[0.0]]],"
                                  "[[[0.0, 1.0]], [[1.0]]],"
                                  "[[[0.0, 0.0]], [[0.0]]]]"))
-        inputs (atom "[1, 1]")
-        network (atom [[[ 0.5, 0.0, 1.0]  [0.5, 1.0, 0.0]], [[1.0, 1.0, 1.0]]])] 
+        inputs (atom "[1, 1]")] 
     (fn []
       [:div.container
        [:div.row
@@ -119,13 +118,13 @@
           "Layers:" (for [[i layer] indexed]
                       (neuron-config layer i))])
        [:p "Training Data" [:br] [atom-textarea training-data]]
-       [:button {:on-click (partial train @training-data @network)}
+       [:button {:on-click (partial train @training-data)}
         "Train Network"]
        [:p "Inputs" [:br] [atom-textarea inputs]]
        [:button {:on-click (partial evaluate @inputs)}
         "Evaluate Inputs"]
-       [:code (:layer-text @app-state)]
-       [viz/draw {} @network]])))
+       [:code (:layer-text @app-state) (str (:network @app-state))]
+       [viz/draw {} (get-state :network)]])))
 ;; -------------------------
 ;; Initialize app
 
