@@ -2,6 +2,7 @@ module Network.Network
 ( Network(..)
 --, Trainer(..)
 
+, feedLayer
 , CostFunction
 , CostFunction'
 --, TrainingData
@@ -48,6 +49,16 @@ createNetwork t g (layerDef : (layerDef' : otherLayerDefs)) =
 -- vector.
 predict :: (Floating a) => Matrix a -> Network a -> Matrix a
 predict input network = input
+
+-- feedLayer
+--   feeds an input through one layer
+feedLayer :: (Floating a) => Matrix a -> Layer a -> Matrix a
+feedLayer input layer =
+  (map.map) a input
+  where a = activation n
+        n = neuron layer
+        z = mult (transpose w) input
+        w = weightMatrix layer
 
 statefulPredict :: (Floating a) => Matrix a -> Network a -> [Matrix a]
 statefulPredict input network = [input]
