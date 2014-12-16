@@ -2,14 +2,18 @@
 module Parse
 ( LayerParseDefinition(..)
 , NetworkParseDefinition(..)
+, TrainingParseDefinition(..)
                         ) where
 import Network.Layer
+import Network.Network
 import Data.Aeson
 import GHC.Generics
+import Linear
 
-data LayerParseDefinition = LayerParseDefinition { neuronType :: String 
-                                         , count :: Int
-                                         , connect :: String
+data LayerParseDefinition = LayerParseDefinition { ntype :: String 
+                                         , ncount :: Int
+                                         , connectivity :: String
+                                         , id :: String
                                          } deriving (Generic, Show)
 
 instance FromJSON LayerParseDefinition
@@ -21,3 +25,9 @@ data NetworkParseDefinition = NetworkParseDefinition { layers :: [LayerParseDefi
 
 instance FromJSON NetworkParseDefinition
 instance ToJSON NetworkParseDefinition
+
+data TrainingParseDefinition = TrainingParseDefinition { trainingdata :: [(Matrix Int, Matrix Int)]
+                                         } deriving (Generic, Show)
+
+instance FromJSON TrainingParseDefinition
+instance ToJSON TrainingParseDefinition

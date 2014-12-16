@@ -29,7 +29,7 @@ data Coord = Coord { x :: Double, y :: Double }
 instance FromJSON Coord where
     parseJSON (Object v) = Coord <$>
                            v .: "x" <*>
-                             v .: "y"
+                           v .: "y"
     parseJSON _          = empty
 
 ------------------------------------------------------------------------------
@@ -38,21 +38,42 @@ mirror = do
   wb <- body
   text $ decodeUtf8 wb
 
+create = do
+  wb <- body
+  let d  = decode wb :: Maybe NetworkParseDefinition 
+  -- take d, a NetworkParseDefinition, and turn it into a Network Definition, then run it through createNetwork.
+  -- finally, return `text $ decodeUtf8 $ encode result`.
+  text $ decodeUtf8 $ encode d
+
+train = do
+  wb <- body
+  let d  = decode wb :: Maybe TrainingParseDefinition 
+  text $ decodeUtf8 $ encode d
+
 main :: IO ()
 main = do
     putStrLn "Starting HTTP Server."
     -- let req = decode "{\"x\":3.0,\"y\":-1.0}" :: Maybe Coord
-    let ld = decode "{\"count\":3,\"connect\":\"fully\",\"neuronType\":\"sigmoid\"}" :: Maybe LayerParseDefinition
+    let ld = decode "{\"ncount\":3,\"connectivity\":\"fully-connected\",\"ntype\":\"sigmoid\",\"id\":\"tnser\"}" :: Maybe LayerParseDefinition
     print ld
-    let nd = decode "{\"layers\": [{\"count\":3,\"connect\":\"fully\",\"neuronType\":\"sigmoid\"}], \"init\": \"normal\"" :: Maybe NetworkParseDefinition
+    let nd = decode "{\"layers\": [{\"id\": \"abc\",\"ncount\":3,\"connectivity\":\"fully-connected\",\"ntype\":\"sigmoid\"}], \"init\": \"normal\"}" :: Maybe NetworkParseDefinition
     print nd
+    let td = decode "{\"trainingdata\": [[[[1.0, 0.0]], [[1.0]]], [[[1.0, 1.0]], [[0.0]]], [[[0.0, 1.0]], [[1.0]]], [[[0.0, 0.0]], [[0.0]]]]}" :: Maybe TrainingParseDefinition
+    print td
     scottyOpts config $ do
         -- /create {layers: [LayerDefinition], init: String}
-        post "/create/" $ mirror
+        post "/create/" create
+
         -- /train {data: training data (not sure what form), network: Network}
-        post "/train/" $ mirror
+        post "/train/" train
+
         -- /eval {inputs: [Int?], network: Network}
         post "/eval" $ mirror
 
 
 ------------------------------------------------------------------------------
+
+
+
+
+
