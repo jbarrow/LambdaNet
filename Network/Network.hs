@@ -81,7 +81,17 @@ predictWithState input network =
 
 deltas :: -- something --
 
-updateNetwork :: -- something --
+updateNetwork :: (Floating a) => [(Matrix a, Matrix a)] -> Network a -> Network a
+updateNetwork [] network = network
+updateNetwork ((weightUpdate, biasUpdate): restOfUpdates) network =
+  updateNetwork restOfUpdates network'
+  where network' = Network (newLayer : restOfLayers)
+        restOfLayers = drop 1 (layers network)
+        newLayer = Layer newWeights newBiases neuronType
+        newWeights = add (weightMatrix oldLayer) weightUpdate
+        newBiases = add (biasMatrix oldLayer) biasUpdate
+        neuronType = neuron oldLayer
+        oldLayer = head (layers network)
 
 backprop :: -- something --
 backprop trainer network [] = updateNetwork -- something --
