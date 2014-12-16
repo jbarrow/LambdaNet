@@ -46,6 +46,8 @@ createNetwork :: (RandomGen g, Random a, Floating a) => RandomTransform a -> g -
 -- Base Cases
 createNetwork t g [] = Network []
 createNetwork t g (layerDef : []) = Network [outputLayer]
+-- BAD! The connectivity should be a diagonal matrix
+-- FIX THIS
   where outputLayer = createLayer t g layerDef layerDef
 -- Return a layer ++ the rest of the network
 createNetwork t g (layerDef : (layerDef' : otherLayerDefs)) =
