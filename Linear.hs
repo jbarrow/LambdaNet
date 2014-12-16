@@ -20,6 +20,7 @@ module Linear
 ) where
 
 import System.Random
+import Data.List (permutations)
 
 type Matrix a = [[a]]
 
@@ -94,3 +95,10 @@ normals _ = []
 
 uniforms :: Floating a => [a] -> [a]
 uniforms xs = xs
+
+-- Random shuffle
+-- grabs random permutation of list
+-- order is strictly and consistently mapped
+-- providing the same random number yields the same permutation
+randomShuffle :: [a] -> a -> [a]
+randomShuffle n r = permutations n !! r
