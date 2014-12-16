@@ -45,7 +45,7 @@ createLayer t g layerDef layerDef' =
         randomMatrix' = [take j (randomList t g)]
         i = neuronCount layerDef
         j = neuronCount layerDef'
-        connectivity = connect layerDef
+        connectivity = connect layerDef'
 
 -- connectFully
 --   a connectivity function that fully connects input neurons

@@ -47,10 +47,7 @@ class Trainer a where
 createNetwork :: (RandomGen g, Random a, Floating a) => RandomTransform a -> g -> [LayerDefinition a] -> Network a
 -- Base Cases
 createNetwork t g [] = Network []
-createNetwork t g (layerDef : []) = Network [outputLayer]
--- BAD! The connectivity should be a diagonal matrix
--- FIX THIS
-  where outputLayer = createLayer t g layerDef layerDef
+createNetwork t g (layerDef : []) = Network []
 -- Return a layer ++ the rest of the network
 createNetwork t g (layerDef : (layerDef' : otherLayerDefs)) =
   Network (aLayer : layers restOfNetwork)
