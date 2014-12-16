@@ -1,13 +1,11 @@
 module Linear
 ( Matrix
-, Vector
 , RandomTransform
 
 , rows
 , cols
 , dot
-, vMult
-, mMult
+, mult
 , hadamard
 , transpose
 , scalar
@@ -24,21 +22,18 @@ type Vector a = [a]
 type Matrix a = [[a]]
 
 rows :: (Num a) => Matrix a -> Int
-rows = length
+rows = length . head
 
 cols :: (Num a) => Matrix a -> Int
-cols = length . head
+cols = length
 
 dot :: (Num a) => Vector a -> Vector a -> a
 dot u v = sum $ zipWith (*) u v
 
-vMult :: (Num a) => Matrix a -> Vector a -> Vector a
-vMult m v = map (dot v) m
-
 -- matrix multiplication m * n
-mMult :: (Num a) => Matrix a -> Matrix a -> Matrix a
-mMult [] n = []
-mMult m n = vMult (transpose n) (head m) : mMult (drop 1 m) n
+mult :: (Num a) => Matrix a -> Matrix a -> Matrix a
+mult [] n = []
+mult m n = map (dot (head m)) (transpose n) : mult (drop 1 m) n
 
 hadamard :: (Num a) => Matrix a -> Matrix a -> Matrix a
 hadamard m n = zipWith (zipWith (*)) m n
@@ -52,6 +47,12 @@ transpose ((x:xs) : xss) = (x : [h | (h:_) <- xss]) : transpose (xs : [ t | (_:t
 scalar :: (Num a) => Matrix a -> a -> Matrix a
 scalar mat n = map (map (* n)) mat
 
+combine:: (Num a) => Matrix a -> Matrix a -> Matrix a
+combine m n = if (cols m == cols n) 
+               then zipWith (++) m n 
+               else if (rows m == rows n) 
+                      then m ++ n
+                      else m
 -- parameters
 --   j is the number of columns of the resulting matrix
 -- returns
