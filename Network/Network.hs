@@ -9,6 +9,7 @@ module Network.Network
 , getXORNetwork
 
 , feedLayer
+, toMatrixFloat
 , createNetwork
 --, fit
 , predict
@@ -24,6 +25,10 @@ import Network.Neuron
 import Network.Layer
 import Linear
 import System.Random
+
+
+toMatrixFloat :: (Floating a) => Network a -> [Matrix a]
+toMatrixFloat n = zipWith combine (map weightMatrix (layers n)) (map biasMatrix (layers n))
 
 -- Networks are constructed front to back. Start by adding an input layer,
 -- then each hidden layer, and finally an output layer.
