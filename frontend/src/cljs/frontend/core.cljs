@@ -19,11 +19,6 @@
 (defn put-in! [ks v]
   (swap! app-state assoc-in ks v)) 
 
-(defn json-parse
-  "Returns ClojureScript data for the given JSON string."
-  [line]
-  (js->clj (JSON/parse line)))
-
 ;; -------------------------
 ;; Neural Logic
 
@@ -63,12 +58,9 @@
                                " distribution, with the following layers: "
                                (:layers @app-state)))))
 
-(defn train [data network] (do (http/train data network)
-                   (put! :layer-text
-                         (str "Initialize using "
-                              (:init-type @app-state)
-                              " distribution, with the following layers: "
-                              (:layers @app-state)))))
+(defn train [data network] (http/train data network))
+
+(defn evaluate [inputs network] (http/eval inputs network))
 
 ;; -------------------------
 ;; View
@@ -130,7 +122,7 @@
        [:button {:on-click (partial train @training-data @network)}
         "Train Network"]
        [:p "Inputs" [:br] [atom-textarea inputs]]
-       [:button {:on-click evaluate}
+       [:button {:on-click (partial evaluate @inputs)}
         "Evaluate Inputs"]
        [:code (:layer-text @app-state)]
        [viz/draw {} @network]])))

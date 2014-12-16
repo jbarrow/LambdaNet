@@ -23,15 +23,6 @@ config :: Options
 config = def { verbose = 0
            , settings = (settings def) { settingsPort = 4000 } }
 
-data Coord = Coord { x :: Double, y :: Double }
-             deriving (Show)
-
-instance FromJSON Coord where
-    parseJSON (Object v) = Coord <$>
-                           v .: "x" <*>
-                           v .: "y"
-    parseJSON _          = empty
-
 ------------------------------------------------------------------------------
 
 mirror = do
@@ -65,8 +56,10 @@ main = do
     print ld
     let nd = decode "{\"layers\": [{\"id\": \"abc\",\"ncount\":3,\"connectivity\":\"fully-connected\",\"ntype\":\"sigmoid\"}], \"init\": \"normal\"}" :: Maybe NetworkParseDefinition
     print nd
-    let td = decode "{\"trainingdata\": [[[[1.0, 0.0]], [[1.0]]], [[[1.0, 1.0]], [[0.0]]], [[[0.0, 1.0]], [[1.0]]], [[[0.0, 0.0]], [[0.0]]]]}" :: Maybe TrainingParseDefinition
+    let td = decode "{\"trainingdata\": [[[[1.0, 0.0]], [[1.0]]], [[[1.0, 1.0]], [[0.0]]], [[[0.0, 1.0]], [[1.0]]], [[[0.0, 0.0]], [[0.0]]]], \"nw\":[[[0.5,0,1],[0.5,1,0]],[[1,1,1]]]}" :: Maybe TrainingParseDefinition
     print td
+    let id = decode "{\"inputs\": [1.0, 0.0], \"network\":[[[0.5,0,1],[0.5,1,0]],[[1,1,1]]]}" :: Maybe InputParseDefinition
+    print id
     scottyOpts config $ do
         -- /create {layers: [LayerDefinition], init: String}
         post "/create/" create
@@ -75,7 +68,7 @@ main = do
         post "/train/" train
 
         -- /eval {inputs: [Int?], network: Network}
-        post "/eval/" $ eval
+        post "/eval/" eval
 
 
 ------------------------------------------------------------------------------

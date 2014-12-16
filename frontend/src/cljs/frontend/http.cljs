@@ -5,11 +5,6 @@
 
 (def root "http://localhost:4000")
 
-(defn create [init-type layers app-state]
-  (go (let [response (<! (http/post (str root "/create")
-                                    {:json-params {:init init-type
-                                                   :layers layers}}))])))
-
 (defn json-parse
   "Returns ClojureScript data for the given JSON string."
   [line]
@@ -18,7 +13,18 @@
 (defn input-to-vector [data]
   (get (json-parse (str "{\"data\":" data "}")) "data"))
 
-(defn train [data app-state]
+(defn create [init-type layers app-state]
+  (go (let [response (<! (http/post (str root "/create")
+                                    {:json-params {:init init-type
+                                                   :layers layers}}))])))
+(defn train [data network app-state]
   (go (let [response (<! (http/post (str root "/train")
-                                    {:json-params {:trainingdata (input-to-vector data)}}))]
+                                    {:json-params {:trainingdata (input-to-vector data)
+                                                   :nw network}}))]
+        (println response))))
+
+(defn eval [inputs network app-state]
+  (go (let [response (<! (http/post (str root "/eval")
+                                    {:json-params {:inputs (input-to-vector inputs)
+                                                   :network network}}))]
         (println response))))

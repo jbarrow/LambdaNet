@@ -5,6 +5,7 @@ module Parse
 , TrainingParseDefinition(..)
 , InputParseDefinition(..)
                         ) where
+import Network.Network
 import Data.Aeson
 import GHC.Generics
 import Linear
@@ -25,13 +26,15 @@ data NetworkParseDefinition = NetworkParseDefinition { layers :: [LayerParseDefi
 instance FromJSON NetworkParseDefinition
 instance ToJSON NetworkParseDefinition
 
-data TrainingParseDefinition = TrainingParseDefinition { trainingdata :: [(Matrix Int, Matrix Int)]
+data TrainingParseDefinition = TrainingParseDefinition { trainingdata :: [(Matrix Float, Matrix Float)]
+                                                       , nw :: [Matrix Float]
                                          } deriving (Generic, Show)
 
 instance FromJSON TrainingParseDefinition
 instance ToJSON TrainingParseDefinition
 
-data InputParseDefinition = InputParseDefinition { inputs :: [Int]
+data InputParseDefinition = InputParseDefinition { inputs :: [Float]
+                                                 , network :: [Matrix Float]
                                          } deriving (Generic, Show)
 
 instance FromJSON InputParseDefinition
