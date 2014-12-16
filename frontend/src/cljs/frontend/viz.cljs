@@ -11,8 +11,8 @@
   [:g.layer
    (for [[y weight] (map vector (iterate inc 0) (first layer))] 
      [:g.neuron
-      [c/rect (neuron-position x y)]
-      [neuron-connections layer x (neuron-position x y)]])])
+      [neuron-connections layer x y]
+      [c/rect (neuron-position x y)]])])
 
 (defn to-right-side [pos]
   (let [x (+ (:x pos) 40)
@@ -20,14 +20,18 @@
     {:x x :y y}))
 
 (defn to-left-side [pos]
-  (let [y (+ (:y pos) 10)]
-    {:x (:x pos) :y y}))
+  (assoc pos :y (+ 10 (:y pos))))
 
-(defn neuron-connections [layer x start-pos]
+(defn thickness [weight]
+  {:stroke-width (* weight 4)})
+
+(defn neuron-connections [layer start-x start-y]
+  (println start-x start-y)
   [:g.connections
-   (for [[y weight] (map vector (iterate inc 0) layer)]
-     [c/segment (to-right-side start-pos)
-      (to-left-side (neuron-position (inc x) y))])])
+   (for [[y weights] (map vector (iterate inc 0) layer)]
+     [c/segment (to-right-side (neuron-position start-x start-y))
+      (to-left-side (neuron-position (inc start-x) y))
+      (thickness (get weights y))])])
 
 (defn draw-network [network]
   [:g.network

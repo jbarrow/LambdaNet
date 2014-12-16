@@ -14,21 +14,18 @@
    :height 20
    :width 40})
 
-(def segment-defaults
-  {:stroke "black"
-   :stroke-width 2})
-
 (defn point [x y]
   [:circle
    (merge point-defaults
           {:cx x
            :cy y})])
 
-(defn segment [from to]
+(defn segment [from to thickness]
+  (println thickness) 
   [:line
-   (merge segment-defaults
-          {:x1 (:x from) :y1 (:y from)
-           :x2 (:x to) :y2 (:y to)})])
+   (merge {:x1 (:x from) :y1 (:y from)
+           :x2 (:x to) :y2 (:y to)}
+          (or thickness {:stroke-width 1}))])
 
 (defn rect [pos]
   [:rect

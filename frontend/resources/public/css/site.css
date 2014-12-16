@@ -32,3 +32,13 @@ a {
 a:hover {
   text-decoration: underline;
 }
+
+rect {
+    stroke: #2980b9;
+    stroke-width: 2px;
+    fill: #3498db; 
+}
+
+line {
+    stroke: #27ae60;
+}

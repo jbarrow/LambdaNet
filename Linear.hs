@@ -5,6 +5,8 @@ module Linear
 , rows
 , cols
 , dot
+, add
+, sub
 , mult
 , hadamard
 , transpose
@@ -19,7 +21,6 @@ module Linear
 
 import System.Random
 
-type Vector a = [a]
 type Matrix a = [[a]]
 
 rows :: (Num a) => Matrix a -> Int
@@ -28,13 +29,23 @@ rows = length
 cols :: (Num a) => Matrix a -> Int
 cols = length . head
 
-dot :: (Num a) => Vector a -> Vector a -> a
-dot u v = sum $ zipWith (*) u v
+-- need to modify this for proper error handling with Maybe
+dot :: (Num a) => Matrix a -> Matrix a -> a
+dot [u] [v] = sum $ zipWith (*) u v
+dot u v = 0
+
+-- matrix addition
+add :: (Num a) => Matrix a -> Matrix a -> Matrix a
+add m n = zipWith (zipWith (+)) m n
+
+-- matrix subtraction
+sub :: (Num a) => Matrix a -> Matrix a -> Matrix a
+sub m n = zipWith (zipWith (-)) m n
 
 -- matrix multiplication m * n
 mult :: (Num a) => Matrix a -> Matrix a -> Matrix a
 mult [] n = []
-mult m n = map (dot (head m)) (transpose n) : mult (drop 1 m) n
+mult m n = map (dot [head m]) [[x] | x <- (transpose n)] : mult (drop 1 m) n
 
 hadamard :: (Num a) => Matrix a -> Matrix a -> Matrix a
 hadamard m n = zipWith (zipWith (*)) m n

@@ -9,6 +9,6 @@
         (prn (map :login (:body response))))))
 
 (defn create [init-type layers]
-  (go (let [response (<! (http/post "http://localhost:3000"
+  (go (let [response (<! (http/post "http://localhost:8000/create"
                                     {:json-params {:init init-type
                                                    :layers layers}}))])))
