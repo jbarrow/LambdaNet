@@ -23,10 +23,10 @@ type Vector a = [a]
 type Matrix a = [[a]]
 
 rows :: (Num a) => Matrix a -> Int
-rows = length . head
+rows = length
 
 cols :: (Num a) => Matrix a -> Int
-cols = length
+cols = length . head
 
 dot :: (Num a) => Vector a -> Vector a -> a
 dot u v = sum $ zipWith (*) u v
@@ -49,9 +49,9 @@ scalar :: (Num a) => Matrix a -> a -> Matrix a
 scalar mat n = map (map (* n)) mat
 
 combine:: (Num a) => Matrix a -> Matrix a -> Matrix a
-combine m n = if (cols m == cols n) 
-               then zipWith (++) m n 
-               else if (rows m == rows n) 
+combine m n = if (cols m == cols n)
+               then zipWith (++) m n
+               else if (rows m == rows n)
                       then m ++ n
                       else m
 -- parameters

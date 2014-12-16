@@ -1,10 +1,10 @@
 module Network.Network
 ( Network(..)
-, Trainer(..)
+--, Trainer(..)
 
 , CostFunction
 , CostFunction'
-, TrainingData
+--, TrainingData
 
 , createNetwork
 ) where
@@ -40,9 +40,17 @@ createNetwork t g (layerDef : (layerDef' : otherLayerDefs)) =
 
 -- Using a scikit-learn-esque naming scheme - predict to classify data
 -- and fit to train the network.
-predict :: (Floating a) => Vector a -> Network a -> Vector a
+
+-- Predict folds over each layer of the network using the input vector as the
+-- first value of the accumulator. (foldl with an applyLayer function)
+-- The applyLayer function multiplies the input and the weight matrix
+-- and then applies the neuron activation function via a map to the entire output
+-- vector.
+predict :: (Floating a) => Matrix a -> Network a -> Matrix a
 predict input network = input
 
+statefulPredict :: (Floating a) => Matrix a -> Network a -> [Matrix a]
+statefulPredict input network = [input]
 
 fit :: (Floating a, Trainer t) => t -> Int -> [TrainingData a] -> Network a -> Network a
 fit t batch (h:ts) network = train t network h
@@ -52,7 +60,7 @@ fit t batch (h:ts) network = train t network h
 type CostFunction a = a -> a
 type CostFunction' a = a -> a
 
-type TrainingData a = Map.Map (Vector a) (Vector a)
+type TrainingData a = Map.Map (Matrix a) (Matrix a)
 
 data BackpropTrainer a = BackpropTrainer { eta :: a
                                          , cost :: CostFunction a
