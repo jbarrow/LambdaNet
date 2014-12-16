@@ -39,7 +39,7 @@ createLayer t g layerDef layerDef' =
         (hadamard randomMatrix' (connectivity i j))
         (neuronDef layerDef)
   where randomMatrix = reshape j (take (i*j) (randomList t g))
-        randomMatrix' = reshape j (take (i*j) (randomList t g))
+        randomMatrix' = [take j (randomList t g)]
         i = neuronCount layerDef
         j = neuronCount layerDef'
         connectivity = connect layerDef
