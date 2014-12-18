@@ -18,14 +18,23 @@ module Network.Network
 --, updateLayer
 , quadraticCost
 , quadraticCost'
+, randomList
+, boxMuller
+, normals
+, uniforms
 --, epoch
 ) where
 
 import Network.Neuron
 import Network.Layer
-import Linear
 import System.Random
 
+-- Random shuffle
+-- grabs random permutation of list
+-- order is strictly and consistently mapped
+-- providing the same random number yields the same permutation
+--randomShuffle :: [a] -> b -> [a]
+--randomShuffle n r = permutations n !! r
 
 toMatrixFloat :: (Floating a) => Network a -> [Matrix a]
 toMatrixFloat n = zipWith combine (map weightMatrix (layers n)) (map biasMatrix (layers n))
