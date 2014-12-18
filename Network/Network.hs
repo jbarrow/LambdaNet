@@ -188,12 +188,6 @@ feedLayer input layer = (map . map) a (add z b)
         b = biasMatrix layer
         w = weightMatrix layer
 
-feedLayerWithoutActivation :: (Floating a) => Matrix a -> Layer a -> Matrix a
-feedLayerWithoutActivation input layer = add z b
-  where z = mult input w
-        b = biasMatrix layer
-        w = weightMatrix layer
-
 -- Fits the data for a given number of epochs
 fit :: (Floating a, Trainer t) => Int ->  t -> Int -> [TrainingData a] -> Network a -> Network a
 fit 0 t batch trainData network = network
