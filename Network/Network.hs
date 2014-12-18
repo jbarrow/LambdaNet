@@ -12,8 +12,8 @@ module Network.Network
 
 --, fit
 
--- , quadraticCost
--- , quadraticCost'
+, quadraticCost
+, quadraticCost'
 ) where
 
 import Network.Neuron
@@ -67,6 +67,15 @@ apply vector layer = mapVector sigma (weights <> vector + bias)
   where sigma = activation (neuron layer)
         weights = weightMatrix layer
         bias = (biasVector layer)
+
+-- | The quadratic cost function (1/2) * sum (y - a) ^ 2
+quadraticCost :: (Floating a, Num (Vector a), Container Vector a) => Matrix a -> Matrix a -> a
+quadraticCost y a = sumElements $ 0.5 * (y - a) ^ 2
+
+-- | The derivative of the quadratic cost function sum (y - a)
+quadraticCost' :: (Floating a, Num (Vector a), Container Vector a) => Matrix a -> Matrix a -> Matrix a
+quadraticCost' y a = y - a
+
 
 -- updateNetwork :: (Floating a) => [(Matrix a, Matrix a)] -> Network a -> Network a
 -- updateNetwork [] network = network
@@ -153,10 +162,3 @@ apply vector layer = mapVector sigma (weights <> vector + bias)
 -- -- instance (Floating a) => Trainer (BackpropTrainer a) where
 -- --   train trainer network trainData = backprop -- something -- trainer network trainData
 --
--- -- So far we provide one defined cost function, the quadratic cost. Eventually
--- -- we will add more cost functions.
--- quadraticCost :: (Floating a) => Matrix a -> Matrix a -> a
--- quadraticCost y a = 0.5 * (sum $ map sum $ (map . map) (^2) $ sub y a)
---
--- quadraticCost' :: (Floating a) => Matrix a -> Matrix a -> Matrix a
--- quadraticCost' y a = sub y a
