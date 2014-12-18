@@ -3,15 +3,11 @@
 module Network.Network
 ( Network(..)
 , Trainer(..)
-, CostFunction
-, CostFunction'
 , TrainingData
 
 , createNetwork
 , predict
 
-, quadraticCost
-, quadraticCost'
 ) where
 
 import Network.Neuron
@@ -22,13 +18,6 @@ import Numeric.LinearAlgebra
 -- | Networks are constructed front to back. Start by adding an input layer,
 --   then each hidden layer, and finally an output layer.
 data Network a = Network { layers :: [Layer a] }
-
--- | A CostFunction is used for evaluating a network's performance on a given
---   input
-type CostFunction a = Matrix a -> Matrix a -> a
-
--- | A CostFunction' (derivative) is used in backPropagation
-type CostFunction' a = Matrix a -> Matrix a -> Matrix a
 
 -- | A tuple of (input, expected output)
 type TrainingData a = (Vector a, Vector a)
@@ -65,11 +54,3 @@ apply vector layer = mapVector sigma (weights <> vector + bias)
   where sigma = activation (neuron layer)
         weights = weightMatrix layer
         bias = (biasVector layer)
-
--- | The quadratic cost function (1/2) * sum (y - a) ^ 2
-quadraticCost :: (Floating a, Num (Vector a), Container Vector a) => Matrix a -> Matrix a -> a
-quadraticCost y a = sumElements $ 0.5 * (y - a) ^ 2
-
--- | The derivative of the quadratic cost function sum (y - a)
-quadraticCost' :: (Floating a, Num (Vector a), Container Vector a) => Matrix a -> Matrix a -> Matrix a
-quadraticCost' y a = y - a
