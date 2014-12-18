@@ -1,0 +1,82 @@
+
+-- updateNetwork :: (Floating a) => [(Matrix a, Matrix a)] -> Network a -> Network a
+-- updateNetwork [] network = network
+-- updateNetwork (update: restOfUpdates) network =
+--   Network (updatedLayer : layers restOfUpdatedNetwork)
+--   where updatedLayer = updateLayer update (head (layers network))
+--         restOfUpdatedNetwork = updateNetwork restOfUpdates restOfNetwork
+--         restOfNetwork = Network (drop 1 (layers network))
+--
+-- updateLayer :: (Floating a) => (Matrix a, Matrix a) -> Layer a -> Layer a
+-- updateLayer (weightUpdate, biasUpdate) layer =
+--   Layer newWeights newBiases (neuron layer)
+--   where newWeights = add (weightMatrix layer) weightUpdate
+--         newBiases = add (biasMatrix layer) biasUpdate
+--
+--
+-- -- backprop :: (Floating a, Trainer t) => t -> Network a -> [TrainingData a] -> [(Matrix a, Matrix a)] -> [(Matrix a, Matrix a)]
+-- -- backprop trainer network [] updates = updateNetwork updates network
+-- -- backprop trainer network (d:ds) updates = backprop trainer network ds (updateLayer updates (deltas network d))
+-- -- predictWithState :: (Floating a) => Matrix a -> Network a -> [Matrix a]
+-- -- predictWithState input network =
+-- --   if null (layers network)
+-- --     then [input]
+-- --     else input : (predictWithState input' restOfNetwork)
+-- --       where input' = feedLayerWithoutActivation input (head (layers network))
+-- --             restOfNetwork = Network (tail (layers network))
+--
+-- -- deltas :: (Floating a, Trainer t) => t -> Network a -> TrainingData a -> [(Matrix a, Matrix a)]
+-- -- deltas trainer network trainData = (reverse $ getNablas states (reverse network))
+-- --   where states = reverse $ predictWithState (fst trainData) network
+--
+-- -- deltasOutputs :: (Floating a, Trainer t) => t -> Network a -> TrainingData a -> [Matrix a]
+-- -- deltasOutputs trainer network trainData inputs =
+-- --   (deltaBias, deltaWeights) : deltasHidden network d (tail inputs)
+-- --   where deltaBias = d
+-- --         deltaWeights =
+-- --         a = predict (fst trainData) network
+-- --         y = snd trainData
+-- --
+--
+-- -- parameters
+-- --   the network
+-- --   delta from l+1 layer
+-- --   inputs
+-- -- deltasHidden :: (Floating a) => Network a -> Matrix a -> [Matrix a] -> [(Matrix a, Matrix a)]
+-- -- deltasHidden network d inputs =
+-- --   if null (layers network)
+-- --   then []
+-- --   else (deltaBias, deltaWeights) : deltasHidden restOfNetwork d' inputs'
+-- --   where deltaBias = d'
+-- --         deltaWeights = mult outputs d'
+-- --         ouputs =
+-- --         d' = hadamard (mult weights d) (a' inputs)
+-- --         weights = weightMatrix topLayer
+-- --         a' = activation' (neuron topLayer)
+-- --         topLayer = head (layers network)
+-- --         restOfNetwork = Network (tail (layers network))
+-- --         inputs' = tail inputs
+--
+-- -- backprop :: (Floating a, Trainer t) => t -> Network a -> [TrainingData a] -> [(Matrix a, Matrix a)] -> [(Matrix a, Matrix a)]
+-- -- backprop trainer network [] updates = updateNetwork updates network
+-- -- backprop trainer network (d:ds) updates = backprop trainer network ds (updateLayer updates (deltas t network d))
+-- --
+-- -- -- feedLayer
+-- -- --   feeds an input through one layer
+--
+
+-- -- Runs through all of the data minibatch by minibatch calling the trainer's train function
+-- epoch :: (Floating a, Trainer t) => t -> Int -> [TrainingData a] -> Network a -> Network a
+-- epoch t batch [] network = network
+-- epoch t batch trainData network = epoch t batch tails (train t network miniBatch)
+--   where miniBatch = take batch trainData
+--         tails = drop batch trainData
+--
+-- -- Training a network
+-- -- data BackpropTrainer a = BackpropTrainer { eta :: a
+-- --                                          , cost :: CostFunction a
+-- --                                          , cost' :: CostFunction' a
+-- --                                          }
+-- -- instance (Floating a) => Trainer (BackpropTrainer a) where
+-- --   train trainer network trainData = backprop -- something -- trainer network trainData
+--
