@@ -49,10 +49,10 @@ type RandomTransform a = [a] -> [a]
 createLayer :: (RandomGen g, Random a, Floating a, Num (Vector a), Container Vector a) => RandomTransform a -> g -> LayerDefinition a -> LayerDefinition a -> Layer a
 createLayer t g layerDef layerDef' =
   Layer (randomMatrix * (connectivity i j))
-        (randomMatrix' * bias)
+        (randomVector * bias)
         (neuronDef layerDef)
   where randomMatrix = (i >< j) (randomList t g)
-        randomMatrix' = i |> (randomList t g)
+        randomVector = i |> (randomList t g)
         i = neuronCount layerDef'
         j = neuronCount layerDef
         connectivity = connect layerDef'
