@@ -36,6 +36,11 @@ data Layer a = Layer { weightMatrix :: (Matrix a)
 --   matrix for two layers (fully connected, convolutionally connected, etc.)
 type Connectivity a = Int -> Int -> Matrix a
 
+-- | A random transformation type alias. It is a transformation defined on an
+--   infinite list of uniformly distributed random numbers, and returns a list
+--   distributed on the transforming distribution.
+type RandomTransform a = [a] -> [a]
+
 -- | The createLayer function takes in a random transformation on an infinite
 --   stream of uniformly generated numbers, a source of entropy, and two
 --   layer definitions, one for the previous layer and one for the next layer.
@@ -47,22 +52,17 @@ createLayer t g layerDef layerDef' =
         (randomMatrix' * bias)
         (neuronDef layerDef)
   where randomMatrix = (i >< j) (randomList t g)
-        randomMatrix' = j |> (randomList t g)
-        i = neuronCount layerDef
-        j = neuronCount layerDef'
+        randomMatrix' = i |> (randomList t g)
+        i = neuronCount layerDef'
+        j = neuronCount layerDef
         connectivity = connect layerDef'
-        bias = j |> (repeat 1)
+        bias = i |> (repeat 1) -- bias connectivity (full)
 
 -- | The connectFully function takes the number of input neurons for a layer (i),
 --   and the number of output neurons of a layer (j) and returns an i x j
 --   connectivity matrix for a fully connected network.
 connectFully :: Int -> Int -> Matrix Float
 connectFully i j = (i >< j) (repeat 1)
-
--- | A random transformation type alias. It is a transformation defined on an
---   infinite list of uniformly distributed random numbers, and returns a list
---   distributed on the transforming distribution.
-type RandomTransform a = [a] -> [a]
 
 -- | Initialize an infinite random list given a random transform and a source
 --   of entroy.
