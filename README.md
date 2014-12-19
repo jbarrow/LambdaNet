@@ -30,7 +30,7 @@ let trainData = [
   (fromList [0.0, 0.0], fromList [0.0]),
   (fromList [0.0, 1.0], fromList [1.0]),
   (fromList [1.0, 0.0], fromList [1.0]),
-  (fromList [1.0, 1.0], fromList [1.0])
+  (fromList [1.0, 1.0], fromList [0.0])
 ]
 ```
 
@@ -72,7 +72,7 @@ let network' = fit 100 t 2 trainData network
 Using the network to predict values is the simplest part of the entire process. Given that you've followed the code above to create and train the network, you can use it to predict values like so:
 
 ```
-predict [[1.0, 0.0]] network'
+predict fromList [1.0, 1.0] network'
 ```
 
 That's all there is to it. Pass in a vector (which, in this library is a matrix) and a network object to get out a predicted output. Given that the network trained properly, you should get a value close to 1.
