@@ -53,8 +53,8 @@ recluNeuron = Neuron reclu reclu'
 sigmoid :: (Floating a) => a -> a
 sigmoid t = 1 / (1 + exp (-1 * t))
 
--- | The derivative of the sigmoid function conveniently can be computed in terms
---   of the sigmoid function.
+-- | The derivative of the sigmoid function conveniently can be computed in
+--   terms of the sigmoid function.
 sigmoid' :: (Floating a) => a -> a
 sigmoid' t = s * (1 - s)
               where s = sigmoid t

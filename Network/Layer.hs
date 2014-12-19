@@ -46,7 +46,9 @@ type RandomTransform a = [a] -> [a]
 --   layer definitions, one for the previous layer and one for the next layer.
 --   It returns a layer defined by the Layer type -- a weight matrix, a bias
 --   vector, and a neuron type.
-createLayer :: (RandomGen g, Random a, Floating a, Num (Vector a), Container Vector a) => RandomTransform a -> g -> LayerDefinition a -> LayerDefinition a -> Layer a
+createLayer ::
+  (RandomGen g, Random a, Floating a, Num (Vector a), Container Vector a)
+  => RandomTransform a -> g -> LayerDefinition a -> LayerDefinition a -> Layer a
 createLayer t g layerDef layerDef' =
   Layer (randomMatrix * (connectivity i j))
         (randomVector * bias)
@@ -58,15 +60,16 @@ createLayer t g layerDef layerDef' =
         connectivity = connect layerDef'
         bias = i |> (repeat 1) -- bias connectivity (full)
 
--- | The connectFully function takes the number of input neurons for a layer (i),
---   and the number of output neurons of a layer (j) and returns an i x j
+-- | The connectFully function takes the number of input neurons for a layer, i,
+--   and the number of output neurons of a layer, j, and returns an i x j
 --   connectivity matrix for a fully connected network.
 connectFully :: Int -> Int -> Matrix Float
 connectFully i j = (i >< j) (repeat 1)
 
 -- | Initialize an infinite random list given a random transform and a source
 --   of entroy.
-randomList :: (RandomGen g, Random a, Floating a) => RandomTransform a -> g -> [a]
+randomList :: (RandomGen g, Random a, Floating a)
+  => RandomTransform a -> g -> [a]
 randomList transform = transform . randoms
 
 -- | Define a transformation on the uniform distribution to generate

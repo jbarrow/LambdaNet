@@ -39,11 +39,13 @@ type CostFunction a = Matrix a -> Matrix a -> a
 type CostFunction' a = Matrix a -> Matrix a -> Matrix a
 
 -- | The quadratic cost function (1/2) * sum (y - a) ^ 2
-quadraticCost :: (Floating a, Num (Vector a), Container Vector a) => Matrix a -> Matrix a -> a
+quadraticCost :: (Floating a, Num (Vector a), Container Vector a)
+  => Matrix a -> Matrix a -> a
 quadraticCost y a = sumElements $ 0.5 * (y - a) ^ 2
 
 -- | The derivative of the quadratic cost function sum (y - a)
-quadraticCost' :: (Floating a, Num (Vector a), Container Vector a) => Matrix a -> Matrix a -> Matrix a
+quadraticCost' :: (Floating a, Num (Vector a), Container Vector a)
+  => Matrix a -> Matrix a -> Matrix a
 quadraticCost' y a = y - a
 
 -- | Declare the BackpropTrainer to be an instance of Trainer.
@@ -52,22 +54,26 @@ instance (Floating a) => Trainer (BackpropTrainer a) where
   fit t n trainData = fit t (backprop t n (head trainData)) (tail trainData)
 
 -- | Perform backpropagation on a single training data instance.
-backprop :: (Floating a, Trainer t) => t -> Network a -> TrainingData a -> Network a
+backprop :: (Floating a, Trainer t)
+  => t -> Network a -> TrainingData a -> Network a
 backprop t n trainData = n
 
--- | The outputs function scans over each layer of the network and stores the activated
---   results
-outputs :: (Floating a, Num (Vector a), Container Vector a, Product a) => Vector a -> Network a -> [Vector a]
+-- | The outputs function scans over each layer of the network and stores the
+--   activated results
+outputs :: (Floating a, Num (Vector a), Container Vector a, Product a)
+  => Vector a -> Network a -> [Vector a]
 outputs input network = scanl apply input (layers network)
 
--- | The inputs function performs a similar task to outputs, but returns a list of vectors
---   of unactivated inputs
-inputs :: (Floating a, Num (Vector a), Container Vector a, Product a) => Vector a -> Network a -> [Vector a]
+-- | The inputs function performs a similar task to outputs, but returns a list
+--   of vectors of unactivated inputs
+inputs :: (Floating a, Num (Vector a), Container Vector a, Product a)
+  => Vector a -> Network a -> [Vector a]
 inputs input network = if null (layers network) then []
   else unactivated : (inputs activated (Network (tail $ layers network)))
     where unactivated = (weightMatrix layer) <> input + (biasVector layer)
           layer = head (layers network)
           activated = mapVector (activation (neuron layer)) unactivated
 
---deltas :: (Floating a, Num (Vector a), Container Vector a) => Network a -> [Vector a] -> Vector a -> [Matrix a]
+--deltas :: (Floating a, Num (Vector a), Container Vector a)
+--  => Network a -> [Vector a] -> Vector a -> [Matrix a]
 --deltas =

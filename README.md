@@ -25,7 +25,13 @@ LambdaNet doesn't provide a means of acquiring and packaging the training data. 
 We'll go into a little more detail about each of these elements a bit later. But the entire process can be done in the Haskell REPL ```ghci``` in the main directory:
 
 ```
-let trainData = [([[1.0, 0.0]], [[1.0]]), ([[1.0, 1.0]], [[0.0]]), ([[0.0, 1.0]], [[1.0]]), ([[0.0, 0.0]], [[0.0]])]
+:l docs.hs
+let trainData = [
+  (fromList [0.0, 0.0], fromList [0.0]),
+  (fromList [0.0, 1.0], fromList [1.0]),
+  (fromList [1.0, 0.0], fromList [1.0]),
+  (fromList [1.0, 1.0], fromList [1.0])
+]
 ```
 
 These are the 4 states an XOR network can be in given two inputs.
@@ -37,7 +43,6 @@ The process of creating a new neural network is quite simple:
   - Pass that list of layer definitions into the createNetwork function, along with the weight initialization function and an entropy generator of choice.
 
 ```
-:l docs.hs
 let g = mkStdGen 4
 let l = LayerDefinition sigmoidNeuron 2 connectFully
 let l' = LayerDefinition sigmoidNeuron 2 connectFully
