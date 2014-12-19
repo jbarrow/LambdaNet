@@ -33,5 +33,4 @@
   (go (let [response (<! (http/post (str root "/eval")
                                     {:json-params {:inputs (input-to-vector inputs)
                                                    :network network}}))]
-        (let [body (json-parse (:body response))]
-          (if (not= body []) (swap! app-state assoc :result body))))))
+        (swap! app-state assoc :result "[0]"))))
