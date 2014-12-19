@@ -2,12 +2,11 @@
 
 module Network.Network
 ( Network(..)
-, Trainer(..)
 , TrainingData
 
 , createNetwork
 , predict
-
+, apply
 ) where
 
 import Network.Neuron
@@ -21,12 +20,6 @@ data Network a = Network { layers :: [Layer a] }
 
 -- | A tuple of (input, expected output)
 type TrainingData a = (Vector a, Vector a)
-
--- | Trainer is a typeclass for all trainer types - a trainer will take in
---   an instance of itself, a network, a list of training data, and return a
---   new network trained on the data.
-class Trainer a where
-  fit :: (Floating b) => a -> Network b -> [TrainingData b] -> Network b
 
 -- | The createNetwork function takes in a random transform used for weight
 --   initialization, a source of entropy, and a list of layer definitions,
@@ -53,4 +46,4 @@ apply :: (Floating a, Num (Vector a), Container Vector a, Product a) => Vector a
 apply vector layer = mapVector sigma (weights <> vector + bias)
   where sigma = activation (neuron layer)
         weights = weightMatrix layer
-        bias = (biasVector layer)
+        bias = biasVector layer

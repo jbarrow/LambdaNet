@@ -4,7 +4,6 @@ import Network.Network
 import System.IO
 import Text.Printf
 import Control.Monad
-import Linear
 import System.Random
 
 -- Compute a numerical approximation of a function on the range from
