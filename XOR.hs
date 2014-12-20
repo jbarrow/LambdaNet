@@ -12,4 +12,5 @@ main = do
   let l'' = LayerDefinition sigmoidNeuron 1 connectFully
   let g = mkStdGen 4
   let n = createNetwork normals g [l, l', l'']
-  print $ inputs (fromList [1.0, 1.0]) n
+  let t = BackpropTrainer 0.3 quadraticCost quadraticCost'
+  print $ deltas t n (fromList [1.0, 1.0], fromList [0.0])
