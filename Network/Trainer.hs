@@ -1,8 +1,7 @@
 {-# LANGUAGE FlexibleContexts #-}
 
 module Network.Trainer
-( Trainer(..)
-, BackpropTrainer(..)
+( BackpropTrainer(..)
 , CostFunction
 , CostFunction'
 
@@ -22,8 +21,8 @@ import Numeric.LinearAlgebra
 -- | Trainer is a typeclass for all trainer types - a trainer will take in
 --   an instance of itself, a network, a list of training data, and return a
 --   new network trained on the data.
-class Trainer a where
-  fit :: (Floating b) => a -> Network b -> [TrainingData b] -> Network b
+--class Trainer a where
+--  fit :: (Floating b) => a -> Network b -> [TrainingData b] -> Network b
 
 -- | A BackpropTrainer performs simple backpropagation on a neural network.
 --   It can be used as the basis for more complex trainers.
@@ -50,17 +49,19 @@ quadraticCost' :: (Floating a, Num (Vector a), Container Vector a)
 quadraticCost' y a = y - a
 
 -- | Declare the BackpropTrainer to be an instance of Trainer.
-instance (Floating a) => Trainer (BackpropTrainer a) where
-  fit t n [] = n
-  fit t n trainData = fit t (backprop t n (head trainData)) (tail trainData)
+--instance (Floating a) => Trainer (BackpropTrainer a) where
+fit :: (Floating a)
+  => BackpropTrainer a -> Network a -> [TrainingData a] -> Network a
+fit t n [] = n
+fit t n trainData = fit t (backprop t n (head trainData)) (tail trainData)
 
 -- | Perform backpropagation on a single training data instance.
-backprop :: (Floating a, Trainer t)
-  => t -> Network a -> TrainingData a -> Network a
+backprop :: (Floating a)
+  => BackpropTrainer a -> Network a -> TrainingData a -> Network a
 backprop t n trainData = n--updateNetwork t n trainData (deltas t n trainData)
 
-updateNetwork :: (Floating a, Trainer t)
-  => t -> Network a -> TrainingData a -> [Vector a] -> Network a
+updateNetwork :: (Floating a)
+  => BackpropTrainer a -> Network a -> TrainingData a -> [Vector a] -> Network a
 updateNetwork t n example deltas = n
 
 -- | The outputs function scans over each layer of the network and stores the
