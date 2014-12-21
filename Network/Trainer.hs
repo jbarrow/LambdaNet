@@ -10,6 +10,7 @@ module Network.Trainer
 , backprop
 , inputs
 , deltas
+, fit
 ) where
 
 import Network.Network
@@ -50,19 +51,30 @@ quadraticCost' y a = y - a
 
 -- | Declare the BackpropTrainer to be an instance of Trainer.
 --instance (Floating a) => Trainer (BackpropTrainer a) where
-fit :: (Floating a)
+fit :: (Floating a, Num (Vector a), Container Vector a, Product a)
   => BackpropTrainer a -> Network a -> [TrainingData a] -> Network a
 fit t n [] = n
 fit t n trainData = fit t (backprop t n (head trainData)) (tail trainData)
 
 -- | Perform backpropagation on a single training data instance.
-backprop :: (Floating a)
+backprop :: (Floating a, Num (Vector a), Container Vector a, Product a)
   => BackpropTrainer a -> Network a -> TrainingData a -> Network a
-backprop t n trainData = n--updateNetwork t n trainData (deltas t n trainData)
+backprop t n trainData = updateNetwork t n trainData (deltas t n trainData) (outputs (fst trainData) n)
 
-updateNetwork :: (Floating a)
-  => BackpropTrainer a -> Network a -> TrainingData a -> [Vector a] -> Network a
-updateNetwork t n example deltas = n
+updateNetwork :: (Floating a, Num (Vector a), Container Vector a, Product a)
+  => BackpropTrainer a -> Network a -> TrainingData a -> [Vector a] -> [Vector a] -> Network a
+updateNetwork t n example [] os = n
+updateNetwork t n example (delta:ds) (output:os) =
+  Network ((updateLayer t (head $ layers n) delta output) :
+    (layers (updateNetwork t rest example ds os)))
+  where rest = Network (tail $ layers n)
+
+updateLayer :: (Floating a, Num (Vector a), Container Vector a, Product a)
+  => BackpropTrainer a -> Layer a -> Vector a -> Vector a -> Layer a
+updateLayer t l delta output = Layer newWeight newBias n
+  where n = neuron l
+        newWeight = (weightMatrix l) - (eta t) `scale` ((reshape 1 output) <> (reshape (dim delta) delta))
+        newBias = (biasVector l) - (eta t) `scale` delta
 
 -- | The outputs function scans over each layer of the network and stores the
 --   activated results

@@ -13,4 +13,8 @@ main = do
   let g = mkStdGen 4
   let n = createNetwork normals g [l, l', l'']
   let t = BackpropTrainer 0.3 quadraticCost quadraticCost'
-  print $ deltas t n (fromList [1.0, 1.0], fromList [0.0])
+  print $ predict (fromList [0.0, 1.0]) n
+  let n' = fit t n [(fromList [0.0, 1.0], fromList [1.0]), (fromList [1.0, 1.0], fromList [0.0]), (fromList [1.0, 0.0], fromList [1.0]), (fromList [0.0, 0.0], fromList [0.0])]
+  print $ (weightMatrix (head $ layers n'))
+  print $ (weightMatrix (last $ layers n'))
+  print $ predict (fromList [0.0, 1.0]) n'
