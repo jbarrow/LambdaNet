@@ -67,7 +67,7 @@ updateNetwork t n example [] os = n
 updateNetwork t n example (delta:ds) (output:os) =
   Network ((updateLayer t (head $ layers n) delta output) :
     (layers (updateNetwork t rest example ds os)))
-  where rest = Network (tail $ layers n)
+  where rest = Network ([last $ layers n])
 
 updateLayer :: (Floating a, Num (Vector a), Container Vector a, Product a)
   => BackpropTrainer a -> Layer a -> Vector a -> Vector a -> Layer a
