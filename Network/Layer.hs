@@ -47,7 +47,7 @@ type RandomTransform a = [a] -> [a]
 --   It returns a layer defined by the Layer type -- a weight matrix, a bias
 --   vector, and a neuron type.
 createLayer ::
-  (RandomGen g, Random a, Floating a, Num (Vector a), Container Vector a)
+  (RandomGen g, Random a, Floating a, Floating (Vector a), Container Vector a)
   => RandomTransform a -> g -> LayerDefinition a -> LayerDefinition a -> Layer a
 createLayer t g layerDef layerDef' =
   Layer (randomMatrix * (connectivity i j))
