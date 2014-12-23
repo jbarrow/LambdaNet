@@ -8,7 +8,7 @@ import System.IO
 import System.Random
 import Numeric.LinearAlgebra
 
-trainNtimes :: (Floating a, Floating (Vector a), Container Vector a, Product a)
+trainNtimes :: (Floating (Vector a), Container Vector a, Product a)
   => Network a -> Int -> BackpropTrainer a -> Network a
 trainNtimes n 0 t = n
 trainNtimes n c t = trainNtimes (fit t n [(fromList [0.0, 1.0], fromList [1.0]), (fromList [1.0, 1.0], fromList [0.0]), (fromList [1.0, 0.0], fromList [1.0]), (fromList [0.0, 0.0], fromList [0.0])]) (c - 1) t
@@ -17,7 +17,7 @@ main = do
   let l = Layer (fromLists [[1, 2], [3, 4]]) (fromList [2, -2]) sigmoidNeuron
   let l' = Layer (fromLists [[-1, 1]]) (fromList [-1]) sigmoidNeuron
   let n = Network [l, l']
-  --let t = BackpropTrainer 3.0 quadraticCost quadraticCost'
+  let t = BackpropTrainer 3.0 quadraticCost quadraticCost'
 
   print $ ((outputs (fromList [0.0, 1.0]) n) :: [Vector Double])
 
