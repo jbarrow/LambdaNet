@@ -9,6 +9,7 @@ module Network.Trainer
 , quadraticCost'
 , backprop
 , inputs
+, outputs
 , deltas
 , fit
 ) where
