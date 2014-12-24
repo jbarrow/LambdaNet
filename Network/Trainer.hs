@@ -55,26 +55,22 @@ quadraticCost' y a = a - y
 fit :: (Floating (Vector a), Container Vector a, Product a)
   => BackpropTrainer a -> Network a -> [TrainingData a] -> Network a
 fit t n [] = n
-fit t n trainData = fit t (backprop t n (head trainData)) (tail trainData)
+fit t n (e:es) = fit t (backprop t n e) es
 
 -- | Perform backpropagation on a single training data instance.
 backprop :: (Floating (Vector a), Container Vector a, Product a)
   => BackpropTrainer a -> Network a -> TrainingData a -> Network a
-backprop t n trainData = updateNetwork t n trainData
+backprop t n trainData = updateNetwork t n
   (deltas t n trainData) (outputs (fst trainData) n)
 
 updateNetwork :: (Floating (Vector a), Container Vector a, Product a)
-  => BackpropTrainer a -> Network a -> TrainingData a -> [Vector a]
-    -> [Vector a] -> Network a
-updateNetwork t n example [] os = n
-updateNetwork t n example (delta:ds) (output:os) =
-  Network ((updateLayer t (head $ layers n) delta output) :
-    (layers (updateNetwork t rest example ds os)))
-  where rest = Network ([last $ layers n])
+  => BackpropTrainer a -> Network a -> [Vector a] -> [Vector a] -> Network a
+updateNetwork t n deltas os =
+  Network $ map (updateLayer t) (zip3 (layers n) deltas os)
 
 updateLayer :: (Floating (Vector a), Container Vector a, Product a)
-  => BackpropTrainer a -> Layer a -> Vector a -> Vector a -> Layer a
-updateLayer t l delta output = Layer newWeight newBias n
+  => BackpropTrainer a -> (Layer a, Vector a, Vector a) -> Layer a
+updateLayer t (l, delta, output) = Layer newWeight newBias n
   where n = neuron l
         newWeight = (weightMatrix l) -
           (eta t) `scale` ((reshape 1 delta) <> (reshape (dim output) output))
@@ -93,7 +89,7 @@ inputs :: (Floating (Vector a), Container Vector a, Product a)
 inputs input network = if null (layers network) then []
   else unactivated : inputs activated (Network (tail $ layers network))
     where unactivated = weightMatrix layer <> input + biasVector layer
-          layer = head (layers network)
+          layer = head $ layers network
           activated = mapVector (activation (neuron layer)) unactivated
 
 -- | The deltas function returns a list of layer deltas.
