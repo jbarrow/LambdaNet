@@ -20,6 +20,7 @@ main = do
   let t = BackpropTrainer (3.0 :: Double) quadraticCost quadraticCost'
 
   print $ ((outputs (fromList [1.0, 0.0]) n) :: [Vector Double])
+  print $ ((inputs (fromList [1.0, 0.0]) n) :: [Vector Double])
   print $ deltas t n (fromList [1.0, 0.0], fromList [1.0])
 
 

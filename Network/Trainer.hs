@@ -97,7 +97,7 @@ inputs input network = if null (layers network) then []
 deltas :: (Floating (Vector a), Container Vector a, Product a)
   => BackpropTrainer a -> Network a -> TrainingData a -> [Vector a]
 deltas t n example = hiddenDeltas
-  (Network (reverse (layers n))) outputDelta (reverse is)
+  (Network (reverse (layers n))) outputDelta (tail $ reverse is)
     ++ [outputDelta]
   where outputDelta = costd (snd example) output *
           mapVector activationd lastInput
@@ -116,4 +116,4 @@ hiddenDeltas n prevDelta is = if length (layers n) <= 1 then []
   where rest = Network (tail $ layers n)
         delta = (trans w) <> prevDelta * spv
         w = weightMatrix (head $ layers n)
-        spv = mapVector (activation (neuron (head $ layers n))) (head is)
+        spv = mapVector (activation' (neuron (head $ layers n))) (head is)
