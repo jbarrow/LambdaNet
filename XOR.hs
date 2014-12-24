@@ -23,6 +23,12 @@ main = do
   print $ ((inputs (fromList [1.0, 0.0]) n) :: [Vector Double])
   print $ deltas t n (fromList [1.0, 0.0], fromList [1.0])
 
+  let n' = fit t n [(fromList [1.0, 0.0], fromList [1.0])]
+
+  print $ (weightMatrix (head $ layers n'))
+  print $ (weightMatrix (last $ layers n'))
+  print $ (biasVector (head $ layers n'))
+  print $ (biasVector (last $ layers n'))
 
   -- let l = LayerDefinition sigmoidNeuron 2 connectFully
   -- let l' = LayerDefinition sigmoidNeuron 2 connectFully
