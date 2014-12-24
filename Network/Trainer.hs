@@ -18,6 +18,7 @@ import Network.Network
 import Network.Neuron
 import Network.Layer
 import System.Random
+import System.Random.Shuffle (shuffle')
 import Numeric.LinearAlgebra
 
 -- | Trainer is a typeclass for all trainer types - a trainer will take in
@@ -54,7 +55,7 @@ quadraticCost' y a = a - y
 --instance (Floating a) => Trainer (BackpropTrainer a) where
 fit :: (Floating (Vector a), Container Vector a, Product a)
   => BackpropTrainer a -> Network a -> [TrainingData a] -> Network a
-fit t n examples = foldl (backprop t) n examples
+fit t n examples = foldl (backprop t) n (shuffle' examples (length examples) (mkStdGen 4))
 
 -- | Perform backpropagation on a single training data instance.
 backprop :: (Floating (Vector a), Container Vector a, Product a)

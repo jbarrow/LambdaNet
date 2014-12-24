@@ -21,4 +21,5 @@ library
   build-depends:
     base ==4.5.*,
     hmatrix >= 0.16,
-    random
+    random,
+    random-shuffle >= 0.0.4
