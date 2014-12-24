@@ -81,6 +81,15 @@ That's all there is to it. Pass in a vector (which, in this library is a matrix)
 
 The entire library is mean to be as extensible as possible and to allow you to create new types of, well, anything.
 
+### Todo
+
+- [ ] Get backpropagation working
+- [ ] Save and load networks
+- [ ] Selection functions for SGD or online learning
+- [ ] Regularization Cost Functions
+- [ ] RProp Trainer
+- [ ] RMSProp Trainer
+
 ## Neural Networks in the Browser
 
 ### First Time Setup
