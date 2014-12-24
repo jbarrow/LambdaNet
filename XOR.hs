@@ -17,9 +17,11 @@ main = do
   let l = Layer (fromLists [[1, 2], [3, 4]]) (fromList [2, -2]) sigmoidNeuron
   let l' = Layer (fromLists [[-1, 1]]) (fromList [-1]) sigmoidNeuron
   let n = Network [l, l']
-  let t = BackpropTrainer 3.0 quadraticCost quadraticCost'
+  let t = BackpropTrainer (3.0 :: Double) quadraticCost quadraticCost'
 
-  print $ ((outputs (fromList [0.0, 1.0]) n) :: [Vector Double])
+  print $ ((outputs (fromList [1.0, 0.0]) n) :: [Vector Double])
+  print $ deltas t n (fromList [1.0, 0.0], fromList [1.0])
+
 
   -- let l = LayerDefinition sigmoidNeuron 2 connectFully
   -- let l' = LayerDefinition sigmoidNeuron 2 connectFully

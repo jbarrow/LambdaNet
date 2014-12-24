@@ -43,12 +43,12 @@ type CostFunction' a = Vector a -> Vector a -> Vector a
 -- | The quadratic cost function (1/2) * sum (y - a) ^ 2
 quadraticCost :: (Floating (Vector a), Container Vector a)
   => Vector a -> Vector a -> a
-quadraticCost y a = sumElements $ 0.5 * (y - a) ** 2
+quadraticCost y a = sumElements $ 0.5 * (a - y) ** 2
 
 -- | The derivative of the quadratic cost function sum (y - a)
 quadraticCost' :: (Floating (Vector a))
   => Vector a -> Vector a -> Vector a
-quadraticCost' y a = y - a
+quadraticCost' y a = a - y
 
 -- | Declare the BackpropTrainer to be an instance of Trainer.
 --instance (Floating a) => Trainer (BackpropTrainer a) where
