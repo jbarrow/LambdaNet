@@ -7,9 +7,6 @@ module Network.Neuron
 , tanhNeuron
 , recluNeuron
 
-, evaluate
-, evaluate'
-
 , sigmoid
 , sigmoid'
 , tanh
@@ -28,15 +25,6 @@ data Neuron a = Neuron { activation :: (ActivationFunction a)
 
 type ActivationFunction a = a -> a
 type ActivationFunction' a = a -> a
-
--- | Evaluate the activation of a neuron by pattern matching it on
---   the constructor.
-evaluate :: (Floating a) => Neuron a -> [a] -> a
-evaluate (Neuron f f') = f . sum
-
--- | Evaluate the derivative of a neuron, given a floating point vector
-evaluate' :: (Floating a) => Neuron a -> [a] -> a
-evaluate' (Neuron f f') = f' . sum
 
 -- | Our provided neuron types: sigmoid, tanh, reclu
 sigmoidNeuron :: (Floating a) => Neuron a

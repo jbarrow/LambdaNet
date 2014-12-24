@@ -54,8 +54,7 @@ quadraticCost' y a = a - y
 --instance (Floating a) => Trainer (BackpropTrainer a) where
 fit :: (Floating (Vector a), Container Vector a, Product a)
   => BackpropTrainer a -> Network a -> [TrainingData a] -> Network a
-fit t n [] = n
-fit t n (e:es) = fit t (backprop t n e) es
+fit t n examples = foldl (backprop t) n examples
 
 -- | Perform backpropagation on a single training data instance.
 backprop :: (Floating (Vector a), Container Vector a, Product a)
