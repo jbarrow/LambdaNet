@@ -55,7 +55,8 @@ quadraticCost' y a = a - y
 --instance (Floating a) => Trainer (BackpropTrainer a) where
 fit :: (Floating (Vector a), Container Vector a, Product a)
   => BackpropTrainer a -> Network a -> [TrainingData a] -> Network a
-fit t n examples = foldl (backprop t) n (shuffle' examples (length examples) (mkStdGen 4))
+fit t n examples = foldl (backprop t) n
+  (shuffle' examples (length examples) (mkStdGen 4))
 
 -- | Perform backpropagation on a single training data instance.
 backprop :: (Floating (Vector a), Container Vector a, Product a)
@@ -63,11 +64,13 @@ backprop :: (Floating (Vector a), Container Vector a, Product a)
 backprop t n trainData = updateNetwork t n
   (deltas t n trainData) (outputs (fst trainData) n)
 
+-- | Update the weights and biases of a network given a list of deltas
 updateNetwork :: (Floating (Vector a), Container Vector a, Product a)
   => BackpropTrainer a -> Network a -> [Vector a] -> [Vector a] -> Network a
 updateNetwork t n deltas os =
   Network $ map (updateLayer t) (zip3 (layers n) deltas os)
 
+-- | The mapped function to update the weight and biases in a single layer
 updateLayer :: (Floating (Vector a), Container Vector a, Product a)
   => BackpropTrainer a -> (Layer a, Vector a, Vector a) -> Layer a
 updateLayer t (l, delta, output) = Layer newWeight newBias n
