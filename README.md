@@ -83,7 +83,6 @@ The entire library is mean to be as extensible as possible and to allow you to c
 
 ### Todo
 
-- [ ] Get backpropagation working
 - [ ] Save and load networks
 - [ ] Selection functions for SGD or online learning
 - [ ] Regularization Cost Functions
