@@ -1,4 +1,5 @@
-{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE FlexibleContexts,
+             RecordWildCards #-}
 
 module Network.Layer
 ( LayerDefinition(..)
@@ -21,6 +22,7 @@ module Network.Layer
 import Network.Neuron
 import System.Random
 import Numeric.LinearAlgebra
+import Data.Binary (encode, decode, Binary(..))
 
 -- | The LayerDefinition type is an intermediate type initialized by the
 --   library user to define the different layers of the network.
@@ -42,6 +44,9 @@ data ShowableLayer a = ShowableLayer { weights :: (Matrix a)
                                      , biases :: (Vector a)
                                      } deriving Show
 
+instance (Element a, Binary a) => Binary (ShowableLayer a) where
+  put ShowableLayer{..} = do put weights; put biases
+  get = do weights <- get; biases <- get; return ShowableLayer{..}
 
 -- | Connectivity is the type alias for a function that defines the connective
 --   matrix for two layers (fully connected, convolutionally connected, etc.)

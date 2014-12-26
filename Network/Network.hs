@@ -7,12 +7,16 @@ module Network.Network
 , createNetwork
 , predict
 , apply
+, saveNetwork
 ) where
 
 import Network.Neuron
 import Network.Layer
 import System.Random
 import Numeric.LinearAlgebra
+import qualified Data.ByteString.Lazy as B
+import System.IO
+import Data.Binary (encode, decode, Binary(..))
 
 -- | Networks are constructed front to back. Start by adding an input layer,
 --   then each hidden layer, and finally an output layer.
@@ -47,3 +51,10 @@ apply vector layer = mapVector sigma (weights <> vector + bias)
   where sigma = activation (neuron layer)
         weights = weightMatrix layer
         bias = biasVector layer
+
+saveNetwork :: (Binary (ShowableLayer a), Floating a, Floating (Vector a), Container Vector a)
+  => FilePath -> Network a -> IO ()
+saveNetwork file n = B.writeFile file (encode $ map layerToShowable (layers n))
+
+--laodNetwork :: (RandomGen g, Random a, Floating a, Floating (Vector a), Container Vector a)
+--  => FilePath -> [LayerDefinition a] -> Network a

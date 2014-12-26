@@ -31,3 +31,5 @@ main = do
   print $ predict (fromList [1, 0]) n'
   print $ predict (fromList [0, 1]) n'
   print $ predict (fromList [1, 1]) n'
+
+  saveNetwork "xor.ann" n'
