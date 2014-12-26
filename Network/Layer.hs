@@ -92,8 +92,8 @@ layerToShowable l = ShowableLayer (weightMatrix l) (biasVector l)
 --   which is an unfortunate restriction owed to Haskell's inability to
 --   serialize functions.
 showableToLayer :: (Floating (Vector a), Container Vector a, Floating a)
-  => ShowableLayer a -> Neuron a -> Layer a
-showableToLayer s n = Layer (weights s) (biases s) n
+  => (ShowableLayer a, LayerDefinition a) -> Layer a
+showableToLayer (s, d) = Layer (weights s) (biases s) (neuronDef d)
 
 -- | Initialize an infinite random list given a random transform and a source
 --   of entroy.

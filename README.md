@@ -83,7 +83,7 @@ The entire library is mean to be as extensible as possible and to allow you to c
 
 ### Todo
 
-- [ ] Save and load networks
+- [ ] Train Until with Predicates
 - [ ] Selection functions for SGD or online learning
 - [ ] Regularization Cost Functions
 - [ ] RProp Trainer

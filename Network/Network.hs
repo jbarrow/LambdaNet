@@ -5,6 +5,7 @@ module Network.Network
 , TrainingData
 
 , createNetwork
+, loadNetwork
 , predict
 , apply
 , saveNetwork
@@ -56,5 +57,6 @@ saveNetwork :: (Binary (ShowableLayer a), Floating a, Floating (Vector a), Conta
   => FilePath -> Network a -> IO ()
 saveNetwork file n = B.writeFile file (encode $ map layerToShowable (layers n))
 
---laodNetwork :: (RandomGen g, Random a, Floating a, Floating (Vector a), Container Vector a)
---  => FilePath -> [LayerDefinition a] -> Network a
+loadNetwork :: (Binary (ShowableLayer a), Floating a, Floating (Vector a), Container Vector a)
+  => FilePath -> [LayerDefinition a] -> IO (Network a)
+loadNetwork file defs = B.readFile file >>= \sls -> return $ Network (map showableToLayer (zip (decode sls) defs))

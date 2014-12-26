@@ -17,6 +17,7 @@ trainNtimes n c t = trainNtimes (fit t n
    (fromList [1, 0], fromList [1]),
    (fromList [0, 0], fromList [0])]) (c - 1) t
 
+main :: IO ()
 main = do
   let l = LayerDefinition sigmoidNeuron 2 connectFully
   let l' = LayerDefinition sigmoidNeuron 2 connectFully
@@ -33,3 +34,10 @@ main = do
   print $ predict (fromList [1, 1]) n'
 
   saveNetwork "xor.ann" n'
+
+  n'' <- loadNetwork "xor.ann" [l, l', l'']
+
+  print $ predict (fromList [0, 0]) n''
+  print $ predict (fromList [1, 0]) n''
+  print $ predict (fromList [0, 1]) n''
+  print $ predict (fromList [1, 1]) n''
