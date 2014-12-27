@@ -63,6 +63,11 @@ minibatch :: (Floating (Vector a), Container Vector a)
   => Int -> [TrainingData a] -> [[TrainingData a]]
 minibatch size examples = chunksOf size examples
 
+-- | If we want to train the network online
+online :: (Floating (Vector a), Container Vector a)
+  => [TrainingData a] -> [[TrainingData a]]
+online examples = chunksOf 1 examples
+
 -- | Declare the BackpropTrainer to be an instance of Trainer.
 --instance (Floating a) => Trainer (BackpropTrainer a) where
 fit :: (Floating (Vector a), Container Vector a, Product a)
