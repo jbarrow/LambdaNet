@@ -7,6 +7,7 @@ allowing users to define custom:
   - Neuron types
   - Layer connectivities
   - Weight initialization functions
+  - Selection functions
   - Cost functions
   - Regularization functions
   - Trainers
@@ -64,8 +65,12 @@ However, be aware that you first need to create a trainer (the library provides 
 
 ```
 let t = BackpropTrainer 0.3 quadraticCost quadraticCost'
-let network' = fit 100 t 2 trainData network
+let network' = fit (minibatch 1) 100 t 2 trainData network
 ```
+
+Note that the fit function takes a selection function, and we provide
+minibatch and online. In order to use minibatch as a selection function,
+you must partially apply the batch size, in this case, 1.
 
 ### Using the Network
 
