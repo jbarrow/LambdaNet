@@ -62,12 +62,12 @@ quadraticCost' y a = a - y
 --   with the minibatch size
 minibatch :: (Floating (Vector a), Container Vector a)
   => Int -> [TrainingData a] -> [[TrainingData a]]
-minibatch size examples = chunksOf size examples
+minibatch size = chunksOf size
 
 -- | If we want to train the network online
 online :: (Floating (Vector a), Container Vector a)
   => [TrainingData a] -> [[TrainingData a]]
-online examples = chunksOf 1 examples
+online = minibatch 1
 
 -- | Declare the BackpropTrainer to be an instance of Trainer.
 --instance (Floating a) => Trainer (BackpropTrainer a) where
@@ -79,8 +79,8 @@ fit s t n examples = foldl (backprop t) n $
 -- | Perform backpropagation on a single training data instance.
 backprop :: (Floating (Vector a), Container Vector a, Product a)
   => BackpropTrainer a -> Network a -> [TrainingData a] -> Network a
-backprop t n (trainData:ds) = updateNetwork t n
-  (deltas t n trainData) (outputs (fst trainData) n)
+backprop t n (e:es) = updateNetwork t n
+  (deltas t n e) (outputs (fst e) n)
 
 -- | Update the weights and biases of a network given a list of deltas
 updateNetwork :: (Floating (Vector a), Container Vector a, Product a)
