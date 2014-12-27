@@ -44,6 +44,9 @@ data ShowableLayer a = ShowableLayer { weights :: (Matrix a)
                                      , biases :: (Vector a)
                                      } deriving Show
 
+-- | We want Showable layer to be packable in the binary format, so we
+--   define it as an instance of showable.
+
 instance (Element a, Binary a) => Binary (ShowableLayer a) where
   put ShowableLayer{..} = do put weights; put biases
   get = do weights <- get; biases <- get; return ShowableLayer{..}

@@ -53,10 +53,15 @@ apply vector layer = mapVector sigma (weights <> vector + bias)
         weights = weightMatrix layer
         bias = biasVector layer
 
+-- | Given a filename and a network, we want to save the weights and biases
+--   of the network to the file for later use.
 saveNetwork :: (Binary (ShowableLayer a), Floating a, Floating (Vector a), Container Vector a)
   => FilePath -> Network a -> IO ()
 saveNetwork file n = B.writeFile file (encode $ map layerToShowable (layers n))
 
+-- | Given a filename, and a list of layer definitions, we want to reexpand
+--   the data back into a network.
 loadNetwork :: (Binary (ShowableLayer a), Floating a, Floating (Vector a), Container Vector a)
   => FilePath -> [LayerDefinition a] -> IO (Network a)
-loadNetwork file defs = B.readFile file >>= \sls -> return $ Network (map showableToLayer (zip (decode sls) defs))
+loadNetwork file defs = B.readFile file >>= \sls ->
+  return $ Network (map showableToLayer (zip (decode sls) defs))
