@@ -11,7 +11,7 @@ import Numeric.LinearAlgebra
 trainNtimes :: (Floating (Vector a), Container Vector a, Product a)
   => Network a -> Int -> BackpropTrainer a -> Network a
 trainNtimes n 0 t = n
-trainNtimes n c t = trainNtimes (fit t n
+trainNtimes n c t = trainNtimes (fit online t n
   [(fromList [0, 1], fromList [1]),
    (fromList [1, 1], fromList [0]),
    (fromList [1, 0], fromList [1]),

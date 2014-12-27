@@ -9,6 +9,7 @@ module Network.Trainer
 , quadraticCost
 , quadraticCost'
 , minibatch
+, online
 , backprop
 , inputs
 , outputs
@@ -71,14 +72,14 @@ online examples = chunksOf 1 examples
 -- | Declare the BackpropTrainer to be an instance of Trainer.
 --instance (Floating a) => Trainer (BackpropTrainer a) where
 fit :: (Floating (Vector a), Container Vector a, Product a)
-  => BackpropTrainer a -> Network a -> [TrainingData a] -> Network a
-fit t n examples = foldl (backprop t) n
-  (shuffle' examples (length examples) (mkStdGen 4))
+  => Selection a -> BackpropTrainer a -> Network a -> [TrainingData a] -> Network a
+fit s t n examples = foldl (backprop t) n $
+  s (shuffle' examples (length examples) (mkStdGen 4))
 
 -- | Perform backpropagation on a single training data instance.
 backprop :: (Floating (Vector a), Container Vector a, Product a)
-  => BackpropTrainer a -> Network a -> TrainingData a -> Network a
-backprop t n trainData = updateNetwork t n
+  => BackpropTrainer a -> Network a -> [TrainingData a] -> Network a
+backprop t n (trainData:ds) = updateNetwork t n
   (deltas t n trainData) (outputs (fst trainData) n)
 
 -- | Update the weights and biases of a network given a list of deltas
