@@ -4,9 +4,11 @@ module Network.Trainer
 ( BackpropTrainer(..)
 , CostFunction
 , CostFunction'
+, Selection
 
 , quadraticCost
 , quadraticCost'
+, minibatch
 , backprop
 , inputs
 , outputs
@@ -19,6 +21,7 @@ import Network.Neuron
 import Network.Layer
 import System.Random
 import System.Random.Shuffle (shuffle')
+import Data.List.Split (chunksOf)
 import Numeric.LinearAlgebra
 
 -- | Trainer is a typeclass for all trainer types - a trainer will take in
@@ -41,6 +44,9 @@ type CostFunction a = Vector a -> Vector a -> a
 -- | A CostFunction' (derivative) is used in backPropagation
 type CostFunction' a = Vector a -> Vector a -> Vector a
 
+-- | A selection function for performing gradient descent
+type Selection a = [TrainingData a] -> [[TrainingData a]]
+
 -- | The quadratic cost function (1/2) * sum (y - a) ^ 2
 quadraticCost :: (Floating (Vector a), Container Vector a)
   => Vector a -> Vector a -> a
@@ -50,6 +56,12 @@ quadraticCost y a = sumElements $ 0.5 * (a - y) ** 2
 quadraticCost' :: (Floating (Vector a))
   => Vector a -> Vector a -> Vector a
 quadraticCost' y a = a - y
+
+-- | The minibatch function becomes a Selection when partially applied
+--   with the minibatch size
+minibatch :: (Floating (Vector a), Container Vector a)
+  => Int -> [TrainingData a] -> [[TrainingData a]]
+minibatch size examples = chunksOf size examples
 
 -- | Declare the BackpropTrainer to be an instance of Trainer.
 --instance (Floating a) => Trainer (BackpropTrainer a) where

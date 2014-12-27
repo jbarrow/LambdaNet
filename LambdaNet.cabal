@@ -22,4 +22,5 @@ library
     base ==4.5.*,
     hmatrix >= 0.16,
     random,
-    random-shuffle >= 0.0.4
+    random-shuffle >= 0.0.4,
+    split
