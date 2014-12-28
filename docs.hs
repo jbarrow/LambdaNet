@@ -29,6 +29,7 @@ main = do
   writeDat "docs/derivative_reclu.txt" (computeApproximation reclu') 5
   writeDat "docs/derivative_tanh.txt" (computeApproximation tanh') 5
 
---  putStr "Generating Distributions..."
+  putStr "Generating Distributions..."
 --  writeDat "docs/normal.txt" (take 20000 (randomList normals (mkStdGen 4))) 5
 --  writeDat "docs/uniform.txt" (take 20000 (randomList uniforms (mkStdGen 4))) 5
+  writeDat "docs/bounded_uniform.txt" (take 20000 (randomList (boundedUniforms (-0.5 :: Float, 0.5 :: Float)) (mkStdGen 4))) 5

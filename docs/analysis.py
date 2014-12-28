@@ -40,7 +40,7 @@ def main():
         plot_activation_functions(activation)
 
     distribution_types = [
-        "normal", "uniform"
+        "normal", "uniform", "bounded_uniform"
     ]
 
     for distribution in distribution_types:

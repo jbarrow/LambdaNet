@@ -17,6 +17,7 @@ module Network.Layer
 , boxMuller
 , normals
 , uniforms
+, boundedUniforms
 ) where
 
 import Network.Neuron
@@ -118,6 +119,12 @@ normals _ = []
 
 -- | A non-transformation to return a list of uniformly distributed numbers
 --   from a list of uniformly distributed numbers. It's really a matter of
---   naming consistency.
+--   naming consistency. It generates numbers on the range (0, 1]
 uniforms :: Floating a => [a] -> [a]
 uniforms xs = xs
+
+-- | An affine transformation to return a list of uniforms on the range
+--   (a, b]
+boundedUniforms :: Floating a => (a, a) -> [a] -> [a]
+boundedUniforms (lower, upper) xs = map affine xs
+  where affine x = lower + x * (upper - lower)
