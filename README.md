@@ -1,32 +1,45 @@
 LambdaNet
 =====
 
-LambdaNet is an _in progress_ attempt at a functional "box-of-LEGO" style neural network built around higher order
-functions. The goal is to provide a framework that promotes experimentation with neural networks by
-allowing users to define custom:
-  - Neuron types
-  - Layer connectivities
-  - Weight initialization functions
-  - Selection functions
-  - Cost functions
-  - Regularization functions
-  - Trainers
+LambdaNet is an artificial neural network library written in Haskell
+that abstracts network creation, training, and use as higher order
+functions. The benefit of this approach is that it provides a framework
+in which users can:
+  - quickly iterate through network designs by using different functional components
+  - experiment by writing small functional components to extend the library
 
-It comes with a pre-defined, and pretty standard, set of all of the above so you can quickly get
-started building networks for use on real data sets.
+The library comes with a pre-defined set of functions that can be composed
+in many ways to operate on real-world data. These will be enumerated later
+in the documentation.
 
 ## Using LambdaNet
 
-We will walk you through how to use the LambdaNet Haskell library to create, train, and use an XOR network.
+Using LambdaNet to rapidly prototype networks using built-in functions
+requires only a minimal level of Haskell knowledge (although getting
+the data into the right form may be more difficult). However, extending
+the library may require a more in-depth knowledge of Haskell and
+functional programming techniques.
 
-### Getting the Training Data
-
-LambdaNet doesn't provide a means of acquiring and packaging the training data. In the following example, we will use some simple training data.
-
-We'll go into a little more detail about each of these elements a bit later. But the entire process can be done in the Haskell REPL ```ghci``` in the main directory:
+You can find a quick example of using the network in `XOR.hs`. You can
+run the file in your REPL to see the results:
 
 ```
-:l docs.hs
+:l XOR.hs
+main
+```
+
+The rest of this section dissects the XOR network in order to talk about
+the design of LambdaNet.
+
+### Training Data
+
+Before you can train or use a network, you must have training data. The
+training data is a tuple of vectors, the first value being the input
+to the network, and the second value being the expected output.
+
+For the XOR network, the data is easily hardcoded:
+
+```
 let trainData = [
   (fromList [0.0, 0.0], fromList [0.0]),
   (fromList [0.0, 1.0], fromList [1.0]),
@@ -35,66 +48,169 @@ let trainData = [
 ]
 ```
 
-These are the 4 states an XOR network can be in given two inputs.
+However, for any non-trivial application the most difficult work will be
+getting the data in this form. Unfortunately, LambdaNet does not currently
+have tools to support data handling.
 
-### Creating a New Network
+### Layer Definitions
 
-The process of creating a new neural network is quite simple:
-  - Create a list of layer definitions with a neuron type, neuron count, and connectivity function, and
-  - Pass that list of layer definitions into the createNetwork function, along with the weight initialization function and an entropy generator of choice.
+The first step in creating a network is to define a list of layer
+definintions. The type layer definition takes a neuron type, a count of
+neurons in the layer, and a connectivity function.
+
+Creating the layer definitions for a three-layer XOR network, with
+2 neurons in the input layer, 2 hidden neurons, and 1 output neuron
+can be done as:
 
 ```
-let g = mkStdGen 4
 let l = LayerDefinition sigmoidNeuron 2 connectFully
 let l' = LayerDefinition sigmoidNeuron 2 connectFully
 let l'' = LayerDefinition sigmoidNeuron 1 connectFully
-let network = createNetwork normals g [l, l', l'']
 ```
 
-Note, the mkStdGen is our (very random) source of entropy. Feel free to exchange it with your favorite entropy
-generator of choice.
+#### Neuron Types
 
-Et voila, you have a functioning neural network that simply needs to be trained. The network created above has three layers, the first
-with three neurons, the second with 4, and the output with 2.
+A neuron is simply defined as an activation function and its derivative,
+and the LambdaNet library provides three built-in neuron types:
+  - `sigmoidNeuron` - A neuron with a sigmoid activation function
+  - `tanhNeuron` - A neuron with a hyperbolic tangent activation function
+  - `recluNeuron` - A neuron with a rectified linear activation function
+
+By passing one of these functions into a LayerDefinition, you can
+create a layer with neurons of that type.
+
+#### Connectivity
+
+A connectivity function is a bit more opaque. Currently, the library
+only provides `connectFully`, a function which creates a fully
+connected feed-forward network.
+
+Simply, the connectivity function takes in the number of neurons in layer l
+and the number of neurons in layer l + 1, and returns a boolean matrix
+of integers (0/1) that represents the connectivity graph of the layers
+-- a 0 means two neurons are not connected and a 1 means they are. The
+starting weights are defined later.
+
+### Creating the Network
+
+The `createNetwork` function takes in a random transform, an entropy
+generator, and a list of layer definitions, and returns a network.
+
+For the XOR network, the createNetwork function is:
+
+```
+let n = createNetwork normals (mkStdGen 4) [l, l', l'']
+```
+
+Our source of entropy is the very random: `mkStdGen 4`, which will
+always result in the same generator.
+
+#### Random Transforms
+
+The random transform function is a transform that operates on a
+stream of uniformly distributed random numbers and returns a stream
+of floating point numbers.
+
+Currently, the two defined distributions are:
+  - `uniforms` - A trivial function that returns a stream of uniformly distributed random numbers
+  - `normals` - A slightly less-trivial function that uses the Box-Muller transform to create a stream of numbers ~ N(0, 1)
+
+Work is being done to offer a student t-distribution, which would require
+support for a chi-squared distribution transformation.
 
 ### Training the Network
 
-Although the above creation through layer definitions may seem unfamiliar, LambdaNet does strive to provide some level of familiarity to machine learning practitioners. In order to achieve this, training and predicting with LambdaNet follows a similar naming convention to Scikit Learn -- namely `predict` and `fit` are used as test and train functions, respectively.
-
-However, be aware that you first need to create a trainer (the library provides a backpropagation trainer) before you can use fit:
+In order to train a network, you must create a new trainer:
 
 ```
-let t = BackpropTrainer 0.3 quadraticCost quadraticCost'
-let network' = fit (minibatch 1) 100 t 2 trainData network
+let t = BackpropTrainer (3 :: Float) quadraticCost quadraticCost'
 ```
 
-Note that the fit function takes a selection function, and we provide
-minibatch and online. In order to use minibatch as a selection function,
-you must partially apply the batch size, in this case, 1.
+The BackpropTrainer type takes in a learning rate, a cost function, and
+its derivative.
+
+The actual training of the network, the `fit` function uses the trainer, a
+network, and the training data, and returns a new, trained network.
+For the XOR network, this is:
+
+```
+let n' = fit online t n trainData
+```
+
+#### Selection Functions
+
+The first argument to the `fit` function is a selection function, which
+breaks the shuffled training data into batches of a specified size.
+They are not currently fully supported, and progress is discussed a little
+later.
 
 ### Using the Network
 
-Using the network to predict values is the simplest part of the entire process. Given that you've followed the code above to create and train the network, you can use it to predict values like so:
+Once the network is trained, you can use it with your test data or
+production data:
 
 ```
-predict (fromList [1.0, 1.0]) network'
+predict (fromList [1, 0]) n'
 ```
 
-That's all there is to it. Pass in a vector (which, in this library is a matrix) and a network object to get out a predicted output. Given that the network trained properly, you should get a value close to 1.
+LambdaNet at least attempts to follow a Scikit-Learn style naming scheme
+with `fit` and `predict` functions.
 
-### Extending the Library
+### Storing and Loading
 
-The entire library is mean to be as extensible as possible and to allow you to create new types of, well, anything.
+Once a network has been trained, the weights and biases can be stored in
+a file:
 
-### Todo
+```
+saveNetwork "xor.ann" n'
+```
 
-- [ ] Train Until with Predicates
-- [ ] Selection functions for SGD or online learning
-- [ ] Regularization Cost Functions
-- [ ] RProp Trainer
-- [ ] RMSProp Trainer
+By calling `saveNetwork` with a file path, you can save the state of the
+network.
 
-## Generating the Documentation Images:
+Loading a network requires passing in a list of layer definitions
+for the original network, but will load all the weights and biases of the
+saved network:
+
+```
+n'' <- loadNetwork "xor.ann" [l, l', l'']
+```
+
+Note that the loadNetwork function returns an IO (Network), you can't simply
+call predict or train on the objet returned by loadNetwork. Using the
+approach in XOR.hs should allow you to work with the returned object.
+
+## Currently Under Development
+
+What has been outlined above is only the first stages of LambdaNet. I intend
+to support some additional features, such as:
+  - Selection functions
+  - Regularization functions
+  - Additional trainer types (RProp, RMSProp)
+  - Additional cost functions
+  - Training with a stop condition
+
+### Selection Functions
+
+I am close to providing full support for selection functions, which
+break up a dataset for each round of training. The currently provided
+selection functions are:
+  - `minibatch n` - You must provide an n and partially apply it to minibatch to get a valid selection function. This function updates the network after every n passes.
+  - `online` - Using this function means that the network updates after every training example.
+
+### Regularization Functions and Momentum
+
+Standard backprop training is subject to overfitting and falling into local
+minima. By providing support for regularization and momentum, LambdaNet
+will be able to provide more extensible and robust training.
+
+### Training Functions with Predicates
+
+Perhaps the most pressing update is providing a training function that
+supports a stopping condition and continues to run until the stopping
+condition is met.
+
+## Generating the Documentation Images
 
 All the documentation for the network was generated in the following manner. First, from the Haskell REPL, use the following commands:
 
@@ -118,7 +234,9 @@ Then, in the docs folder, run:
 python analysis.py
 ```
 
-## Our fearless leader
-<center>
-  <img src="http://fc07.deviantart.net/fs71/f/2013/009/f/a/gabe_newell__the_hero_of_us_all_by_radulfgreyhammer-d5r0ecr.jpg?raw=true" alt="Our fearless leader" height="250"/>
-</center>
+Note that I am currently working on removing the Python image analysis
+from the library, and switching it with Haskell and gnuplot. I'm also
+working on using the generated images in network documentation.
+
+## Our Fearless Leader
+<img src="http://fc07.deviantart.net/fs71/f/2013/009/f/a/gabe_newell__the_hero_of_us_all_by_radulfgreyhammer-d5r0ecr.jpg?raw=true" alt="Our fearless leader" height="250"/>

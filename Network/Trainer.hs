@@ -139,7 +139,7 @@ hiddenDeltas n prevDelta is = if length (layers n) <= 1 then []
         w = weightMatrix (head $ layers n)
         spv = mapVector (activation' (neuron (head $ layers n))) (head is)
 
--- | Use the cost function to determine the e
+-- | Use the cost function to determine the error of a network
 evaluate :: (Floating (Vector a), Container Vector a, Product a)
   => BackpropTrainer a -> Network a -> TrainingData a -> a
 evaluate t n example = (cost t) (snd example) (predict (fst example) n)
