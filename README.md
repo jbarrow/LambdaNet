@@ -64,7 +64,7 @@ have tools to support data handling.
 ### Layer Definitions
 
 The first step in creating a network is to define a list of layer
-definintions. The type layer definition takes a neuron type, a count of
+definitions. The type layer definition takes a neuron type, a count of
 neurons in the layer, and a connectivity function.
 
 Creating the layer definitions for a three-layer XOR network, with
@@ -186,7 +186,7 @@ n'' <- loadNetwork "xor.ann" [l, l', l'']
 ```
 
 Note that the loadNetwork function returns an IO (Network), you can't simply
-call predict or train on the objet returned by loadNetwork. Using the
+call predict or train on the object returned by loadNetwork. Using the
 approach in XOR.hs should allow you to work with the returned object.
 
 ## Currently Under Development
