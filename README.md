@@ -12,6 +12,15 @@ The library comes with a pre-defined set of functions that can be composed
 in many ways to operate on real-world data. These will be enumerated later
 in the documentation.
 
+## Installation
+
+LambdaNet relies on the cabal packages hmatrix, random-shuffle, and split,
+which must all be installed before it can be used. (Check the cabal file
+for dependencies).
+
+Once the dependencies are resolved, you can simply `git clone` LambdaNet
+to begin using it.
+
 ## Using LambdaNet
 
 Using LambdaNet to rapidly prototype networks using built-in functions
