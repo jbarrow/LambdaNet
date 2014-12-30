@@ -238,5 +238,3 @@ Note that I am currently working on removing the Python image analysis
 from the library, and switching it with Haskell and gnuplot. I'm also
 working on using the generated images in network documentation.
 
-## Our Fearless Leader
-<img src="http://fc07.deviantart.net/fs71/f/2013/009/f/a/gabe_newell__the_hero_of_us_all_by_radulfgreyhammer-d5r0ecr.jpg?raw=true" alt="Our fearless leader" height="250"/>
