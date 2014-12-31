@@ -2,7 +2,7 @@
 -- documentation, see http://haskell.org/cabal/users-guide/
 
 name:                LambdaNet
-version:             0.1.0.0
+version:             0.1.0.1
 synopsis:            A configurable and extensible neural network library
 description:         LambdaNet is an artificial neural network library that allows
                      users to compose their own networks from function primitives.
@@ -19,7 +19,7 @@ library
   exposed-modules:     Network.Network, Network.Neuron, Network.Layer, Network.Trainer
   -- other-modules:
   build-depends:
-    base ==4.5.*,
+    base >= 4 && < 5,
     hmatrix == 0.16.0.6,
     random,
     random-shuffle >= 0.0.4,
