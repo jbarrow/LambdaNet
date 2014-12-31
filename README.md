@@ -29,8 +29,9 @@ the data into the right form may be more difficult). However, extending
 the library may require a more in-depth knowledge of Haskell and
 functional programming techniques.
 
-You can find a quick example of using the network in `XOR.hs`. You can
-run the file in your REPL to see the results:
+You can find a quick example of using the network in `XOR.hs`. Once LambdaNet
+is installed, download XOR.hs, and then you can run the file in your REPL to
+see the results:
 
 ```
 :l XOR.hs
