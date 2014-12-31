@@ -14,12 +14,12 @@ in the documentation.
 
 ## Installation
 
-LambdaNet relies on the cabal packages hmatrix, random-shuffle, and split,
-which must all be installed before it can be used. (Check the cabal file
-for dependencies).
+LambdaNet can be installed through Cabal:
 
-Once the dependencies are resolved, you can simply `git clone` LambdaNet
-to begin using it.
+```
+cabal update
+cabal install LambdaNet
+```
 
 ## Using LambdaNet
 
@@ -246,4 +246,3 @@ python analysis.py
 Note that I am currently working on removing the Python image analysis
 from the library, and switching it with Haskell and gnuplot. I'm also
 working on using the generated images in network documentation.
-
