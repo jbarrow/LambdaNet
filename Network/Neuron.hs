@@ -13,7 +13,6 @@ module Network.Neuron
 , tanh'
 , reclu
 , reclu'
-, input
 ) where
 
 -- | Using this structure allows users of the library to create their own
@@ -63,7 +62,3 @@ reclu t = log (1 + exp t)
 --   sigmoid.
 reclu' :: (Floating a) => a -> a
 reclu' t = sigmoid t
-
--- | Input neurons
-input :: (Floating a) => a -> a
-input t = t
