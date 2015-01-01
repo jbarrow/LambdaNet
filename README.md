@@ -143,8 +143,17 @@ network, and the training data, and returns a new, trained network.
 For the XOR network, this is:
 
 ```
-let n' = fit online t n trainData
+let n' = trainUntilErrorLessThan n t dat 0.01
 ```
+
+LambdaNet provides three training methods:
+  - `trainUntil`
+  - `trainUntilErrorLessThan`
+  - `trainNTimes`
+
+The `trainUntil` function takes a TrainCompletionPredicate (check Network/Trainer.hs)
+for more information, and the last two are simply wrappers for the first one that
+provide specific predicates.
 
 #### Selection Functions
 
@@ -197,7 +206,6 @@ to support some additional features, such as:
   - Regularization functions
   - Additional trainer types (RProp, RMSProp)
   - Additional cost functions
-  - Training with a stop condition
 
 ### Selection Functions
 
@@ -212,12 +220,6 @@ selection functions are:
 Standard backprop training is subject to overfitting and falling into local
 minima. By providing support for regularization and momentum, LambdaNet
 will be able to provide more extensible and robust training.
-
-### Training Functions with Predicates
-
-Perhaps the most pressing update is providing a training function that
-supports a stopping condition and continues to run until the stopping
-condition is met.
 
 ## Generating the Documentation Images
 

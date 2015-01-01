@@ -6,6 +6,7 @@ module Network.Trainer
 , CostFunction'
 , TrainingData
 , Selection
+, TrainCompletionPredicate
 
 , trainNTimes
 , trainUntilErrorLessThan
@@ -67,10 +68,6 @@ type TrainCompletionPredicate a = Network a -> BackpropTrainer a -> [TrainingDat
 --   training data N times
 trainNTimes :: (Floating (Vector a), Container Vector a, Product a)
   => Network a  -> BackpropTrainer a -> [TrainingData a] -> Int -> Network a
--- trainNTimes network trainer dat 0 = network
--- trainNTimes network trainer dat n =
---   trainNTimes network' trainer dat (n - 1)
---     where network' = fit online trainer network dat
 trainNTimes network trainer dat n =
   trainUntil network trainer dat completion 0
   where completion _ _ _ n' = (n == n')
