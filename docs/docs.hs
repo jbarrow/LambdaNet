@@ -30,6 +30,6 @@ main = do
   writeDat "derivative_tanh.txt" (computeApproximation tanh') 5
 
   putStr "Generating Distributions..."
---  writeDat "docs/normal.txt" (take 20000 (randomList normals (mkStdGen 4))) 5
---  writeDat "docs/uniform.txt" (take 20000 (randomList uniforms (mkStdGen 4))) 5
+  writeDat "normal.txt" (take 20000 (randomList normals (mkStdGen 4)) :: [Float]) 5
+  writeDat "uniform.txt" (take 20000 (randomList uniforms (mkStdGen 4)) :: [Float]) 5
   writeDat "bounded_uniform.txt" (take 20000 (randomList (boundedUniforms (-0.5 :: Float, 0.5 :: Float)) (mkStdGen 4))) 5
