@@ -7,6 +7,9 @@ module Network.Trainer
 , TrainingData
 , Selection
 
+, trainNTimes
+, trainUntil
+
 , quadraticCost
 , quadraticCost'
 , minibatch
@@ -52,6 +55,29 @@ type TrainingData a = (Vector a, Vector a)
 
 -- | A selection function for performing gradient descent
 type Selection a = [TrainingData a] -> [[TrainingData a]]
+
+-- |
+type TrainCompletionPredicate a = Network a -> [TrainingData a] -> Int -> Bool
+
+-- |
+trainNTimes :: (Floating (Vector a), Container Vector a, Product a)
+  => Network a  -> BackpropTrainer a -> [TrainingData a] -> Int -> Network a
+-- trainNTimes network trainer dat 0 = network
+-- trainNTimes network trainer dat n =
+--   trainNTimes network' trainer dat (n - 1)
+--     where network' = fit online trainer network dat
+trainNTimes network trainer dat n =
+  trainUntil network trainer dat completion 0
+  where completion _ _ n' = (n == n')
+
+-- |
+trainUntil :: (Floating (Vector a), Container Vector a, Product a)
+  => Network a -> BackpropTrainer a -> [TrainingData a] -> TrainCompletionPredicate a -> Int -> Network a
+trainUntil network trainer dat completion n =
+  if completion network dat n
+    then network
+    else trainUntil network' trainer dat completion (n+1)
+    where network' = fit online trainer network dat
 
 -- | The quadratic cost function (1/2) * sum (y - a) ^ 2
 quadraticCost :: (Floating (Vector a), Container Vector a)

@@ -8,14 +8,14 @@ import System.IO
 import System.Random
 import Numeric.LinearAlgebra
 
-trainNtimes :: (Floating (Vector a), Container Vector a, Product a)
-  => Network a -> Int -> BackpropTrainer a -> Network a
-trainNtimes n 0 t = n
-trainNtimes n c t = trainNtimes (fit online t n
-  [(fromList [0, 1], fromList [1]),
-   (fromList [1, 1], fromList [0]),
-   (fromList [1, 0], fromList [1]),
-   (fromList [0, 0], fromList [0])]) (c - 1) t
+-- trainNtimes :: (Floating (Vector a), Container Vector a, Product a)
+--   => Network a -> Int -> BackpropTrainer a -> Network a
+-- trainNtimes n 0 t = n
+-- trainNtimes n c t = trainNtimes (fit online t n
+--   [(fromList [0, 1], fromList [1]),
+--    (fromList [1, 1], fromList [0]),
+--    (fromList [1, 0], fromList [1]),
+--    (fromList [0, 0], fromList [0])]) (c - 1) t
 
 main :: IO ()
 main = do
@@ -26,8 +26,12 @@ main = do
   let n = createNetwork normals (mkStdGen 4) [l, l', l'']
 
   let t = BackpropTrainer (3 :: Float) quadraticCost quadraticCost'
-  let n' = trainNtimes n 1000 t
-
+  let dat = [(fromList [0, 1], fromList [1]),
+             (fromList [1, 1], fromList [0]),
+             (fromList [1, 0], fromList [1]),
+             (fromList [0, 0], fromList [0])]
+  let n' = trainNTimes n t dat 1000
+  
   putStrLn "==> XOR predictions: "
   print $ predict (fromList [0, 0]) n'
   print $ predict (fromList [1, 0]) n'
