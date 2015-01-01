@@ -26,12 +26,10 @@ main = do
   let n = createNetwork normals (mkStdGen 4) [l, l', l'']
 
   let t = BackpropTrainer (3 :: Float) quadraticCost quadraticCost'
-  let dat = [(fromList [0, 1], fromList [1]),
-             (fromList [1, 1], fromList [0]),
-             (fromList [1, 0], fromList [1]),
-             (fromList [0, 0], fromList [0])]
-  let n' = trainNTimes n t dat 1000
-  
+  let dat = [(fromList [0, 1], fromList [1]), (fromList [1, 1], fromList [0]), (fromList [1, 0], fromList [1]), (fromList [0, 0], fromList [0])]
+  -- let n' = trainNTimes n t dat 1000
+  let n' = trainUntilErrorLessThan n t dat 0.0000001
+
   putStrLn "==> XOR predictions: "
   print $ predict (fromList [0, 0]) n'
   print $ predict (fromList [1, 0]) n'

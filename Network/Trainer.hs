@@ -8,6 +8,7 @@ module Network.Trainer
 , Selection
 
 , trainNTimes
+, trainUntilErrorLessThan
 , trainUntil
 
 , quadraticCost
@@ -57,7 +58,7 @@ type TrainingData a = (Vector a, Vector a)
 type Selection a = [TrainingData a] -> [[TrainingData a]]
 
 -- |
-type TrainCompletionPredicate a = Network a -> [TrainingData a] -> Int -> Bool
+type TrainCompletionPredicate a = Network a -> BackpropTrainer a -> [TrainingData a] -> Int -> Bool
 
 -- |
 trainNTimes :: (Floating (Vector a), Container Vector a, Product a)
@@ -68,13 +69,26 @@ trainNTimes :: (Floating (Vector a), Container Vector a, Product a)
 --     where network' = fit online trainer network dat
 trainNTimes network trainer dat n =
   trainUntil network trainer dat completion 0
-  where completion _ _ n' = (n == n')
+  where completion _ _ _ n' = (n == n')
+
+-- |
+trainUntilErrorLessThan :: (Floating (Vector a), Container Vector a, Product a, Ord a)
+  => Network a  -> BackpropTrainer a -> [TrainingData a] -> a -> Network a
+trainUntilErrorLessThan network trainer dat err =
+  trainUntil network trainer dat (networkErrorLessThan err) 0
+
+-- |
+networkErrorLessThan :: (Floating (Vector a), Container Vector a, Product a, Ord a)
+  => a -> Network a -> BackpropTrainer a -> [TrainingData a] -> Int -> Bool
+networkErrorLessThan err network trainer dat _ = meanError < err
+  where meanError = (sum errors) / fromIntegral (length errors)
+        errors = map (evaluate trainer network) dat
 
 -- |
 trainUntil :: (Floating (Vector a), Container Vector a, Product a)
   => Network a -> BackpropTrainer a -> [TrainingData a] -> TrainCompletionPredicate a -> Int -> Network a
 trainUntil network trainer dat completion n =
-  if completion network dat n
+  if completion network trainer dat n
     then network
     else trainUntil network' trainer dat completion (n+1)
     where network' = fit online trainer network dat
