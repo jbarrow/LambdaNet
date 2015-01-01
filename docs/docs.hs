@@ -20,16 +20,16 @@ writeDat filename lst prec =
 
 main = do
   putStr "Generating Activation Functions...\n"
-  writeDat "docs/sigmoid.txt" (computeApproximation sigmoid) 5
-  writeDat "docs/reclu.txt" (computeApproximation reclu) 5
-  writeDat "docs/tanh.txt" (computeApproximation tanh) 5
+  writeDat "sigmoid.txt" (computeApproximation sigmoid) 5
+  writeDat "reclu.txt" (computeApproximation reclu) 5
+  writeDat "tanh.txt" (computeApproximation tanh) 5
 
   putStr "Generating Activation Function Derivatives...\n"
-  writeDat "docs/derivative_sigmoid.txt" (computeApproximation sigmoid') 5
-  writeDat "docs/derivative_reclu.txt" (computeApproximation reclu') 5
-  writeDat "docs/derivative_tanh.txt" (computeApproximation tanh') 5
+  writeDat "derivative_sigmoid.txt" (computeApproximation sigmoid') 5
+  writeDat "derivative_reclu.txt" (computeApproximation reclu') 5
+  writeDat "derivative_tanh.txt" (computeApproximation tanh') 5
 
   putStr "Generating Distributions..."
---  writeDat "docs/normal.txt" (take 20000 (randomList normals (mkStdGen 4))) 5
---  writeDat "docs/uniform.txt" (take 20000 (randomList uniforms (mkStdGen 4))) 5
-  writeDat "docs/bounded_uniform.txt" (take 20000 (randomList (boundedUniforms (-0.5 :: Float, 0.5 :: Float)) (mkStdGen 4))) 5
+  writeDat "normal.txt" (take 20000 (randomList normals (mkStdGen 4)) :: [Float]) 5
+  writeDat "uniform.txt" (take 20000 (randomList uniforms (mkStdGen 4)) :: [Float]) 5
+  writeDat "bounded_uniform.txt" (take 20000 (randomList (boundedUniforms (-0.5 :: Float, 0.5 :: Float)) (mkStdGen 4))) 5

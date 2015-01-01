@@ -34,8 +34,7 @@ is installed, download XOR.hs, and then you can run the file in your REPL to
 see the results:
 
 ```
-:l XOR.hs
-main
+runhaskell examples/XOR.hs
 ```
 
 The rest of this section dissects the XOR network in order to talk about
@@ -222,25 +221,10 @@ condition is met.
 
 ## Generating the Documentation Images
 
-All the documentation for the network was generated in the following manner. First, from the Haskell REPL, use the following commands:
+All the documentation for the network was generated in the following manner. In the docs folder, run:
 
 ```
-:l docs.hs
-writeDat "docs/sigmoid.txt" (computeApproximation sigmoid) 5
-writeDat "docs/reclu.txt" (computeApproximation reclu) 5
-writeDat "docs/tanh.txt" (computeApproximation tanh) 5
-writeDat "docs/derivative_sigmoid.txt" (computeApproximation sigmoid') 5
-writeDat "docs/derivative_reclu.txt" (computeApproximation reclu') 5
-writeDat "docs/derivative_tanh.txt" (computeApproximation tanh') 5
-
-let g = mkStdGen 4
-writeDat "docs/normal.txt" (take 20000 (randomList normals g)) 5
-writeDat "docs/uniform.txt" (take 20000 (randomList uniforms g)) 5
-```
-
-Then, in the docs folder, run:
-
-```
+runhaskell docs.hs
 python analysis.py
 ```
 
