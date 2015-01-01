@@ -57,10 +57,14 @@ type TrainingData a = (Vector a, Vector a)
 -- | A selection function for performing gradient descent
 type Selection a = [TrainingData a] -> [[TrainingData a]]
 
--- |
+-- | A predicate (given a network, trainer, a list of training
+--   data, and the number of [fit]s performed) that
+--   tells the trainer to stop training
 type TrainCompletionPredicate a = Network a -> BackpropTrainer a -> [TrainingData a] -> Int -> Bool
 
--- |
+-- | Given a network, a trainer, a list of training data,
+--   and N, this function trains the network with the list of
+--   training data N times
 trainNTimes :: (Floating (Vector a), Container Vector a, Product a)
   => Network a  -> BackpropTrainer a -> [TrainingData a] -> Int -> Network a
 -- trainNTimes network trainer dat 0 = network
@@ -71,27 +75,36 @@ trainNTimes network trainer dat n =
   trainUntil network trainer dat completion 0
   where completion _ _ _ n' = (n == n')
 
--- |
+-- | Given a network, a trainer, a list of training data,
+--   and an error value, this function trains the network with the list of
+--   training data until the error of the network (calculated
+--   by averaging the errors of each training data) is less than
+--   the given error value
 trainUntilErrorLessThan :: (Floating (Vector a), Container Vector a, Product a, Ord a)
   => Network a  -> BackpropTrainer a -> [TrainingData a] -> a -> Network a
 trainUntilErrorLessThan network trainer dat err =
   trainUntil network trainer dat (networkErrorLessThan err) 0
 
--- |
+-- | This function returns true if the error of the network is less than
+--   a given error value, given a network, a trainer, a list of
+--   training data, and a counter (should start with 0)
+--   Note: Is there a way to have a counter with a recursive function
+--         without providing 0?
 networkErrorLessThan :: (Floating (Vector a), Container Vector a, Product a, Ord a)
   => a -> Network a -> BackpropTrainer a -> [TrainingData a] -> Int -> Bool
 networkErrorLessThan err network trainer dat _ = meanError < err
   where meanError = (sum errors) / fromIntegral (length errors)
         errors = map (evaluate trainer network) dat
 
--- |
+-- | This function trains a network until a given TrainCompletionPredicate
+--   is satisfied.
 trainUntil :: (Floating (Vector a), Container Vector a, Product a)
   => Network a -> BackpropTrainer a -> [TrainingData a] -> TrainCompletionPredicate a -> Int -> Network a
 trainUntil network trainer dat completion n =
   if completion network trainer dat n
     then network
     else trainUntil network' trainer dat completion (n+1)
-    where network' = fit online trainer network dat
+      where network' = fit online trainer network dat
 
 -- | The quadratic cost function (1/2) * sum (y - a) ^ 2
 quadraticCost :: (Floating (Vector a), Container Vector a)
