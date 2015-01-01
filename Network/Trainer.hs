@@ -4,6 +4,7 @@ module Network.Trainer
 ( BackpropTrainer(..)
 , CostFunction
 , CostFunction'
+, TrainingData
 , Selection
 
 , quadraticCost
@@ -45,6 +46,9 @@ type CostFunction a = Vector a -> Vector a -> a
 
 -- | A CostFunction' (derivative) is used in backPropagation
 type CostFunction' a = Vector a -> Vector a -> Vector a
+
+-- | A tuple of (input, expected output)
+type TrainingData a = (Vector a, Vector a)
 
 -- | A selection function for performing gradient descent
 type Selection a = [TrainingData a] -> [[TrainingData a]]

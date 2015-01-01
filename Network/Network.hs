@@ -2,7 +2,6 @@
 
 module Network.Network
 ( Network(..)
-, TrainingData
 
 , createNetwork
 , loadNetwork
@@ -22,9 +21,6 @@ import Data.Binary (encode, decode, Binary(..))
 -- | Networks are constructed front to back. Start by adding an input layer,
 --   then each hidden layer, and finally an output layer.
 data Network a = Network { layers :: [Layer a] }
-
--- | A tuple of (input, expected output)
-type TrainingData a = (Vector a, Vector a)
 
 -- | The createNetwork function takes in a random transform used for weight
 --   initialization, a source of entropy, and a list of layer definitions,
