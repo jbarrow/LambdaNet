@@ -1,0 +1,6 @@
+0.2.0.0 - Introduced selection functions and a training function with a
+          stop condition.
+
+0.1.0.1 - Updated the Cabal file to fix failing builds
+
+0.1.0.0 - Initial build
