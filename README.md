@@ -143,7 +143,7 @@ network, and the training data, and returns a new, trained network.
 For the XOR network, this is:
 
 ```
-let n' = trainUntilErrorLessThan n t dat 0.01
+let n' = trainUntilErrorLessThan n t online dat 0.01
 ```
 
 LambdaNet provides three training methods:
@@ -155,12 +155,23 @@ The `trainUntil` function takes a TrainCompletionPredicate (check Network/Traine
 for more information, and the last two are simply wrappers for the first one that
 provide specific predicates.
 
+The calculated error is what is returned by the cost function.
+
+#### Cost Functions
+
+Currently, the only provided cost function is the quadratic error cost function,
+`quadraticCost` and its derivative, `quadraticCost'`. I am about to add the
+cross-entropy cost function.
+
 #### Selection Functions
 
-The first argument to the `fit` function is a selection function, which
-breaks the shuffled training data into batches of a specified size.
-They are not currently fully supported, and progress is discussed a little
-later.
+Selection functions break up a dataset for each round of training. The currently provided
+selection functions are:
+  - `minibatch n` - You must provide an n and partially apply it to minibatch to get a valid selection function. This function updates the network after every n passes.
+  - `online` - Using this function means that the network updates after every training example.
+
+For small data sets, it's better to use online, while for larger data sets, the training
+can occur much faster if you use a reasonably sized minibatch.
 
 ### Using the Network
 
@@ -202,18 +213,9 @@ approach in XOR.hs should allow you to work with the returned object.
 
 What has been outlined above is only the first stages of LambdaNet. I intend
 to support some additional features, such as:
-  - Selection functions
   - Regularization functions
   - Additional trainer types (RProp, RMSProp)
   - Additional cost functions
-
-### Selection Functions
-
-I am close to providing full support for selection functions, which
-break up a dataset for each round of training. The currently provided
-selection functions are:
-  - `minibatch n` - You must provide an n and partially apply it to minibatch to get a valid selection function. This function updates the network after every n passes.
-  - `online` - Using this function means that the network updates after every training example.
 
 ### Regularization Functions and Momentum
 

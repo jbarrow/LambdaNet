@@ -139,11 +139,15 @@ backprop :: (Floating (Vector a), Container Vector a, Product a)
 backprop t n es =
   updateNetwork (length es) t (foldl (calculateNablas t n) emptyNetwork es) n
 
+-- | Given the size of the minibatch, the trainer, the nablas for each layer, given
+--   as a network, and the network itself, return a network with updated wieghts.
 updateNetwork :: (Floating (Vector a), Container Vector a, Product a)
   => Int -> BackpropTrainer a -> Network a -> Network a -> Network a
 updateNetwork mag t nablas n = addNetworks n
   (Network $ map (scaleLayer $ -1 * (eta t) / (fromIntegral mag)) (layers nablas))
 
+-- | Calculate the nablas for a minibatch and return them as a network (so each
+--   weight and bias gets its own nabla).
 calculateNablas :: (Floating (Vector a), Container Vector a, Product a)
   => BackpropTrainer a -> Network a -> Network a -> TrainingData a -> Network a
 calculateNablas t n nablas e = Network $ map (updateLayer t) (zip3 (layers n) ds os)
