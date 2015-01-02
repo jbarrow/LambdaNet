@@ -14,7 +14,8 @@ main = do
   let l' = LayerDefinition sigmoidNeuron 2 connectFully
   let l'' = LayerDefinition sigmoidNeuron 1 connectFully
 
-  let n = createNetwork normals (mkStdGen 4) [l, l', l'']
+  g <- newStdGen
+  let n = createNetwork normals g [l, l', l'']
 
   let t = BackpropTrainer (3 :: Float) quadraticCost quadraticCost'
   let dat = [(fromList [0, 1], fromList [1]), (fromList [1, 1], fromList [0]), (fromList [1, 0], fromList [1]), (fromList [0, 0], fromList [0])]

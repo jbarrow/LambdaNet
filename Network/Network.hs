@@ -46,17 +46,16 @@ createNetwork t g [] = Network []
 createNetwork t g (layerDef : []) = Network []
 createNetwork t g (layerDef : layerDef' : otherLayerDefs) =
   Network (layer : layers restOfNetwork)
-  where layer = createLayer t g layerDef layerDef'
-        restOfNetwork = createNetwork t g (layerDef' : otherLayerDefs)
+  where layer = createLayer t g' layerDef layerDef'
+        restOfNetwork = createNetwork t g'' (layerDef' : otherLayerDefs)
+        (g', g'') = split g
 
 -- | Our Unit, an empty network with no layers
-emptyNetwork :: (Product a)
-  => Network a
+emptyNetwork :: Network a
 emptyNetwork = Network []
 
 -- | A boolean to check if the network is the unit network or not
-isEmptyNetwork :: (Product a)
-  => Network a -> Bool
+isEmptyNetwork :: Network a -> Bool
 isEmptyNetwork n = length (layers n) == 0
 
 -- | A function to combine two networks

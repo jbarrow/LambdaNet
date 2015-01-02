@@ -12,6 +12,7 @@ module Network.Layer
 , showableToLayer
 
 , createLayer
+, scaleLayer
 , connectFully
 , randomList
 , boxMuller
@@ -73,12 +74,18 @@ createLayer t g layerDef layerDef' =
   Layer (randomMatrix * (connectivity i j))
         (randomVector * bias)
         (neuronDef layerDef)
-  where randomMatrix = (i >< j) (randomList t g)
-        randomVector = i |> (randomList t g)
+  where randomMatrix = (i >< j) (randomList t g')
+        randomVector = i |> (randomList t g'')
         i = neuronCount layerDef'
         j = neuronCount layerDef
         connectivity = connect layerDef'
         bias = i |> (repeat 1) -- bias connectivity (full)
+        (g', g'') = split g
+
+scaleLayer :: (Floating (Vector a), Container Vector a)
+  => a -> Layer a -> Layer a
+scaleLayer factor l =
+  Layer (factor `scale` (weightMatrix l)) (factor `scale` (biasVector l)) (neuron l)
 
 -- | The connectFully function takes the number of input neurons for a layer, i,
 --   and the number of output neurons of a layer, j, and returns an i x j
