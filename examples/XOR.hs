@@ -19,14 +19,15 @@ main = do
 
   let t = BackpropTrainer (3 :: Float) quadraticCost quadraticCost'
   let dat = [(fromList [0, 1], fromList [1]), (fromList [1, 1], fromList [0]), (fromList [1, 0], fromList [1]), (fromList [0, 0], fromList [0])]
-  let n' = trainNTimes n t dat 1000
+
+  let n' = trainNTimes n t online dat 1000
 
   putStrLn "==> XOR predictions: "
   print $ predict (fromList [0, 0]) n'
   print $ predict (fromList [1, 0]) n'
   print $ predict (fromList [0, 1]) n'
   print $ predict (fromList [1, 1]) n'
-
+  
   saveNetwork "xor.ann" n'
 
   putStrLn $ "==> Network saved and reloaded: "

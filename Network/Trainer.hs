@@ -20,6 +20,8 @@ module Network.Trainer
 , inputs
 , outputs
 , deltas
+, hiddenDeltas
+, calculateNablas
 , fit
 , evaluate
 ) where
@@ -67,9 +69,9 @@ type TrainCompletionPredicate a = Network a -> BackpropTrainer a -> [TrainingDat
 --   and N, this function trains the network with the list of
 --   training data N times
 trainNTimes :: (Floating (Vector a), Container Vector a, Product a)
-  => Network a  -> BackpropTrainer a -> [TrainingData a] -> Int -> Network a
-trainNTimes network trainer dat n =
-  trainUntil network trainer dat completion 0
+  => Network a  -> BackpropTrainer a -> Selection a -> [TrainingData a] -> Int -> Network a
+trainNTimes network trainer s dat n =
+  trainUntil network trainer s dat completion 0
   where completion _ _ _ n' = (n == n')
 
 -- | Given a network, a trainer, a list of training data,
@@ -78,9 +80,9 @@ trainNTimes network trainer dat n =
 --   by averaging the errors of each training data) is less than
 --   the given error value
 trainUntilErrorLessThan :: (Floating (Vector a), Container Vector a, Product a, Ord a)
-  => Network a  -> BackpropTrainer a -> [TrainingData a] -> a -> Network a
-trainUntilErrorLessThan network trainer dat err =
-  trainUntil network trainer dat (networkErrorLessThan err) 0
+  => Network a  -> BackpropTrainer a -> Selection a -> [TrainingData a] -> a -> Network a
+trainUntilErrorLessThan network trainer s dat err =
+  trainUntil network trainer s dat (networkErrorLessThan err) 0
 
 -- | This function returns true if the error of the network is less than
 --   a given error value, given a network, a trainer, a list of
@@ -96,12 +98,12 @@ networkErrorLessThan err network trainer dat _ = meanError < err
 -- | This function trains a network until a given TrainCompletionPredicate
 --   is satisfied.
 trainUntil :: (Floating (Vector a), Container Vector a, Product a)
-  => Network a -> BackpropTrainer a -> [TrainingData a] -> TrainCompletionPredicate a -> Int -> Network a
-trainUntil network trainer dat completion n =
+  => Network a -> BackpropTrainer a -> Selection a -> [TrainingData a] -> TrainCompletionPredicate a -> Int -> Network a
+trainUntil network trainer s dat completion n =
   if completion network trainer dat n
     then network
-    else trainUntil network' trainer dat completion (n+1)
-      where network' = fit online trainer network dat
+    else trainUntil network' trainer s dat completion (n+1)
+      where network' = fit s trainer network dat
 
 -- | The quadratic cost function (1/2) * sum (y - a) ^ 2
 quadraticCost :: (Floating (Vector a), Container Vector a)
@@ -134,23 +136,27 @@ fit s t n examples = foldl (backprop t) n $
 -- | Perform backpropagation on a single training data instance.
 backprop :: (Floating (Vector a), Container Vector a, Product a)
   => BackpropTrainer a -> Network a -> [TrainingData a] -> Network a
-backprop t n (e:es) = updateNetwork t n
-  (deltas t n e) (outputs (fst e) n)
+backprop t n es =
+  updateNetwork (length es) t (foldl (calculateNablas t n) emptyNetwork es) n
 
--- | Update the weights and biases of a network given a list of deltas
 updateNetwork :: (Floating (Vector a), Container Vector a, Product a)
-  => BackpropTrainer a -> Network a -> [Vector a] -> [Vector a] -> Network a
-updateNetwork t n deltas os =
-  Network $ map (updateLayer t) (zip3 (layers n) deltas os)
+  => Int -> BackpropTrainer a -> Network a -> Network a -> Network a
+updateNetwork mag t nablas n = addNetworks n
+  (Network $ map (scaleLayer $ -1 * (eta t) / (fromIntegral mag)) (layers nablas))
+
+calculateNablas :: (Floating (Vector a), Container Vector a, Product a)
+  => BackpropTrainer a -> Network a -> Network a -> TrainingData a -> Network a
+calculateNablas t n nablas e = Network $ map (updateLayer t) (zip3 (layers n) ds os)
+  where ds = deltas t n e
+        os = outputs (fst e) n
 
 -- | The mapped function to update the weight and biases in a single layer
 updateLayer :: (Floating (Vector a), Container Vector a, Product a)
   => BackpropTrainer a -> (Layer a, Vector a, Vector a) -> Layer a
 updateLayer t (l, delta, output) = Layer newWeight newBias n
   where n = neuron l
-        newWeight = (weightMatrix l) -
-          (eta t) `scale` ((reshape 1 delta) <> (reshape (dim output) output))
-        newBias = (biasVector l) - (eta t) `scale` delta
+        newWeight = ((reshape 1 delta) <> (reshape (dim output) output))
+        newBias = delta
 
 -- | The outputs function scans over each layer of the network and stores the
 --   activated results
