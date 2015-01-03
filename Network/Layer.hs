@@ -4,11 +4,9 @@
 module Network.Layer
 ( LayerDefinition(..)
 , Layer(..)
-, ShowableLayer(..)
 , Connectivity
 , RandomTransform
 
-, layerToShowable
 , showableToLayer
 
 , createLayer
@@ -38,20 +36,11 @@ data LayerDefinition a = LayerDefinition { neuronDef :: (Neuron a)
 data Layer a = Layer { weightMatrix :: (Matrix a)
                      , biasVector :: (Vector a)
                      , neuron :: (Neuron a)
-                     }
+                     } deriving Show
 
--- | We have to define a new type to be able to serialize and store
---   networks.
-data ShowableLayer a = ShowableLayer { weights :: (Matrix a)
-                                     , biases :: (Vector a)
-                                     } deriving Show
-
--- | We want Showable layer to be packable in the binary format, so we
---   define it as an instance of showable.
-
-instance (Element a, Binary a) => Binary (ShowableLayer a) where
-  put ShowableLayer{..} = do put weights; put biases
-  get = do weights <- get; biases <- get; return ShowableLayer{..}
+instance (Element a, Binary a) => Binary (Layer a) where
+  put Layer{..} = do put weightMatrix; put biasVector
+  get = do weightMatrix <- get; biasVector <- get; return Layer{..}
 
 -- | Connectivity is the type alias for a function that defines the connective
 --   matrix for two layers (fully connected, convolutionally connected, etc.)
@@ -93,18 +82,12 @@ scaleLayer factor l =
 connectFully :: Int -> Int -> Matrix Float
 connectFully i j = (i >< j) (repeat 1)
 
--- | We want to be able to convert between layers and showable layers,
---   and vice-versa
-layerToShowable :: (Floating (Vector a), Container Vector a, Floating a)
-  => Layer a -> ShowableLayer a
-layerToShowable l = ShowableLayer (weightMatrix l) (biasVector l)
-
 -- | To go from a showable to a layer, we also need a neuron type,
 --   which is an unfortunate restriction owed to Haskell's inability to
 --   serialize functions.
 showableToLayer :: (Floating (Vector a), Container Vector a, Floating a)
-  => (ShowableLayer a, LayerDefinition a) -> Layer a
-showableToLayer (s, d) = Layer (weights s) (biases s) (neuronDef d)
+  => (Layer a, LayerDefinition a) -> Layer a
+showableToLayer (s, d) = Layer (weightMatrix s) (biasVector s) (neuronDef d)
 
 -- | Initialize an infinite random list given a random transform and a source
 --   of entroy.

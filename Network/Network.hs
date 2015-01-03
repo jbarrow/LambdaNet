@@ -25,7 +25,7 @@ import Data.Binary (encode, decode, Binary(..))
 
 -- | Networks are constructed front to back. Start by adding an input layer,
 --   then each hidden layer, and finally an output layer.
-data Network a = Network { layers :: [Layer a] }
+data Network a = Network { layers :: [Layer a] } deriving Show
 
 -- | We gain the ability to combine two networks of the same proportions
 --   by abstracting a network as a monoid. This is useful in backpropagation
@@ -85,13 +85,13 @@ apply vector layer = mapVector sigma (weights <> vector + bias)
 
 -- | Given a filename and a network, we want to save the weights and biases
 --   of the network to the file for later use.
-saveNetwork :: (Binary (ShowableLayer a), Floating a, Floating (Vector a), Container Vector a)
+saveNetwork :: (Binary (Layer a), Floating a, Floating (Vector a), Container Vector a)
   => FilePath -> Network a -> IO ()
-saveNetwork file n = B.writeFile file (encode $ map layerToShowable (layers n))
+saveNetwork file n = B.writeFile file (encode (layers n))
 
 -- | Given a filename, and a list of layer definitions, we want to reexpand
 --   the data back into a network.
-loadNetwork :: (Binary (ShowableLayer a), Floating a, Floating (Vector a), Container Vector a)
+loadNetwork :: (Binary (Layer a), Floating a, Floating (Vector a), Container Vector a)
   => FilePath -> [LayerDefinition a] -> IO (Network a)
 loadNetwork file defs = B.readFile file >>= \sls ->
   return $ Network (map showableToLayer (zip (decode sls) defs))

@@ -20,20 +20,24 @@ module Network.Neuron
 --   derivative - and packaging them up into a neuron type.
 data Neuron a = Neuron { activation :: (ActivationFunction a)
                        , activation' :: (ActivationFunction' a)
+                       , description :: String
                        }
+
+instance (Floating a) => Show (Neuron a) where
+  show n = description n
 
 type ActivationFunction a = a -> a
 type ActivationFunction' a = a -> a
 
 -- | Our provided neuron types: sigmoid, tanh, reclu
 sigmoidNeuron :: (Floating a) => Neuron a
-sigmoidNeuron = Neuron sigmoid sigmoid'
+sigmoidNeuron = Neuron sigmoid sigmoid' "sigmoid"
 
 tanhNeuron :: (Floating a) => Neuron a
-tanhNeuron = Neuron tanh tanh'
+tanhNeuron = Neuron tanh tanh' "tanh"
 
 recluNeuron :: (Floating a) => Neuron a
-recluNeuron = Neuron reclu reclu'
+recluNeuron = Neuron reclu reclu' "reclu"
 
 -- | The sigmoid activation function, a standard activation function defined
 --   on the range (0, 1).
@@ -44,14 +48,14 @@ sigmoid t = 1 / (1 + exp (-1 * t))
 --   terms of the sigmoid function.
 sigmoid' :: (Floating a) => a -> a
 sigmoid' t = s * (1 - s)
-              where s = sigmoid t
+  where s = sigmoid t
 
 -- | The hyperbolic tangent activation function is provided in Prelude. Here
 --   we provide the derivative. As with the sigmoid function, the derivative
 --   of tanh can be computed in terms of tanh.
 tanh' :: (Floating a) => a -> a
 tanh' t = 1 - s ^ 2
-               where s = tanh t
+  where s = tanh t
 
 -- | The rectified linear activation function. This is a more "biologically
 --   accurate" activation function that still retains differentiability.
