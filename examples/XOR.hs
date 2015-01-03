@@ -4,6 +4,8 @@ import Network.Neuron
 import Network.Layer
 import Network.Network
 import Network.Trainer
+import Network.Trainer.BackpropTrainer
+
 import Network.Visualizations
 import System.IO
 import System.Random
