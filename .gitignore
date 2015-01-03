@@ -1,6 +1,7 @@
 *.class
 *.log
 *.ann
+*.png
 
 .DS_Store
 docs/*.txt

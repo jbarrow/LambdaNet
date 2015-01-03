@@ -4,6 +4,7 @@ import Network.Neuron
 import Network.Layer
 import Network.Network
 import Network.Trainer
+import Network.Visualizations
 import System.IO
 import System.Random
 import Numeric.LinearAlgebra
@@ -37,3 +38,6 @@ main = do
   print $ predict (fromList [1, 0]) n''
   print $ predict (fromList [0, 1]) n''
   print $ predict (fromList [1, 1]) n''
+
+  networkHistogram "weights.png" weightList n''
+  networkHistogram "biases.png" biasList n''

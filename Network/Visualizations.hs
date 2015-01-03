@@ -1,7 +1,7 @@
 {-# LANGUAGE FlexibleContexts #-}
 
 module Network.Visualizations
-( weightHistogram
+( networkHistogram
 , weightList
 , biasList
 ) where
@@ -13,20 +13,17 @@ import Network.Network
 import Network.Trainer
 import Data.Foldable (foldMap, )
 
-import Network.Histogram
+import Graphics.Histogram
 import GHC.Float
 
-weightList :: (Floating (Vector a), Container Vector a)
-  => Network a -> [a]
+weightList :: Network -> [Double]
 weightList n = concat $ map (toList . flatten . weightMatrix) (layers n)
 
-biasList :: (Floating (Vector a), Container Vector a)
-=> Network a -> [a]
+biasList :: Network -> [Double]
 biasList n = concat $ map (toList . biasVector) (layers n)
 
-weightHistogram :: (Floating (Vector a), Container Vector a)
-  => Network a -> IO ()
-weightHistogram n = do
-  let hist = histogram binSturges (weightList n)
-  plot "simple.png" hist
+networkHistogram :: FilePath -> (Network -> [Double]) -> Network -> IO ()
+networkHistogram filename listFunction n = do
+  let hist = histogram binSturges (listFunction n)
+  plot filename hist
   return ()
