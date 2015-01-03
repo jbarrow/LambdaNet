@@ -1,4 +1,4 @@
-{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE FlexibleContexts, InstanceSigs #-}
 
 module Network.Trainer
 ( BackpropTrainer(..)
@@ -37,8 +37,8 @@ import Numeric.LinearAlgebra
 -- | Trainer is a typeclass for all trainer types - a trainer will take in
 --   an instance of itself, a network, a list of training data, and return a
 --   new network trained on the data.
---class Trainer a where
---  fit :: (Floating b) => a -> Network b -> [TrainingData b] -> Network b
+class Trainer a where
+  fit :: Selection -> a -> Network -> [TrainingData] -> Network
 
 -- | A BackpropTrainer performs simple backpropagation on a neural network.
 --   It can be used as the basis for more complex trainers.
@@ -119,10 +119,10 @@ online :: [TrainingData] -> [[TrainingData]]
 online = minibatch 1
 
 -- | Declare the BackpropTrainer to be an instance of Trainer.
---instance (Floating a) => Trainer (BackpropTrainer a) where
-fit :: Selection -> BackpropTrainer -> Network -> [TrainingData] -> Network
-fit s t n examples = foldl (backprop t) n $
-  s (shuffle' examples (length examples) (mkStdGen 4))
+instance Trainer (BackpropTrainer) where
+  fit :: Selection -> BackpropTrainer -> Network -> [TrainingData] -> Network
+  fit s t n examples = foldl (backprop t) n $
+    s (shuffle' examples (length examples) (mkStdGen 4))
 
 -- | Perform backpropagation on a single training data instance.
 backprop :: BackpropTrainer -> Network -> [TrainingData] -> Network
