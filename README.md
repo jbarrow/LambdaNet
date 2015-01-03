@@ -14,7 +14,9 @@ in the documentation.
 
 ## Installation
 
-LambdaNet can be installed through Cabal:
+
+The first step is to follow the [HMatrix installation instructions](https://github.com/albertoruiz/hmatrix/blob/master/INSTALL.md).
+After that, LambdaNet can be installed through Cabal:
 
 ```
 cabal update
