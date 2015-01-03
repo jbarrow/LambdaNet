@@ -2,7 +2,6 @@
 
 module Network.Trainer.BackpropTrainer
 ( BackpropTrainer(..)
-, StopCondition
 
 , backprop
 , inputs
@@ -12,10 +11,6 @@ module Network.Trainer.BackpropTrainer
 , calculateNablas
 , fit
 , evaluate
-
-, trainNTimes
-, trainUntilErrorLessThan
-, trainUntil
 ) where
 
 import Network.Network
@@ -25,67 +20,23 @@ import Network.Trainer
 
 import System.Random
 import System.Random.Shuffle (shuffle')
-import Data.List.Split (chunksOf)
 import Numeric.LinearAlgebra
 
 -- | A BackpropTrainer performs simple backpropagation on a neural network.
 --   It can be used as the basis for more complex trainers.
 data BackpropTrainer = BackpropTrainer { eta :: Double
-, cost :: CostFunction
-, cost' :: CostFunction'
-}
-
--- | This function returns true if the error of the network is less than
---   a given error value, given a network, a trainer, a list of
---   training data, and a counter (should start with 0)
---   Note: Is there a way to have a counter with a recursive function
---         without providing 0?
-networkErrorLessThan :: Double -> Network -> BackpropTrainer -> [TrainingData] -> Int -> Bool
-networkErrorLessThan err network trainer dat _ = meanError < err
-  where meanError = (sum errors) / fromIntegral (length errors)
-        errors = map (evaluate trainer network) dat
-
--- | A predicate (given a network, trainer, a list of training
---   data, and the number of [fit]s performed) that
---   tells the trainer to stop training
-type StopCondition = Network -> BackpropTrainer -> [TrainingData] -> Int -> Bool
-
--- | Given a network, a trainer, a list of training data,
---   and N, this function trains the network with the list of
---   training data N times
-trainNTimes :: Network -> BackpropTrainer -> Selection -> [TrainingData] -> Int -> Network
-trainNTimes network trainer s dat n =
-  trainUntil network trainer s dat completion 0
-  where completion _ _ _ n' = (n == n')
-
--- | Given a network, a trainer, a list of training data,
---   and an error value, this function trains the network with the list of
---   training data until the error of the network (calculated
---   by averaging the errors of each training data) is less than
---   the given error value
-trainUntilErrorLessThan :: Network -> BackpropTrainer -> Selection -> [TrainingData] -> Double -> Network
-trainUntilErrorLessThan network trainer s dat err =
-  trainUntil network trainer s dat (networkErrorLessThan err) 0
-
--- | This function trains a network until a given TrainCompletionPredicate
---   is satisfied.
-trainUntil :: Network -> BackpropTrainer -> Selection -> [TrainingData] -> StopCondition -> Int -> Network
-trainUntil network trainer s dat completion n =
-  if completion network trainer dat n
-    then network
-    else trainUntil network' trainer s dat completion (n+1)
-    where network' = fit s trainer network dat
-
--- | Use the cost function to determine the error of a network
-evaluate :: BackpropTrainer -> Network -> TrainingData -> Double
-evaluate t n example = (cost t) (snd example) (predict (fst example) n)
-
+                                       , cost :: CostFunction
+                                       , cost' :: CostFunction'
+                                       }
 
 -- | Declare the BackpropTrainer to be an instance of Trainer.
 instance Trainer (BackpropTrainer) where
   fit :: Selection -> BackpropTrainer -> Network -> [TrainingData] -> Network
   fit s t n examples = foldl (backprop t) n $
     s (shuffle' examples (length examples) (mkStdGen 4))
+  -- | Use the cost function to determine the error of a network
+  evaluate :: BackpropTrainer -> Network -> TrainingData -> Double
+  evaluate t n example = (cost t) (snd example) (predict (fst example) n)
 
 -- | Perform backpropagation on a single training data instance.
 backprop :: BackpropTrainer -> Network -> [TrainingData] -> Network
