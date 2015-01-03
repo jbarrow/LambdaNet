@@ -17,7 +17,7 @@ main = do
   g <- newStdGen
   let n = createNetwork normals g [l, l', l'']
 
-  let t = BackpropTrainer (3 :: Float) quadraticCost quadraticCost'
+  let t = BackpropTrainer (3 :: Double) quadraticCost quadraticCost'
   let dat = [(fromList [0, 1], fromList [1]), (fromList [1, 1], fromList [0]), (fromList [1, 0], fromList [1]), (fromList [0, 0], fromList [0])]
 
   let n' = trainNTimes n t online dat 1000
@@ -27,7 +27,7 @@ main = do
   print $ predict (fromList [1, 0]) n'
   print $ predict (fromList [0, 1]) n'
   print $ predict (fromList [1, 1]) n'
-  
+
   saveNetwork "xor.ann" n'
 
   putStrLn $ "==> Network saved and reloaded: "
