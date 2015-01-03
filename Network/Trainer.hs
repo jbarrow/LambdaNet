@@ -6,7 +6,7 @@ module Network.Trainer
 , CostFunction'
 , TrainingData
 , Selection
-, TrainCompletionPredicate
+, StopCondition
 
 , trainNTimes
 , trainUntilErrorLessThan
@@ -63,7 +63,7 @@ type Selection a = [TrainingData a] -> [[TrainingData a]]
 -- | A predicate (given a network, trainer, a list of training
 --   data, and the number of [fit]s performed) that
 --   tells the trainer to stop training
-type TrainCompletionPredicate a = Network a -> BackpropTrainer a -> [TrainingData a] -> Int -> Bool
+type StopCondition a = Network a -> BackpropTrainer a -> [TrainingData a] -> Int -> Bool
 
 -- | Given a network, a trainer, a list of training data,
 --   and N, this function trains the network with the list of
@@ -98,7 +98,7 @@ networkErrorLessThan err network trainer dat _ = meanError < err
 -- | This function trains a network until a given TrainCompletionPredicate
 --   is satisfied.
 trainUntil :: (Floating (Vector a), Container Vector a, Product a)
-  => Network a -> BackpropTrainer a -> Selection a -> [TrainingData a] -> TrainCompletionPredicate a -> Int -> Network a
+  => Network a -> BackpropTrainer a -> Selection a -> [TrainingData a] -> StopCondition a -> Int -> Network a
 trainUntil network trainer s dat completion n =
   if completion network trainer dat n
     then network
