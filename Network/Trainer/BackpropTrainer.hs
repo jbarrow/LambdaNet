@@ -18,8 +18,6 @@ import Network.Neuron
 import Network.Layer
 import Network.Trainer
 
-import System.Random
-import System.Random.Shuffle (shuffle')
 import Numeric.LinearAlgebra
 
 -- | A BackpropTrainer performs simple backpropagation on a neural network.
@@ -32,8 +30,7 @@ data BackpropTrainer = BackpropTrainer { eta :: Double
 -- | Declare the BackpropTrainer to be an instance of Trainer.
 instance Trainer (BackpropTrainer) where
   fit :: Selection -> BackpropTrainer -> Network -> [TrainingData] -> Network
-  fit s t n examples = foldl (backprop t) n $
-    s (shuffle' examples (length examples) (mkStdGen 4))
+  fit s t n examples = foldl (backprop t) n $ s examples
   -- | Use the cost function to determine the error of a network
   evaluate :: BackpropTrainer -> Network -> TrainingData -> Double
   evaluate t n example = (cost t) (snd example) (predict (fst example) n)

@@ -22,6 +22,8 @@ import Network.Network
 import Network.Neuron
 import Network.Layer
 
+import System.Random
+import System.Random.Shuffle (shuffle')
 import Data.List.Split (chunksOf)
 import Numeric.LinearAlgebra
 
@@ -80,9 +82,9 @@ networkErrorLessThan err network trainer dat _ = meanError < err
 -- | Given a network, a trainer, a list of training data,
 --   and N, this function trains the network with the list of
 --   training data N times
-trainNTimes :: Trainer t => Network -> t -> Selection -> [TrainingData] -> Int -> Network
-trainNTimes network trainer s dat n =
-  trainUntil network trainer s dat completion 0
+trainNTimes :: (Trainer t, RandomGen g) => g -> Network -> t -> Selection -> [TrainingData] -> Int -> Network
+trainNTimes g network trainer s dat n =
+  trainUntil g network trainer s dat completion 0
   where completion _ _ _ n' = (n == n')
 
 -- | Given a network, a trainer, a list of training data,
@@ -90,15 +92,16 @@ trainNTimes network trainer s dat n =
 --   training data until the error of the network (calculated
 --   by averaging the errors of each training data) is less than
 --   the given error value
-trainUntilErrorLessThan :: Trainer t => Network -> t -> Selection -> [TrainingData] -> Double -> Network
-trainUntilErrorLessThan network trainer s dat err =
-  trainUntil network trainer s dat (networkErrorLessThan err) 0
+trainUntilErrorLessThan :: (Trainer t, RandomGen g) => g -> Network -> t -> Selection -> [TrainingData] -> Double -> Network
+trainUntilErrorLessThan g network trainer s dat err =
+  trainUntil g network trainer s dat (networkErrorLessThan err) 0
 
 -- | This function trains a network until a given TrainCompletionPredicate
 --   is satisfied.
-trainUntil :: Trainer t => Network -> t -> Selection -> [TrainingData] -> StopCondition t -> Int -> Network
-trainUntil network trainer s dat completion n =
+trainUntil :: (Trainer t, RandomGen g) => g -> Network -> t -> Selection -> [TrainingData] -> StopCondition t -> Int -> Network
+trainUntil g network trainer s dat completion n =
   if completion network trainer dat n
     then network
-    else trainUntil network' trainer s dat completion (n+1)
+    else trainUntil g' network' trainer s (shuffle' dat (length dat) g'') completion (n+1)
     where network' = fit s trainer network dat
+          (g', g'') = split g
