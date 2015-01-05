@@ -31,8 +31,8 @@ import Numeric.LinearAlgebra
 --   an instance of itself, a network, a list of training data, and return a
 --   new network trained on the data.
 class Trainer a where
-  fit :: Selection -> a -> Network -> [TrainingData] -> Network
-  evaluate :: a -> Network -> TrainingData -> Double
+  fit :: Selection -> a -> FeedForwardNetwork -> [TrainingData] -> FeedForwardNetwork
+  evaluate :: a -> FeedForwardNetwork -> TrainingData -> Double
 
 -- | A CostFunction is used for evaluating a network's performance on a given
 --   input
@@ -50,7 +50,7 @@ type Selection = [TrainingData] -> [[TrainingData]]
 -- | A predicate (given a network, trainer, a list of training
 --   data, and the number of [fit]s performed) that
 --   tells the trainer to stop training
-type StopCondition t = Network -> t -> [TrainingData] -> Int -> Bool
+type StopCondition t = FeedForwardNetwork -> t -> [TrainingData] -> Int -> Bool
 
 -- | The quadratic cost function (1/2) * sum (y - a) ^ 2
 quadraticCost :: Vector Double -> Vector Double -> Double
@@ -74,7 +74,7 @@ online = minibatch 1
 --   training data, and a counter (should start with 0)
 --   Note: Is there a way to have a counter with a recursive function
 --         without providing 0?
-networkErrorLessThan :: Trainer t => Double -> Network -> t -> [TrainingData] -> Int -> Bool
+networkErrorLessThan :: (Trainer t) => Double -> FeedForwardNetwork -> t -> [TrainingData] -> Int -> Bool
 networkErrorLessThan err network trainer dat _ = meanError < err
   where meanError = (sum errors) / fromIntegral (length errors)
         errors = map (evaluate trainer network) dat
@@ -82,7 +82,7 @@ networkErrorLessThan err network trainer dat _ = meanError < err
 -- | Given a network, a trainer, a list of training data,
 --   and N, this function trains the network with the list of
 --   training data N times
-trainNTimes :: (Trainer t, RandomGen g) => g -> Network -> t -> Selection -> [TrainingData] -> Int -> Network
+trainNTimes :: (Trainer t, RandomGen g) => g -> FeedForwardNetwork -> t -> Selection -> [TrainingData] -> Int -> FeedForwardNetwork
 trainNTimes g network trainer s dat n =
   trainUntil g network trainer s dat completion 0
   where completion _ _ _ n' = (n == n')
@@ -92,13 +92,13 @@ trainNTimes g network trainer s dat n =
 --   training data until the error of the network (calculated
 --   by averaging the errors of each training data) is less than
 --   the given error value
-trainUntilErrorLessThan :: (Trainer t, RandomGen g) => g -> Network -> t -> Selection -> [TrainingData] -> Double -> Network
+trainUntilErrorLessThan :: (Trainer t, RandomGen g) => g -> FeedForwardNetwork -> t -> Selection -> [TrainingData] -> Double -> FeedForwardNetwork
 trainUntilErrorLessThan g network trainer s dat err =
   trainUntil g network trainer s dat (networkErrorLessThan err) 0
 
 -- | This function trains a network until a given TrainCompletionPredicate
 --   is satisfied.
-trainUntil :: (Trainer t, RandomGen g) => g -> Network -> t -> Selection -> [TrainingData] -> StopCondition t -> Int -> Network
+trainUntil :: (Trainer t, RandomGen g) => g -> FeedForwardNetwork -> t -> Selection -> [TrainingData] -> StopCondition t -> Int -> FeedForwardNetwork
 trainUntil g network trainer s dat completion n =
   if completion network trainer dat n
     then network

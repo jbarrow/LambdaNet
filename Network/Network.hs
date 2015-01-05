@@ -1,17 +1,17 @@
 {-# LANGUAGE FlexibleContexts,
-             UndecidableInstances #-}
+             UndecidableInstances,
+             InstanceSigs #-}
 
 module Network.Network
 ( Network(..)
+, FeedForwardNetwork(..)
 
-, createNetwork
-, loadNetwork
-, emptyNetwork
-, isEmptyNetwork
-, addNetworks
-, predict
+, loadFeedForwardNetwork
+, emptyFeedForwardNetwork
+, isEmptyFeedForwardNetwork
+, addFeedForwardNetworks
 , apply
-, saveNetwork
+, saveFeedForwardNetwork
 ) where
 
 import Network.Neuron
@@ -23,54 +23,58 @@ import System.IO
 import Data.Monoid (Monoid(..))
 import Data.Binary (encode, decode, Binary(..))
 
+class Network a where
+  predict :: Vector Double -> a -> Vector Double
+  createNetwork :: (RandomGen g) => RandomTransform -> g -> [LayerDefinition] -> a
+
 -- | Networks are constructed front to back. Start by adding an input layer,
 --   then each hidden layer, and finally an output layer.
-data Network = Network { layers :: [Layer] } deriving Show
+data FeedForwardNetwork = FeedForwardNetwork { layers :: [Layer] } deriving Show
 
 -- | We gain the ability to combine two networks of the same proportions
 --   by abstracting a network as a monoid. This is useful in backpropagation
 --   for batch training
-instance Monoid (Network) where
-  mempty = emptyNetwork
-  mappend = addNetworks
+instance Monoid (FeedForwardNetwork) where
+  mempty = emptyFeedForwardNetwork
+  mappend = addFeedForwardNetworks
 
 -- | A tuple of (input, expected output)
 type TrainingData = (Vector Double, Vector Double)
 
--- | The createNetwork function takes in a random transform used for weight
---   initialization, a source of entropy, and a list of layer definitions,
---   and returns a network with the weights initialized per the random transform.
-createNetwork :: RandomGen g
-  => RandomTransform -> g -> [LayerDefinition] -> Network
-createNetwork t g [] = Network []
-createNetwork t g (layerDef : []) = Network []
-createNetwork t g (layerDef : layerDef' : otherLayerDefs) =
-  Network (layer : layers restOfNetwork)
-  where layer = createLayer t g' layerDef layerDef'
-        restOfNetwork = createNetwork t g'' (layerDef' : otherLayerDefs)
-        (g', g'') = split g
-
 -- | Our Unit, an empty network with no layers
-emptyNetwork :: Network
-emptyNetwork = Network []
+emptyFeedForwardNetwork :: FeedForwardNetwork
+emptyFeedForwardNetwork = FeedForwardNetwork []
 
 -- | A boolean to check if the network is the unit network or not
-isEmptyNetwork :: Network -> Bool
-isEmptyNetwork n = length (layers n) == 0
+isEmptyFeedForwardNetwork :: FeedForwardNetwork -> Bool
+isEmptyFeedForwardNetwork n = length (layers n) == 0
 
 -- | A function to combine two networks
-addNetworks :: Network -> Network -> Network
-addNetworks n1 n2 = if isEmptyNetwork n1 then n2 else
-  if isEmptyNetwork n2 then n1 else
-    Network $ zipWith combineLayers (layers n1) (layers n2)
+addFeedForwardNetworks :: FeedForwardNetwork -> FeedForwardNetwork -> FeedForwardNetwork
+addFeedForwardNetworks n1 n2 = if isEmptyFeedForwardNetwork n1 then n2 else
+  if isEmptyFeedForwardNetwork n2 then n1 else
+    FeedForwardNetwork $ zipWith combineLayers (layers n1) (layers n2)
   where combineLayers l1 l2 =
           Layer ((weightMatrix l1) + (weightMatrix l2))
           ((biasVector l1) + (biasVector l2)) (neuron l1)
 
--- | Predict folds over each layer of the network using the input vector as the
---   first value of the accumulator. It operates on whatever network you pass in.
-predict :: Vector Double -> Network -> Vector Double
-predict input network = foldl apply input (layers network)
+instance Network (FeedForwardNetwork) where
+  -- | Predict folds over each layer of the network using the input vector as the
+  --   first value of the accumulator. It operates on whatever network you pass in.
+  predict :: Vector Double -> FeedForwardNetwork -> Vector Double
+  predict input network = foldl apply input (layers network)
+
+  -- | The createNetwork function takes in a random transform used for weight
+  --   initialization, a source of entropy, and a list of layer definitions,
+  --   and returns a network with the weights initialized per the random transform.
+  createNetwork :: RandomGen g => RandomTransform -> g -> [LayerDefinition] -> FeedForwardNetwork
+  createNetwork t g [] = emptyFeedForwardNetwork
+  createNetwork t g (layerDef : []) = emptyFeedForwardNetwork
+  createNetwork t g (layerDef : layerDef' : otherLayerDefs) =
+    FeedForwardNetwork (layer : layers restOfNetwork)
+    where layer = createLayer t g' layerDef layerDef'
+          restOfNetwork = createNetwork t g'' (layerDef' : otherLayerDefs)
+          (g', g'') = split g
 
 -- | A function used in the fold in predict that applies the activation
 --   function and pushes the input through a layer of the network.
@@ -82,11 +86,11 @@ apply vector layer = mapVector sigma (weights <> vector + bias)
 
 -- | Given a filename and a network, we want to save the weights and biases
 --   of the network to the file for later use.
-saveNetwork :: Binary (Layer) => FilePath -> Network -> IO ()
-saveNetwork file n = B.writeFile file (encode (layers n))
+saveFeedForwardNetwork :: Binary (Layer) => FilePath -> FeedForwardNetwork -> IO ()
+saveFeedForwardNetwork file n = B.writeFile file (encode (layers n))
 
 -- | Given a filename, and a list of layer definitions, we want to reexpand
 --   the data back into a network.
-loadNetwork :: Binary (Layer) => FilePath -> [LayerDefinition] -> IO (Network)
-loadNetwork file defs = B.readFile file >>= \sls ->
-  return $ Network (map showableToLayer (zip (decode sls) defs))
+loadFeedForwardNetwork :: Binary (Layer) => FilePath -> [LayerDefinition] -> IO (FeedForwardNetwork)
+loadFeedForwardNetwork file defs = B.readFile file >>= \sls ->
+  return $ FeedForwardNetwork (map showableToLayer (zip (decode sls) defs))
