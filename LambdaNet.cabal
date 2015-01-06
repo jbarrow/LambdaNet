@@ -32,4 +32,5 @@ library
     random-shuffle >= 0.0.4,
     split,
     binary,
-    bytestring
+    bytestring,
+    Histogram
