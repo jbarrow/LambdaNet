@@ -16,13 +16,13 @@ import Data.Foldable (foldMap, )
 import Graphics.Histogram
 import GHC.Float
 
-weightList :: Network -> [Double]
+weightList :: FeedForwardNetwork -> [Double]
 weightList n = concat $ map (toList . flatten . weightMatrix) (layers n)
 
-biasList :: Network -> [Double]
+biasList :: FeedForwardNetwork -> [Double]
 biasList n = concat $ map (toList . biasVector) (layers n)
 
-networkHistogram :: FilePath -> (Network -> [Double]) -> Network -> IO ()
+networkHistogram :: FilePath -> (FeedForwardNetwork -> [Double]) -> FeedForwardNetwork -> IO ()
 networkHistogram filename listFunction n = do
   let hist = histogram binSturges (listFunction n)
   plot filename hist
