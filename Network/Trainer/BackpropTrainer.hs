@@ -1,5 +1,6 @@
-{-# LANGUAGE FlexibleContexts, InstanceSigs #-}
-
+{-# LANGUAGE FlexibleContexts,
+             InstanceSigs,
+             MultiParamTypeClasses #-}
 module Network.Trainer.BackpropTrainer
 ( BackpropTrainer(..)
 
@@ -28,7 +29,7 @@ data BackpropTrainer = BackpropTrainer { eta :: Double
                                        }
 
 -- | Declare the BackpropTrainer to be an instance of Trainer.
-instance Trainer (BackpropTrainer) where
+instance Trainer BackpropTrainer FeedForwardNetwork where
   fit s t n examples = foldl (backprop t) n $ s examples
   -- | Use the cost function to determine the error of a network
   evaluate t n example = (cost t) (snd example) (predict (fst example) n)
