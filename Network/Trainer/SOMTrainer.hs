@@ -4,6 +4,9 @@ module Network.Trainer.SOMTrainer
 , evaluate
 ) where
 
+import Network.Trainer
+import Network.Network.SOM
+
 data SOMTrainer = SOMTrainer { eta :: Double }
 
 instance Trainer (SOMTrainer) where
