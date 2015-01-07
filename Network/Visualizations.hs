@@ -10,9 +10,10 @@ import Numeric.LinearAlgebra
 import Network.Neuron
 import Network.Layer
 import Network.Network
+import Network.Network.FeedForwardNetwork
+
 import Network.Trainer
 import Data.Foldable (foldMap, )
-
 import Graphics.Histogram
 import GHC.Float
 

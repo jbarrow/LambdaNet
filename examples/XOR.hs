@@ -2,7 +2,10 @@
 
 import Network.Neuron
 import Network.Layer
+
 import Network.Network
+import Network.Network.FeedForwardNetwork
+
 import Network.Trainer
 import Network.Trainer.BackpropTrainer
 

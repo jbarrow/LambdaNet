@@ -15,6 +15,7 @@ module Network.Trainer.BackpropTrainer
 ) where
 
 import Network.Network
+import Network.Network.FeedForwardNetwork
 import Network.Neuron
 import Network.Layer
 import Network.Trainer
