@@ -9,7 +9,7 @@ import Network.Network.FeedForwardNetwork
 import Network.Trainer
 import Network.Trainer.BackpropTrainer
 
-import Network.Visualizations
+--import Network.Visualizations
 import System.IO
 import System.Random
 import Numeric.LinearAlgebra
@@ -44,5 +44,5 @@ main = do
   print $ predict (fromList [0, 1]) n''
   print $ predict (fromList [1, 1]) n''
 
-  networkHistogram "weights.png" weightList n''
-  networkHistogram "biases.png" biasList n''
+  --networkHistogram "weights.png" weightList n''
+  --networkHistogram "biases.png" biasList n''

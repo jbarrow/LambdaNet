@@ -12,6 +12,7 @@ module Network.Layer
 , createLayer
 , scaleLayer
 , connectFully
+
 , randomList
 , boxMuller
 , normals

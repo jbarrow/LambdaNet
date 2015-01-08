@@ -1,6 +1,5 @@
 {-# LANGUAGE FlexibleContexts,
-             UndecidableInstances,
-             InstanceSigs #-}
+             UndecidableInstances #-}
 
 module Network.Network.FeedForwardNetwork
 ( FeedForwardNetwork(..)
@@ -60,13 +59,11 @@ addFeedForwardNetworks n1 n2 = if isEmptyFeedForwardNetwork n1 then n2 else
 instance Network (FeedForwardNetwork) where
   -- | Predict folds over each layer of the network using the input vector as the
   --   first value of the accumulator. It operates on whatever network you pass in.
-  predict :: Vector Double -> FeedForwardNetwork -> Vector Double
   predict input network = foldl apply input (layers network)
 
   -- | The createNetwork function takes in a random transform used for weight
   --   initialization, a source of entropy, and a list of layer definitions,
   --   and returns a network with the weights initialized per the random transform.
-  createNetwork :: RandomGen g => RandomTransform -> g -> [LayerDefinition] -> FeedForwardNetwork
   createNetwork t g [] = emptyFeedForwardNetwork
   createNetwork t g (layerDef : []) = emptyFeedForwardNetwork
   createNetwork t g (layerDef : layerDef' : otherLayerDefs) =

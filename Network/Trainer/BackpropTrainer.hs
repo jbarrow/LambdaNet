@@ -1,5 +1,4 @@
 {-# LANGUAGE FlexibleContexts,
-             InstanceSigs,
              MultiParamTypeClasses #-}
 module Network.Trainer.BackpropTrainer
 ( BackpropTrainer(..)
