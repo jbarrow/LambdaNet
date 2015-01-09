@@ -6,6 +6,7 @@ module Network.Neuron
 , sigmoidNeuron
 , tanhNeuron
 , recluNeuron
+, l2Neuron
 
 , sigmoid
 , sigmoid'
@@ -38,6 +39,9 @@ tanhNeuron = Neuron tanh tanh' "tanh"
 
 recluNeuron :: Neuron
 recluNeuron = Neuron reclu reclu' "reclu"
+
+l2Neuron :: Neuron
+l2Neuron = Neuron (^2) id "L2"
 
 -- | The sigmoid activation function, a standard activation function defined
 --   on the range (0, 1).
