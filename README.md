@@ -153,7 +153,7 @@ LambdaNet provides three training methods:
   - `trainUntilErrorLessThan`
   - `trainNTimes`
 
-The `trainUntil` function takes a TrainCompletionPredicate (check Network/Trainer.hs)
+The `trainUntil` function takes a StopCondition (check Network/Trainer.hs)
 for more information, and the last two are simply wrappers for the first one that
 provide specific predicates.
 
