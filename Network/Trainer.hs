@@ -97,7 +97,7 @@ trainUntilErrorLessThan :: (Trainer t n, RandomGen g) => g -> n -> t -> Selectio
 trainUntilErrorLessThan g network trainer s dat err =
   trainUntil g network trainer s dat (networkErrorLessThan err) 0
 
--- | This function trains a network until a given TrainCompletionPredicate
+-- | This function trains a network until a given StopCondition
 --   is satisfied.
 trainUntil :: (Trainer t n, RandomGen g) => g -> n -> t -> Selection -> [TrainingData] -> StopCondition t n -> Int -> n
 trainUntil g network trainer s dat completion n =
