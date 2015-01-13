@@ -11,5 +11,7 @@ import Numeric.LinearAlgebra
 
 -- | A network is
 class Network a where
+  type Parameters :: *
+
   predict :: Vector Double -> a -> Vector Double
-  createNetwork :: (RandomGen g) => RandomTransform -> g -> [LayerDefinition] -> a
+  createNetwork :: (RandomGen g) => RandomTransform -> g -> Parameters -> a

@@ -1,5 +1,6 @@
 {-# LANGUAGE FlexibleContexts,
-             UndecidableInstances #-}
+             UndecidableInstances,
+             TypeFamilies #-}
 
 module Network.Network.FeedForwardNetwork
 ( FeedForwardNetwork(..)
@@ -57,6 +58,8 @@ addFeedForwardNetworks n1 n2 = if isEmptyFeedForwardNetwork n1 then n2 else
           ((biasVector l1) + (biasVector l2)) (neuron l1)
 
 instance Network (FeedForwardNetwork) where
+  type Parameters = [LayerDefinition]
+
   -- | Predict folds over each layer of the network using the input vector as the
   --   first value of the accumulator. It operates on whatever network you pass in.
   predict input network = foldl apply input (layers network)
