@@ -6,16 +6,16 @@ module Network.Visualizations
 , biasList
 ) where
 
-import Numeric.LinearAlgebra
-import Network.Neuron
-import Network.Layer
-import Network.Network
-import Network.Network.FeedForwardNetwork
+import           Network.Layer
+import           Network.Network
+import           Network.Network.FeedForwardNetwork
+import           Network.Neuron
+import           Numeric.LinearAlgebra
 
-import Network.Trainer
-import Data.Foldable (foldMap, )
-import Graphics.Histogram
-import GHC.Float
+import           Data.Foldable                      (foldMap)
+import           GHC.Float
+import           Graphics.Histogram
+import           Network.Trainer
 
 weightList :: FeedForwardNetwork -> [Double]
 weightList n = concat $ map (toList . flatten . weightMatrix) (layers n)

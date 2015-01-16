@@ -1,6 +1,6 @@
-{-# LANGUAGE FlexibleContexts,
-             UndecidableInstances,
-             TypeFamilies #-}
+{-# LANGUAGE FlexibleContexts     #-}
+{-# LANGUAGE TypeFamilies         #-}
+{-# LANGUAGE UndecidableInstances #-}
 
 module Network.Network.FeedForwardNetwork
 ( FeedForwardNetwork(..)
@@ -15,16 +15,16 @@ module Network.Network.FeedForwardNetwork
 , apply
 ) where
 
-import Network.Neuron
-import Network.Layer
-import Network.Network
+import           Network.Layer
+import           Network.Network
+import           Network.Neuron
 
-import System.Random
-import Numeric.LinearAlgebra
-import qualified Data.ByteString.Lazy as B
-import System.IO
-import Data.Monoid (Monoid(..))
-import Data.Binary (encode, decode, Binary(..))
+import           Data.Binary           (Binary (..), decode, encode)
+import qualified Data.ByteString.Lazy  as B
+import           Data.Monoid           (Monoid (..))
+import           Numeric.LinearAlgebra
+import           System.IO
+import           System.Random
 
 -- | Networks are constructed front to back. Start by adding an input layer,
 --   then each hidden layer, and finally an output layer.

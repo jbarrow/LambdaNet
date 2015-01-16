@@ -1,5 +1,5 @@
-{-# LANGUAGE FlexibleContexts,
-             MultiParamTypeClasses #-}
+{-# LANGUAGE FlexibleContexts      #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
 module Network.Trainer.BackpropTrainer
 ( BackpropTrainer(..)
 
@@ -13,18 +13,18 @@ module Network.Trainer.BackpropTrainer
 , evaluate
 ) where
 
-import Network.Network
-import Network.Network.FeedForwardNetwork
-import Network.Neuron
-import Network.Layer
-import Network.Trainer
+import           Network.Layer
+import           Network.Network
+import           Network.Network.FeedForwardNetwork
+import           Network.Neuron
+import           Network.Trainer
 
-import Numeric.LinearAlgebra
+import           Numeric.LinearAlgebra
 
 -- | A BackpropTrainer performs simple backpropagation on a neural network.
 --   It can be used as the basis for more complex trainers.
-data BackpropTrainer = BackpropTrainer { eta :: Double
-                                       , cost :: CostFunction
+data BackpropTrainer = BackpropTrainer { eta   :: Double
+                                       , cost  :: CostFunction
                                        , cost' :: CostFunction'
                                        }
 

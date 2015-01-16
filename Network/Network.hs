@@ -1,13 +1,14 @@
-{-# LANGUAGE FlexibleContexts,
-             UndecidableInstances,
-             TypeFamilies #-}
+{-# LANGUAGE FlexibleContexts     #-}
+{-# LANGUAGE InstanceSigs         #-}
+{-# LANGUAGE TypeFamilies         #-}
+{-# LANGUAGE UndecidableInstances #-}
 
 module Network.Network
 ( Network(..) ) where
 
-import Network.Layer
-import System.Random
-import Numeric.LinearAlgebra
+import           Network.Layer
+import           Numeric.LinearAlgebra
+import           System.Random
 
 -- | A network is
 class Network a where

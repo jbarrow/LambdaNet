@@ -1,18 +1,18 @@
 {-# LANGUAGE FlexibleContexts #-}
 
-import Network.Neuron
-import Network.Layer
+import           Network.Layer
+import           Network.Neuron
 
-import Network.Network
-import Network.Network.FeedForwardNetwork
+import           Network.Network
+import           Network.Network.FeedForwardNetwork
 
-import Network.Trainer
-import Network.Trainer.BackpropTrainer
+import           Network.Trainer
+import           Network.Trainer.BackpropTrainer
 
 --import Network.Visualizations
-import System.IO
-import System.Random
-import Numeric.LinearAlgebra
+import           Numeric.LinearAlgebra
+import           System.IO
+import           System.Random
 
 main :: IO ()
 main = do

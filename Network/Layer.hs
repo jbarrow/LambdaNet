@@ -1,5 +1,5 @@
-{-# LANGUAGE FlexibleContexts,
-             RecordWildCards #-}
+{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE RecordWildCards  #-}
 
 module Network.Layer
 ( LayerDefinition(..)
@@ -20,23 +20,23 @@ module Network.Layer
 , boundedUniforms
 ) where
 
-import Network.Neuron
-import System.Random
-import Numeric.LinearAlgebra
-import Data.Binary (encode, decode, Binary(..))
+import           Data.Binary           (Binary (..), decode, encode)
+import           Network.Neuron
+import           Numeric.LinearAlgebra
+import           System.Random
 
 -- | The LayerDefinition type is an intermediate type initialized by the
 --   library user to define the different layers of the network.
-data LayerDefinition = LayerDefinition { neuronDef :: Neuron
+data LayerDefinition = LayerDefinition { neuronDef   :: Neuron
                                        , neuronCount :: Int
-                                       , connect :: Connectivity
+                                       , connect     :: Connectivity
                                        }
 
 -- | The Layer type, which stores the weight matrix, the bias matrix, and
 --   a neuron type.
 data Layer = Layer { weightMatrix :: Matrix Double
-                   , biasVector :: Vector Double
-                   , neuron :: Neuron
+                   , biasVector   :: Vector Double
+                   , neuron       :: Neuron
                    } deriving Show
 
 instance Binary (Layer) where

@@ -1,5 +1,5 @@
-{-# LANGUAGE FlexibleContexts,
-             MultiParamTypeClasses #-}
+{-# LANGUAGE FlexibleContexts      #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
 
 module Network.Trainer
 ( Trainer(..)
@@ -19,14 +19,14 @@ module Network.Trainer
 , trainUntil
 ) where
 
-import Network.Network
-import Network.Neuron
-import Network.Layer
+import           Network.Layer
+import           Network.Network
+import           Network.Neuron
 
-import System.Random
-import System.Random.Shuffle (shuffle')
-import Data.List.Split (chunksOf)
-import Numeric.LinearAlgebra
+import           Data.List.Split       (chunksOf)
+import           Numeric.LinearAlgebra
+import           System.Random
+import           System.Random.Shuffle (shuffle')
 
 -- | Trainer is a typeclass for all trainer types - a trainer will take in
 --   an instance of itself, a network, a list of training data, and return a

@@ -19,7 +19,7 @@ module Network.Neuron
 -- | Using this structure allows users of the library to create their own
 --   neurons by creating two functions - an activation function and its
 --   derivative - and packaging them up into a neuron type.
-data Neuron = Neuron { activation :: ActivationFunction
+data Neuron = Neuron { activation  :: ActivationFunction
                      , activation' :: ActivationFunction'
                      , description :: String
                      }

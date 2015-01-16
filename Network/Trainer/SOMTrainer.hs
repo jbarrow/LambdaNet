@@ -1,3 +1,5 @@
+{-# InstanceSigs #-}
+
 module Network.Trainer.SOMTrainer
 ( SOMTrainer(..)
 , fit
