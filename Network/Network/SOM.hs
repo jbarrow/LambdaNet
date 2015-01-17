@@ -10,6 +10,7 @@ module Network.Network.SOM
 , randomNeuron
 , makeVectors
 , reshapeList
+, distance
 ) where
 
 import           Network.Layer
@@ -36,7 +37,9 @@ instance Network (SOM) where
 
   createNetwork :: (RandomGen g) => RandomTransform -> g -> Parameters -> SOM
   createNetwork transformation g def = SOM randomVectors
-    where randomVectors = reshapeList (x def) $ makeVectors transformation g (inputDim def) ((x def) * (y def))
+    where randomVectors = reshapeList (x def) $
+                          makeVectors transformation g (inputDim def)
+                          ((x def) * (y def))
 
 reshapeList :: Int -> [a] -> [[a]]
 reshapeList x [] = [[]]
@@ -49,5 +52,8 @@ randomNeuron transform g inputDim = inputDim |> (randomList transform g)
 makeVectors :: (RandomGen g) => RandomTransform -> g -> Int -> Int -> [Vector Double]
 makeVectors transform g inputDim 0 = []
 makeVectors transform g inputDim num = (randomNeuron transform g' inputDim) :
-                                  makeVectors transform g'' inputDim (num - 1)
+                                       makeVectors transform g'' inputDim (num - 1)
   where (g', g'') = split g
+
+distance :: Vector Double -> Vector Double -> Double
+distance a b = sqrt $ sum $ map (^2) $ zipWith (-) (toList a) (toList b)
