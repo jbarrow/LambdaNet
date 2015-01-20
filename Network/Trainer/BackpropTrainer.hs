@@ -75,9 +75,8 @@ inputs input network = if null (layers network) then []
 
 -- | The deltas function returns a list of layer deltas.
 deltas :: BackpropTrainer -> FeedForwardNetwork -> TrainingData -> [Vector Double]
-deltas t n example = hiddenDeltas
-  (FeedForwardNetwork (reverse (layers n))) outputDelta (tail $ reverse is)
-    ++ [outputDelta]
+deltas t n example = (reverse (hiddenDeltas
+  (FeedForwardNetwork (reverse (layers n))) outputDelta (tail $ reverse is))) ++ [outputDelta]
   where outputDelta = costd (snd example) output *
           mapVector activationd lastInput
         costd = cost' t

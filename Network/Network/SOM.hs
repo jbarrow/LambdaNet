@@ -25,8 +25,8 @@ data SOM = SOM { neuronMap :: [[Vector Double]] }
 
 -- | A definitution type for the SOM, it contains the dimensions of each layer (x, y)
 --   and the dimension of the input vector (dim)
-data MapDefinition = MapDefinition { x   :: Int
-                                   , y   :: Int
+data MapDefinition = MapDefinition { x        :: Int
+                                   , y        :: Int
                                    , inputDim :: Int
                                    }
 
