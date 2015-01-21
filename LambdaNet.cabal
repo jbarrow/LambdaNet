@@ -33,4 +33,5 @@ library
     split,
     binary,
     bytestring,
-    Histogram
+    Histogram,
+    hspec
