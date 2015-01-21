@@ -46,7 +46,7 @@ emptyFeedForwardNetwork = FeedForwardNetwork []
 
 -- | A boolean to check if the network is the unit network or not
 isEmptyFeedForwardNetwork :: FeedForwardNetwork -> Bool
-isEmptyFeedForwardNetwork n = length (layers n) == 0
+isEmptyFeedForwardNetwork n = null $ layers n
 
 -- | A function to combine two networks
 addFeedForwardNetworks :: FeedForwardNetwork -> FeedForwardNetwork -> FeedForwardNetwork
