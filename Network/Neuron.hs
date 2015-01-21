@@ -1,20 +1,20 @@
 module Network.Neuron
-( Neuron(..)
+       ( Neuron(..)
 
-, ActivationFunction
-, ActivationFunction'
-, sigmoidNeuron
-, tanhNeuron
-, recluNeuron
-, l2Neuron
-
-, sigmoid
-, sigmoid'
-, tanh
-, tanh'
-, reclu
-, reclu'
-) where
+       , ActivationFunction
+       , ActivationFunction'
+       , sigmoidNeuron
+       , tanhNeuron
+       , recluNeuron
+       , l2Neuron
+         
+       , sigmoid
+       , sigmoid'
+       , tanh
+       , tanh'
+       , reclu
+       , reclu'
+       ) where
 
 -- | Using this structure allows users of the library to create their own
 --   neurons by creating two functions - an activation function and its
