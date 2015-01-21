@@ -1,4 +1,4 @@
-module Network.Neuron
+module Network.DemoNeuron
        ( Neuron(..)
        , SigmoidNeuron(..)
        , TanhNeuron(..)
