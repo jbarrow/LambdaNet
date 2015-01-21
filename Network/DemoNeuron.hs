@@ -14,6 +14,7 @@ module Network.Neuron
        , distance
        ) where
 
+import Numeric.LinearAlgebra
 
 data SigmoidNeuron = SigmoidNeuron
 data TanhNeuron = TanhNeuron
@@ -23,37 +24,40 @@ data L2Neuron = L2Neuron
 type Weights = Vector Double
 type Values = Vector Double
 
+-- | A Neuron type has two functions -- evaluate and evaluate',
+--   both of which are functions from weights to input values
+--   to doubles.
 class (Show a) => Neuron a where
-  evaluate :: Weights -> Values -> Double
-  evaluate' :: Weights -> Values -> Double
+  evaluate :: a -> Weights -> Values -> Double
+  evaluate' :: a -> Weights -> Values -> Double
 
 instance Show (SigmoidNeuron) where
-  show = "Sigmoid Neuron"
+  show n = "Sigmoid Neuron"
 
 instance Show (TanhNeuron) where
-  show = "Hyperbolic Tangent Neuron"
+  show n = "Hyperbolic Tangent Neuron"
 
 instance Show (RecluNeuron) where
-  show = "Rectified Linear Neuron"
-
+  show n = "Rectified Linear Neuron"
+  
 instance Show (L2Neuron) where
-  show = "Euclidean Distance Neuron"
+  show n = "Euclidean Distance Neuron"
 
 instance Neuron (SigmoidNeuron) where
-  evaluate  = sigmoid  . dot
-  evaluate' = sigmoid' . dot
+  evaluate  n w v = sigmoid  $ dot w v
+  evaluate' n w v = sigmoid' $ dot w v
 
 instance Neuron (TanhNeuron) where
-  evaluate  = tanh  . dot
-  evaluate' = tanh' . dot
+  evaluate  n w v = tanh  $ dot w v
+  evaluate' n w v= tanh' $ dot w v
 
 instance Neuron (RecluNeuron) where
-  evaluate  = reclu  . dot
-  evaluate' = reclu' . dot
+  evaluate  n w v = reclu  $ dot w v
+  evaluate' n w v = reclu' $ dot w v
 
 instance Neuron (L2Neuron) where
-  evaluate  = distance
-  evaluate' = dot
+  evaluate  n = distance
+  evaluate' n = dot
 
 -- | The sigmoid activation function, a standard activation function defined
 --   on the range (0, 1).
