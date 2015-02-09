@@ -16,10 +16,10 @@ module Network.DemoNeuron
 
 import Numeric.LinearAlgebra
 
-data SigmoidNeuron = SigmoidNeuron
-data TanhNeuron = TanhNeuron
-data RecluNeuron = RecluNeuron
-data L2Neuron = L2Neuron
+data SigmoidNeuron = SigmoidNeuron deriving (Show)
+data TanhNeuron = TanhNeuron deriving (Show)
+data RecluNeuron = RecluNeuron deriving (Show)
+data L2Neuron = L2Neuron deriving (Show)
 
 type Weights = Vector Double
 type Values = Vector Double
@@ -30,18 +30,6 @@ type Values = Vector Double
 class (Show a) => Neuron a where
   evaluate :: a -> Weights -> Values -> Double
   evaluate' :: a -> Weights -> Values -> Double
-
-instance Show (SigmoidNeuron) where
-  show n = "Sigmoid Neuron"
-
-instance Show (TanhNeuron) where
-  show n = "Hyperbolic Tangent Neuron"
-
-instance Show (RecluNeuron) where
-  show n = "Rectified Linear Neuron"
-  
-instance Show (L2Neuron) where
-  show n = "Euclidean Distance Neuron"
 
 instance Neuron (SigmoidNeuron) where
   evaluate  n w v = sigmoid  $ dot w v
