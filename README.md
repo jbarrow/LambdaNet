@@ -14,13 +14,25 @@ in the documentation.
 
 ## Installation
 
-
 The first step is to follow the [HMatrix installation instructions](https://github.com/albertoruiz/hmatrix/blob/master/INSTALL.md).
 After that, LambdaNet can be installed through Cabal:
 
 ```
 cabal update
 cabal install LambdaNet
+```
+
+### Installing the Most Recent Build
+
+Alternatively, you can use the nightly. The API may be different than what
+is covered in the README, but the `examples/` folder will always contain
+a working file using all the features of the current commit.
+
+To install the nightly build, simply run:
+
+```
+git clone https://github.com/jbarrow/LambdaNet.git && cd LambdaNet
+cabal install
 ```
 
 ## Using LambdaNet
