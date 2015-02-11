@@ -227,15 +227,48 @@ approach in XOR.hs should allow you to work with the returned object.
 
 What has been outlined above is only the first stages of LambdaNet. I intend
 to support some additional features, such as:
+  - Unit testing
+  - Self-organizing maps
   - Regularization functions
   - Additional trainer types (RProp, RMSProp)
   - Additional cost functions
+
+### Unit Testing
+
+In order to develop more complex network architectures, it is important
+to ensure that all of the basics are working -- especially as the API
+undergoes changes. To run the unit tests:
+
+```
+git clone https://github.com/jbarrow/LambdaNet.git && cd LambdaNet
+cabal install
+cd test
+runhaskell Main.hs
+```
+
+This will download the most recent version of LambdaNet and run all the
+unit tests.
+
+### Self-Organizing Maps (SOMs, or Kohonen Maps)
+
+SOMs were chosen as the next architecture to develop because they make
+different assumptions than FeedForward networks. This allows us to see
+how the current library handles building out new architectures. Already
+this has forced a change in the Neuron model and spurred the development
+of a visualizations package (in order to usefully understand the outputs
+of the SOMs).
 
 ### Regularization Functions and Momentum
 
 Standard backprop training is subject to overfitting and falling into local
 minima. By providing support for regularization and momentum, LambdaNet
 will be able to provide more extensible and robust training.
+
+## Future Goals
+
+The future goals are:
+  - Convolutional Networks
+  - Data handling for Neural Networks
 
 ## Generating the Documentation Images
 
