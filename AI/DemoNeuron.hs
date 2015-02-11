@@ -1,4 +1,4 @@
-module Network.DemoNeuron
+module AI.DemoNeuron
        ( Neuron(..)
        , SigmoidNeuron(..)
        , TanhNeuron(..)
@@ -78,4 +78,3 @@ reclu' t = sigmoid t
 -- | Calculate the distance between a SOM neuron and an input
 distance :: Vector Double -> Vector Double -> Double
 distance a b = sqrt $ sum $ map (^2) $ zipWith (-) (toList a) (toList b)
-

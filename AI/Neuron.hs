@@ -1,4 +1,4 @@
-module Network.Neuron
+module AI.Neuron
        ( Neuron(..)
 
        , ActivationFunction
@@ -7,7 +7,7 @@ module Network.Neuron
        , tanhNeuron
        , recluNeuron
        , l2Neuron
-         
+
        , sigmoid
        , sigmoid'
        , tanh

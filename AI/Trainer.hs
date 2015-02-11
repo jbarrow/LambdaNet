@@ -1,7 +1,7 @@
 {-# LANGUAGE FlexibleContexts      #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 
-module Network.Trainer
+module AI.Trainer
 ( Trainer(..)
 , CostFunction
 , CostFunction'
@@ -19,9 +19,9 @@ module Network.Trainer
 , trainUntil
 ) where
 
-import           Network.Layer
-import           Network.Network
-import           Network.Neuron
+import           AI.Layer
+import           AI.Network
+import           AI.Neuron
 
 import           Data.List.Split       (chunksOf)
 import           Numeric.LinearAlgebra

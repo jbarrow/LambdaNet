@@ -3,10 +3,10 @@
 {-# LANGUAGE TypeFamilies         #-}
 {-# LANGUAGE UndecidableInstances #-}
 
-module Network.Network
+module AI.Network
 ( Network(..) ) where
 
-import           Network.Layer
+import           AI.Layer
 import           Numeric.LinearAlgebra
 import           System.Random
 

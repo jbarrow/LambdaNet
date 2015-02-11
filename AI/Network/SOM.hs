@@ -3,7 +3,7 @@
 {-# LANGUAGE TypeFamilies         #-}
 {-# LANGUAGE UndecidableInstances #-}
 
-module Network.Network.SOM
+module AI.Network.SOM
 ( SOM(..)
 , MapDefinition(..)
 
@@ -13,9 +13,9 @@ module Network.Network.SOM
 , distance
 ) where
 
-import           Network.Layer
-import           Network.Network
-import           Network.Neuron
+import           AI.Layer
+import           AI.Network
+import           AI.Neuron
 
 import           Numeric.LinearAlgebra
 import           System.Random

@@ -1,13 +1,13 @@
 {-# LANGUAGE FlexibleContexts #-}
 
-import           Network.Layer
-import           Network.Neuron
+import           AI.Layer
+import           AI.Neuron
 
-import           Network.Network
-import           Network.Network.FeedForwardNetwork
+import           AI.Network
+import           AI.Network.FeedForwardNetwork
 
-import           Network.Trainer
-import           Network.Trainer.BackpropTrainer
+import           AI.Trainer
+import           AI.Trainer.BackpropTrainer
 
 --import Network.Visualizations
 import           Numeric.LinearAlgebra
@@ -27,7 +27,7 @@ main = do
   let dat = [(fromList [0, 1], fromList [1]), (fromList [1, 1], fromList [0]), (fromList [1, 0], fromList [1]), (fromList [0, 0], fromList [0])]
 
   let n' = trainNTimes g n t online dat 1000
-  
+
   putStrLn "==> XOR predictions: "
   print $ predict (fromList [0, 0]) n'
   print $ predict (fromList [1, 0]) n'

@@ -1,6 +1,6 @@
 {-# LANGUAGE FlexibleContexts      #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
-module Network.Trainer.BackpropTrainer
+module AI.Trainer.BackpropTrainer
 ( BackpropTrainer(..)
 
 , backprop
@@ -13,11 +13,11 @@ module Network.Trainer.BackpropTrainer
 , evaluate
 ) where
 
-import           Network.Layer
-import           Network.Network
-import           Network.Network.FeedForwardNetwork
-import           Network.Neuron
-import           Network.Trainer
+import           AI.Layer
+import           AI.Network
+import           AI.Network.FeedForwardNetwork
+import           AI.Neuron
+import           AI.Trainer
 
 import           Numeric.LinearAlgebra
 

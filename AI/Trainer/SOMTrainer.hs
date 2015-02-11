@@ -1,13 +1,13 @@
 {-# InstanceSigs #-}
 
-module Network.Trainer.SOMTrainer
+module AI.Trainer.SOMTrainer
 ( SOMTrainer(..)
 , fit
 , evaluate
 ) where
 
-import Network.Trainer
-import Network.Network.SOM
+import AI.Trainer
+import AI.Network.SOM
 
 data SOMTrainer = SOMTrainer { eta :: Double }
 

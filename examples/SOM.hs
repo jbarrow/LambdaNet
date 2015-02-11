@@ -1,10 +1,10 @@
 {-# LANGUAGE FlexibleContexts #-}
 
-import Network.Neuron
-import Network.Layer
+import AI.Neuron
+import AI.Layer
 
-import Network.Network
-import Network.Network.SOM
+import AI.Network
+import AI.Network.SOM
 
 import System.Random
 

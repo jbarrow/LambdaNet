@@ -1,7 +1,7 @@
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE RecordWildCards  #-}
 
-module Network.Layer
+module AI.Layer
 ( LayerDefinition(..)
 , Layer(..)
 , Connectivity
@@ -21,7 +21,7 @@ module Network.Layer
 ) where
 
 import           Data.Binary           (Binary (..), decode, encode)
-import           Network.Neuron
+import           AI.Neuron
 import           Numeric.LinearAlgebra
 import           System.Random
 

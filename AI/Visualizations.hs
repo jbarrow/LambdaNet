@@ -1,21 +1,21 @@
 {-# LANGUAGE FlexibleContexts #-}
 
-module Network.Visualizations
+module AI.Visualizations
 ( networkHistogram
 , weightList
 , biasList
 ) where
 
-import           Network.Layer
-import           Network.Network
-import           Network.Network.FeedForwardNetwork
-import           Network.Neuron
+import           AI.Layer
+import           AI.Network
+import           AI.Network.FeedForwardNetwork
+import           AI.Neuron
 import           Numeric.LinearAlgebra
 
 import           Data.Foldable                      (foldMap)
 import           GHC.Float
 import           Graphics.Histogram
-import           Network.Trainer
+import           AI.Trainer
 
 weightList :: FeedForwardNetwork -> [Double]
 weightList n = concat $ map (toList . flatten . weightMatrix) (layers n)

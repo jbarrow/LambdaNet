@@ -2,7 +2,7 @@
 {-# LANGUAGE TypeFamilies         #-}
 {-# LANGUAGE UndecidableInstances #-}
 
-module Network.Network.FeedForwardNetwork
+module AI.Network.FeedForwardNetwork
 ( FeedForwardNetwork(..)
 
 , emptyFeedForwardNetwork
@@ -15,9 +15,9 @@ module Network.Network.FeedForwardNetwork
 , apply
 ) where
 
-import           Network.Layer
-import           Network.Network
-import           Network.Neuron
+import           AI.Layer
+import           AI.Network
+import           AI.Neuron
 
 import           Data.Binary           (Binary (..), decode, encode)
 import qualified Data.ByteString.Lazy  as B
