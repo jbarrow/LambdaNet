@@ -5,7 +5,7 @@ module AI.DemoNeuron
        , RecluNeuron(..)
        , L2Neuron(..)
 
-       , Weights
+       , NeuronWeights
        , Values
 
        , sigmoid, sigmoid'
@@ -16,22 +16,45 @@ module AI.DemoNeuron
 
 import Numeric.LinearAlgebra
 import Numeric.LinearAlgebra.Data
+import Data.Binary
+import Data.Binary.Put
+import qualified Data.ByteString.Char8 as C
 
 data SigmoidNeuron = SigmoidNeuron deriving (Show)
 data TanhNeuron = TanhNeuron deriving (Show)
 data RecluNeuron = RecluNeuron deriving (Show)
 data L2Neuron = L2Neuron deriving (Show)
 
-type Weights = Vector Double
+type NeuronWeights = Vector Double
 type Values = Vector Double
-type Activation = Doube
+type Activation = Double
 
 -- | A Neuron type has two functions -- evaluate and evaluate',
---   both of which are functions from weights to input values
+--   both of which are functions from NeuronWeights to input values
 --   to doubles.
-class (Show a) => Neuron a where
-  evaluate :: a -> Weights -> Values -> Activation
-  evaluate' :: a -> Weights -> Values -> Activation
+class (Show a, Binary a) => Neuron a where
+  evaluate :: a -> NeuronWeights -> Values -> Activation
+  evaluate' :: a -> NeuronWeights -> Values -> Activation
+
+-- | Declare the Sigmoid Neuron to be a binary type
+instance Binary (SigmoidNeuron) where
+  put SigmoidNeuron = putByteString (C.pack (show SigmoidNeuron))
+  get = do return SigmoidNeuron
+
+-- | Declare the Tanh neuron to be a binary type
+instance Binary (TanhNeuron) where
+  put TanhNeuron = putByteString (C.pack (show TanhNeuron))
+  get = do return TanhNeuron
+
+-- | Declare a Rectified Linear Neuron to be a binary type
+instance Binary (RecluNeuron) where
+  put RecluNeuron = putByteString (C.pack (show RecluNeuron))
+  get = do return RecluNeuron
+
+-- | Declare an L2 Neuron to be a binary type
+instance Binary (L2Neuron) where
+  put L2Neuron = putByteString (C.pack (show L2Neuron))
+  get = do return L2Neuron
 
 instance Neuron (SigmoidNeuron) where
   evaluate  n w v = sigmoid  $ l1Norm w v
@@ -51,9 +74,9 @@ instance Neuron (L2Neuron) where
 
 -- | Compute a dot product, but ensure that the dimensions of both
 --   vectors are the same size.
-l1Norm :: Weights -> Values -> Double
+l1Norm :: NeuronWeights -> Values -> Double
 l1Norm w v = if size w /= size v
-             then error "Neuron weights and values don't align"
+             then error "Neuron NeuronWeights and values don't align"
              else dot w v
 
 -- | The sigmoid activation function, a standard activation function defined
@@ -85,5 +108,5 @@ reclu' :: Double -> Activation
 reclu' t = sigmoid t
 
 -- | Calculate the distance between a SOM neuron and an input
-l2Norm :: Weights -> Values -> Activation
+l2Norm :: NeuronWeights -> Values -> Activation
 l2Norm a b = sqrt $ sum $ map (^2) $ zipWith (-) (toList a) (toList b)
