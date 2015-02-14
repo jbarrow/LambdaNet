@@ -1,13 +1,17 @@
 module AI.DemoNeuron
        ( Neuron(..)
-       , SigmoidNeuron(..)
-       , TanhNeuron(..)
-       , RecluNeuron(..)
        , L2Neuron(..)
+       , ReducedNeuron(..)
 
        , NeuronWeights
        , Values
+       , ActivationFunction
+       , ActivationFunction'
 
+       , sigmoidNeuron
+       , tanhNeuron
+       , recluNeuron
+         
        , sigmoid, sigmoid'
        , tanh, tanh'
        , reclu, reclu'
@@ -16,14 +20,15 @@ module AI.DemoNeuron
 
 import Numeric.LinearAlgebra
 import Numeric.LinearAlgebra.Data
-import Data.Binary
-import Data.Binary.Put
-import qualified Data.ByteString.Char8 as C
 
-data SigmoidNeuron = SigmoidNeuron deriving (Show)
-data TanhNeuron = TanhNeuron deriving (Show)
-data RecluNeuron = RecluNeuron deriving (Show)
+type ActivationFunction = Double -> Double
+type ActivationFunction' = Double -> Double
+
 data L2Neuron = L2Neuron deriving (Show)
+data ReducedNeuron = ReducedNeuron { activation :: ActivationFunction
+                                   , activation' :: ActivationFunction'
+                                   , description :: String
+                                   }
 
 type NeuronWeights = Vector Double
 type Values = Vector Double
@@ -35,22 +40,23 @@ type Activation = Double
 class (Show a) => Neuron a where
   evaluate :: a -> NeuronWeights -> Values -> Activation
   evaluate' :: a -> NeuronWeights -> Values -> Activation
- 
-instance Neuron (SigmoidNeuron) where
-  evaluate  n w v = sigmoid  $ l1Norm w v
-  evaluate' n w v = sigmoid' $ l1Norm w v
 
-instance Neuron (TanhNeuron) where
-  evaluate  n w v = tanh  $ l1Norm w v
-  evaluate' n w v= tanh' $ l1Norm w v
-
-instance Neuron (RecluNeuron) where
-  evaluate  n w v = reclu  $ l1Norm w v
-  evaluate' n w v = reclu' $ l1Norm w v
+instance Show (ReducedNeuron) where
+  show n = description n
 
 instance Neuron (L2Neuron) where
   evaluate  n = l2Norm
   evaluate' n = l1Norm
+
+-- | Our provided neuron types: sigmoid, tanh, reclu
+sigmoidNeuron :: ReducedNeuron
+sigmoidNeuron = ReducedNeuron sigmoid sigmoid' "sigmoid"
+
+tanhNeuron :: ReducedNeuron
+tanhNeuron = ReducedNeuron tanh tanh' "tanh"
+
+recluNeuron :: ReducedNeuron
+recluNeuron = ReducedNeuron reclu reclu' "reclu"
 
 -- | Compute a dot product, but ensure that the dimensions of both
 --   vectors are the same size.
