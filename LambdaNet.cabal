@@ -23,7 +23,16 @@ extra-source-files:  README.md
                      Changelog
 
 library
-  exposed-modules:   AI.Network, AI.Neuron, AI.Layer, AI.Trainer, AI.Trainer.BackpropTrainer, AI.Network.FeedForwardNetwork, AI.Network.SOM, AI.DemoNeuron
+  exposed-modules:
+    AI.Network,
+    AI.Neuron,
+    AI.Layer,
+    AI.Trainer,
+    AI.Trainer.BackpropTrainer,
+    AI.Network.FeedForwardNetwork,
+    AI.Network.SOM,
+    AI.DemoNeuron,
+    AI.DemoLayer
   -- other-modules:
   build-depends:
     base >= 4 && < 5,
