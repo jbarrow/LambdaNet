@@ -3,8 +3,8 @@ module TestLayer where
 import Test.Hspec
 import Test.QuickCheck
 
-import AI.Neuron
-import AI.Layer
+import AI.DemoNeuron
+import AI.DemoLayer
 
 testLayer :: IO ()
 testLayer = hspec $ do

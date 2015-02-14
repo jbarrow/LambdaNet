@@ -35,5 +35,5 @@ type LayerWidth = Int
 type Connectivity = LayerWidth -> LayerWidth -> Weights
 
 instance (Neuron a) => Binary (Layer a) where
-  put Layer{..} = do put neuron; put weights; put biases
-  get = do neuron <- get; weights <- get; biases <- get; return Layer{..}
+  put Layer{..} = do put weights; put biases
+  get = do weights <- get; biases <- get; return Layer{..}

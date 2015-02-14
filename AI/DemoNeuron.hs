@@ -32,30 +32,10 @@ type Activation = Double
 -- | A Neuron type has two functions -- evaluate and evaluate',
 --   both of which are functions from NeuronWeights to input values
 --   to doubles.
-class (Show a, Binary a) => Neuron a where
+class (Show a) => Neuron a where
   evaluate :: a -> NeuronWeights -> Values -> Activation
   evaluate' :: a -> NeuronWeights -> Values -> Activation
-
--- | Declare the Sigmoid Neuron to be a binary type
-instance Binary (SigmoidNeuron) where
-  put SigmoidNeuron = putByteString (C.pack (show SigmoidNeuron))
-  get = do return SigmoidNeuron
-
--- | Declare the Tanh neuron to be a binary type
-instance Binary (TanhNeuron) where
-  put TanhNeuron = putByteString (C.pack (show TanhNeuron))
-  get = do return TanhNeuron
-
--- | Declare a Rectified Linear Neuron to be a binary type
-instance Binary (RecluNeuron) where
-  put RecluNeuron = putByteString (C.pack (show RecluNeuron))
-  get = do return RecluNeuron
-
--- | Declare an L2 Neuron to be a binary type
-instance Binary (L2Neuron) where
-  put L2Neuron = putByteString (C.pack (show L2Neuron))
-  get = do return L2Neuron
-
+ 
 instance Neuron (SigmoidNeuron) where
   evaluate  n w v = sigmoid  $ l1Norm w v
   evaluate' n w v = sigmoid' $ l1Norm w v
