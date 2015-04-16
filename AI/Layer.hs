@@ -78,7 +78,7 @@ scaleLayer factor l =
 -- | The connectFully function takes the number of input neurons for a layer, i,
 --   and the number of output neurons of a layer, j, and returns an i x j
 --   connectivity matrix for a fully connected network.
-connectFully :: Int -> Int -> Matrix Double
+connectFully :: Connectivity
 connectFully i j = (i >< j) (repeat 1)
 
 -- | To go from a showable to a layer, we also need a neuron type,
@@ -101,7 +101,7 @@ boxMuller x1 x2 = (z1, z2)
 
 -- | This is a function of type RandomTransform that transforms a list of
 --   uniformly distributed numbers to a list of normally distributed numbers.
-normals :: [Double] -> [Double]
+normals :: RandomTransform
 normals (x1:x2:xs) = z1:z2:(normals xs)
   where (z1, z2) = boxMuller x1 x2
 normals _ = []
@@ -109,7 +109,7 @@ normals _ = []
 -- | A non-transformation to return a list of uniformly distributed numbers
 --   from a list of uniformly distributed numbers. It's really a matter of
 --   naming consistency. It generates numbers on the range (0, 1]
-uniforms :: [Double] -> [Double]
+uniforms :: RandomTransform
 uniforms xs = xs
 
 -- | An affine transformation to return a list of uniforms on the range
