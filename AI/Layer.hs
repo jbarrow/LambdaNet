@@ -44,7 +44,9 @@ instance Binary (Layer) where
   get = do weightMatrix <- get; biasVector <- get; return Layer{..}
 
 -- | Connectivity is the type alias for a function that defines the connective
---   matrix for two layers (fully connected, convolutionally connected, etc.)
+--   matrix for two layers (fully connected, convolutionally connected, etc.).
+--   It takes the number of input and output neurons as the
+--   first and second parameters, respectively.
 type Connectivity = Int -> Int -> Matrix Double
 
 -- | A random transformation type alias. It is a transformation defined on an
