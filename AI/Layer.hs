@@ -12,6 +12,7 @@ module AI.Layer
 , createLayer
 , scaleLayer
 , connectFully
+, connectLocally
 
 , randomList
 , boxMuller
@@ -45,6 +46,7 @@ instance Binary (Layer) where
 
 -- | Connectivity is the type alias for a function that defines the connective
 --   matrix for two layers (fully connected, convolutionally connected, etc.)
+--   and takes in the number of output and input neurons
 type Connectivity = Int -> Int -> Matrix Double
 
 -- | A random transformation type alias. It is a transformation defined on an
@@ -80,6 +82,24 @@ scaleLayer factor l =
 --   connectivity matrix for a fully connected network.
 connectFully :: Connectivity
 connectFully i j = (i >< j) (repeat 1)
+
+-- | The connectConv function takes in the number of filters, receptive field size,
+--   stride, zero-padding, depth, width and height of the input and output
+connectLocally :: Int -> Int -> Int -> Int -> Int -> Int -> Int -> Int -> Int -> Connectivity
+connectLocally f s p d k w1 h1 w2 h2 i j = 
+  repmat (trans (fromLists conn :: Matrix Double)) d k
+  where conn = [(replicate row_zero_offset 0)
+                ++ (take (f * row_size) (cycle field_area)) 
+                ++ (replicate (row_size * col_size - row_size * f - row_zero_offset) 0)
+                | n <- [0..i-1],
+                  let row_size = w1 + 2 * p,
+                  let col_size = h1 + 2 * p,
+                  let row_zero_offset = (1 + s) * (quot n w2) * row_size,
+                  let field_area_zero_offset = (1 + s) * (mod n w2),
+                  let field_area = (replicate field_area_zero_offset 0) 
+                                   ++ (replicate f 1)
+                                   ++ (replicate (row_size - f - field_area_zero_offset) 0)
+                ]
 
 -- | To go from a showable to a layer, we also need a neuron type,
 --   which is an unfortunate restriction owed to Haskell's inability to
