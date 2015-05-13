@@ -88,17 +88,17 @@ connectFully i j = (i >< j) (repeat 1)
 connectLocally :: Int -> Int -> Int -> Int -> Int -> Int -> Int -> Int -> Int -> Connectivity
 connectLocally f s p d k w1 h1 w2 h2 i j = 
   repmat (fromLists conn :: Matrix Double) k d
-  where conn = [(replicate row_zero_offset 0)
-                ++ (take (f * row_size) (cycle field_area)) 
-                ++ (replicate (row_size * col_size - row_size * f - row_zero_offset) 0)
+  where conn = [(replicate rowZeroOffset 0)
+                ++ (take (f * rowSize) (cycle fieldArea)) 
+                ++ (replicate (rowSize * colSize - rowSize * f - rowZeroOffset) 0)
                 | n <- [0.. (quot i k)-1],
-                  let row_size = w1 + 2 * p,
-                  let col_size = h1 + 2 * p,
-                  let row_zero_offset = (1 + s) * (quot n w2) * row_size,
-                  let field_area_zero_offset = (1 + s) * (mod n w2),
-                  let field_area = (replicate field_area_zero_offset 0) 
+                  let rowSize = w1 + 2 * p,
+                  let colSize = h1 + 2 * p,
+                  let rowZeroOffset = (1 + s) * (quot n w2) * rowSize,
+                  let fieldAreaZeroOffset = (1 + s) * (mod n w2),
+                  let fieldArea = (replicate fieldAreaZeroOffset 0) 
                                    ++ (replicate f 1)
-                                   ++ (replicate (row_size - f - field_area_zero_offset) 0)
+                                   ++ (replicate (rowSize - f - fieldAreaZeroOffset) 0)
                 ]
 
 -- | To go from a showable to a layer, we also need a neuron type,
