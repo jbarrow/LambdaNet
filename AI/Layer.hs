@@ -87,11 +87,11 @@ connectFully i j = (i >< j) (repeat 1)
 --   stride, zero-padding, depth, width and height of the input and output
 connectLocally :: Int -> Int -> Int -> Int -> Int -> Int -> Int -> Int -> Int -> Connectivity
 connectLocally f s p d k w1 h1 w2 h2 i j = 
-  repmat (trans (fromLists conn :: Matrix Double)) d k
+  repmat (fromLists conn :: Matrix Double) k d
   where conn = [(replicate row_zero_offset 0)
                 ++ (take (f * row_size) (cycle field_area)) 
                 ++ (replicate (row_size * col_size - row_size * f - row_zero_offset) 0)
-                | n <- [0..i-1],
+                | n <- [0.. (quot i k)-1],
                   let row_size = w1 + 2 * p,
                   let col_size = h1 + 2 * p,
                   let row_zero_offset = (1 + s) * (quot n w2) * row_size,
