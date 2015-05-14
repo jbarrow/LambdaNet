@@ -75,3 +75,16 @@ testNeuron = hspec $ do
 
     it "should approach the one upper bound" $ do
         (testApproachesUpperBound tanh 1 0.0000000001) `shouldBe` True
+
+  describe "Reclu Neuron" $ do
+    it "should be an instance of Show" $ do
+      (typeOf $ show recluNeuron) `shouldBe` typeRep ["Char"]
+                       
+    it "should have a monotonically increasing activation function" $ do
+       (testMonotonicallyIncreasing reclu) `shouldBe` True
+
+    it "should have a lower bound at negative zero" $ do
+        (testLowerBound reclu 0) `shouldBe` True
+
+    it "should approach the zero lower bound" $ do
+        (testApproachesLowerBound reclu 0 0.000000001) `shouldBe` True
