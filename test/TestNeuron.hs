@@ -55,4 +55,23 @@ testNeuron = hspec $ do
         (testApproachesLowerBound sigmoid 0 0.000000001) `shouldBe` True
 
     it "should approach the one upper bound" $ do
-        (testApproachesUpperBound sigmoid 0 0.0000000001) `shouldBe` True
+        (testApproachesUpperBound sigmoid 1 0.0000000001) `shouldBe` True
+
+  describe "Tanh Neuron" $ do
+    it "should be an instance of Show" $ do
+      (typeOf $ show tanhNeuron) `shouldBe` typeRep ["Char"]
+                       
+    it "should have a monotonically increasing activation function" $ do
+       (testMonotonicallyIncreasing tanh) `shouldBe` True
+
+    it "should have an upper bound at one" $ do
+        (testUpperBound tanh 1) `shouldBe` True
+
+    it "should have a lower bound at negative one" $ do
+        (testLowerBound tanh (-1)) `shouldBe` True
+
+    it "should approach the zero lower bound" $ do
+        (testApproachesLowerBound tanh (-1) 0.000000001) `shouldBe` True
+
+    it "should approach the one upper bound" $ do
+        (testApproachesUpperBound tanh 1 0.0000000001) `shouldBe` True
