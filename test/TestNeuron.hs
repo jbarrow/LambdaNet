@@ -28,7 +28,7 @@ testUpperBound f upper = and $ map (<= upper) applied
 
 testApproachesUpperBound :: ActivationFunction -> Double -> Double -> Bool
 testApproachesUpperBound  f upper epsilon = and $ map (>= upper - epsilon) applied
-    where applied = map f [-100.0, -100.1 .. -130.0]
+    where applied = map f [100.0, 100.1 .. 130.0]
 
 -- | Test that an activation function is monotonically increasing (for now,
 --   no formal proof, just a band around 0).
