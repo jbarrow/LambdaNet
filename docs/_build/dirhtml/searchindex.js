@@ -1,0 +1,1 @@
+Search.setIndex({envversion:42,terms:{"function":0,index:0,search:0,rapid:0,built:0,evalu:0,neural:0,modul:0,haskel:0,content:0,network:0,prototyp:0,allow:0,page:0,librari:0,architectur:0},objtypes:{},objnames:{},filenames:["index"],titles:["LambdaNet"],objects:{},titleterms:{lambdanet:0,indic:0,tabl:0}})
