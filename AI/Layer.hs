@@ -11,6 +11,8 @@ module AI.Layer
 
 , createLayer
 , scaleLayer
+, randomizeFully
+, randomizeLocally
 , connectFully
 , connectLocally
 
@@ -31,6 +33,7 @@ import           System.Random
 data LayerDefinition = LayerDefinition { neuronDef   :: Neuron
                                        , neuronCount :: Int
                                        , connect     :: Connectivity
+                                       , randomize   :: Randomization
                                        }
 
 -- | The Layer type, which stores the weight matrix, the bias matrix, and
@@ -49,6 +52,13 @@ instance Binary (Layer) where
 --   and takes in the number of output and input neurons
 type Connectivity = Int -> Int -> Matrix Double
 
+-- | Randomiation is the type alias for a function that defines
+--   the initial random values for the weight matrix and bias vector
+--   for two layers and takes in a random transformation on an infinite
+--   stream of uniformly generated numbers, a source of entropy,
+--   the number of output neurons, and the number of input neurons
+type Randomization = RandomTransform -> Int -> Int -> (Matrix Double, Vector Double)
+
 -- | A random transformation type alias. It is a transformation defined on an
 --   infinite list of uniformly distributed random numbers, and returns a list
 --   distributed on the transforming distribution.
@@ -65,8 +75,9 @@ createLayer t g layerDef layerDef' =
   Layer (randomMatrix * (connectivity i j))
         (randomVector * bias)
         (neuronDef layerDef)
-  where randomMatrix = (i >< j) (randomList t g')
-        randomVector = i |> (randomList t g'')
+  where randomMatrix = fst randomValues
+        randomVector = snd randomValues
+        randomValues = (randomize layerDef') t i j
         i = neuronCount layerDef'
         j = neuronCount layerDef
         connectivity = connect layerDef'
@@ -76,6 +87,25 @@ createLayer t g layerDef layerDef' =
 scaleLayer :: Double -> Layer -> Layer
 scaleLayer factor l =
   Layer (factor `scale` (weightMatrix l)) (factor `scale` (biasVector l)) (neuron l)
+
+-- | The randomizeFully function takes in a source of entropy, the number of output
+--   neurons, and the number of input neurons, and returns a tuple of the 
+--   a fully random matrix, and a fully random vector
+randomizeFully :: (RandomGen g) => g -> Randomization
+randomizeFully g t i j = (randomMatrix, randomVector)
+  where randomMatrix = (i >< j) (randomList t g')
+        randomVector = i |> (randomList t g'')
+        (g', g'') = split g
+
+-- | The randomizeLocally function takes in a source of entropy, the number of output
+--   neurons, and the number of input neurons, and returns a tuple of the 
+--   a locally random matrix, and a locally random vector
+randomizeLocally :: (RandomGen g) => g -> Int -> Randomization
+randomizeLocally g d t i j = (randomMatrix, randomVector)
+  where randomMatrix = repmat ((i >< presynPerDim) (randomList t g')) 1 d
+        randomVector = i |> (randomList t g'')
+        presynPerDim = quot j d
+        (g', g'') = split g
 
 -- | The connectFully function takes the number of input neurons for a layer, i,
 --   and the number of output neurons of a layer, j, and returns an i x j

@@ -16,11 +16,12 @@ import           System.Random
 
 main :: IO ()
 main = do
-  let l = LayerDefinition sigmoidNeuron 2 connectFully
-  let l' = LayerDefinition sigmoidNeuron 2 connectFully
-  let l'' = LayerDefinition sigmoidNeuron 1 connectFully
 
   g <- newStdGen
+  let l = LayerDefinition sigmoidNeuron 2 connectFully (randomizeFully g)
+  let l' = LayerDefinition sigmoidNeuron 2 connectFully (randomizeFully g)
+  let l'' = LayerDefinition sigmoidNeuron 1 connectFully (randomizeFully g)
+
   let n = createNetwork normals g [l, l', l'']
 
   let t = BackpropTrainer (3 :: Double) quadraticCost quadraticCost'
