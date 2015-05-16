@@ -35,7 +35,12 @@ testApproachesUpperBound  f upper epsilon = and $ map (>= upper - epsilon) appli
 testMonotonicallyIncreasing :: ActivationFunction -> Bool
 testMonotonicallyIncreasing f = and $ zipWith (<=) applied (drop 1 applied)
     where applied = map f [-10.0, -9.99 .. 10.0]
-    
+
+-- | Test the maximum of a function -- left to do for later
+testMaximum :: ActivationFunction -> Double -> Bool
+testMaximum f center = (maximum $ map f lst) == (f center)
+    where lst = [-10.0 - center, -9.99 - center .. 10.0 + center]
+                    
 testNeuron :: IO ()
 testNeuron = hspec $ do
   describe "Sigmoid Neuron" $ do
@@ -57,6 +62,9 @@ testNeuron = hspec $ do
     it "should approach the one upper bound" $ do
         (testApproachesUpperBound sigmoid 1 0.0000000001) `shouldBe` True
 
+    it "should have a derivative with a maximum at 0" $ do
+        (testMaximum sigmoid' 0) `shouldBe` True
+
   describe "Tanh Neuron" $ do
     it "should be an instance of Show" $ do
       (typeOf $ show tanhNeuron) `shouldBe` typeRep ["Char"]
@@ -76,6 +84,9 @@ testNeuron = hspec $ do
     it "should approach the one upper bound" $ do
         (testApproachesUpperBound tanh 1 0.0000000001) `shouldBe` True
 
+    it "should have a derivative with a maximum at 0" $ do
+        (testMaximum tanh' 0) `shouldBe` True
+                                                       
   describe "Reclu Neuron" $ do
     it "should be an instance of Show" $ do
       (typeOf $ show recluNeuron) `shouldBe` typeRep ["Char"]
@@ -88,3 +99,18 @@ testNeuron = hspec $ do
 
     it "should approach the zero lower bound" $ do
         (testApproachesLowerBound reclu 0 0.000000001) `shouldBe` True
+
+    it "should have a derivative that is monotonically increasing" $ do
+       (testMonotonicallyIncreasing reclu') `shouldBe` True
+
+    it "should have a derivative with an upper bound at one" $ do
+        (testUpperBound reclu' 1) `shouldBe` True
+
+    it "should have a derivative with a lower bound at zero" $ do
+        (testLowerBound reclu' 0) `shouldBe` True
+
+    it "should a derivative that approaches the zero lower bound" $ do
+        (testApproachesLowerBound reclu' 0 0.000000001) `shouldBe` True
+
+    it "should a derivative that approaches the one upper bound" $ do
+        (testApproachesUpperBound reclu' 1 0.0000000001) `shouldBe` True
