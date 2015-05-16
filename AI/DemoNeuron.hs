@@ -44,6 +44,14 @@ class (Show a) => Neuron a where
 instance Show (ReducedNeuron) where
   show n = description n
 
+instance Neuron (ReducedNeuron) where
+    evaluate n weights values = f $ dot weights values
+        where f = activation n
+
+    evaluate' n weights values = f' $ dot weights values
+        where f' = activation' n
+
+           
 instance Neuron (L2Neuron) where
   evaluate  n = l2Norm
   evaluate' n = l1Norm
