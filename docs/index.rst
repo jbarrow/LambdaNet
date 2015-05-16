@@ -9,6 +9,7 @@ LambdaNet
 LambdaNet is a functional neural network library built in Haskell that allows rapid
 prototyping and evaluation of neural architectures.
 
+
 Contents:
 
 .. toctree::

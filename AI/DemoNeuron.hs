@@ -50,7 +50,6 @@ instance Neuron (ReducedNeuron) where
 
     evaluate' n weights values = f' $ dot weights values
         where f' = activation' n
-
            
 instance Neuron (L2Neuron) where
   evaluate  n = l2Norm
