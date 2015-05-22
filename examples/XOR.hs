@@ -18,9 +18,9 @@ main :: IO ()
 main = do
 
   g <- newStdGen
-  let l = LayerDefinition sigmoidNeuron 2 connectFully (randomizeFully g)
-  let l' = LayerDefinition sigmoidNeuron 2 connectFully (randomizeFully g)
-  let l'' = LayerDefinition sigmoidNeuron 1 connectFully (randomizeFully g)
+  let l = LayerDefinition sigmoidNeuron 2 connectFully randomizeFully
+  let l' = LayerDefinition sigmoidNeuron 2 connectFully randomizeFully
+  let l'' = LayerDefinition sigmoidNeuron 1 connectFully randomizeFully
 
   let n = createNetwork normals g [l, l', l'']
 

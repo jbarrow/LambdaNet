@@ -58,7 +58,7 @@ addFeedForwardNetworks n1 n2 = if isEmptyFeedForwardNetwork n1 then n2 else
           ((biasVector l1) + (biasVector l2)) (neuron l1)
 
 instance Network (FeedForwardNetwork) where
-  type Parameters = [LayerDefinition]
+  type Parameters g = [LayerDefinition g]
 
   -- | Predict folds over each layer of the network using the input vector as the
   --   first value of the accumulator. It operates on whatever network you pass in.
@@ -85,11 +85,11 @@ apply vector layer = mapVector sigma (weights <> vector + bias)
 
 -- | Given a filename and a network, we want to save the weights and biases
 --   of the network to the file for later use.
-saveFeedForwardNetwork :: Binary (Layer) => FilePath -> FeedForwardNetwork -> IO ()
+saveFeedForwardNetwork :: (Binary Layer) => FilePath -> FeedForwardNetwork -> IO ()
 saveFeedForwardNetwork file n = B.writeFile file (encode (layers n))
 
 -- | Given a filename, and a list of layer definitions, we want to reexpand
 --   the data back into a network.
-loadFeedForwardNetwork :: Binary (Layer) => FilePath -> [LayerDefinition] -> IO (FeedForwardNetwork)
+loadFeedForwardNetwork :: (Binary Layer, RandomGen g) => FilePath -> [LayerDefinition g] -> IO (FeedForwardNetwork)
 loadFeedForwardNetwork file defs = B.readFile file >>= \sls ->
   return $ FeedForwardNetwork (map showableToLayer (zip (decode sls) defs))

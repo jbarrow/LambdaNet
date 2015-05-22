@@ -4,7 +4,7 @@ import Test.Hspec
 import Test.QuickCheck
 
 import AI.DemoNeuron
-import AI.DemoLayer
+import AI.Layer
 
 testLayer :: IO ()
 testLayer = hspec $ do
