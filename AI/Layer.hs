@@ -6,6 +6,7 @@ module AI.Layer
 , Layer(..)
 , Connectivity
 , RandomTransform
+, Randomization
 
 , showableToLayer
 

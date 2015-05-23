@@ -25,19 +25,20 @@ data SOM = SOM { neuronMap :: [[Vector Double]] }
 
 -- | A definitution type for the SOM, it contains the dimensions of each layer (x, y)
 --   and the dimension of the input vector (dim)
-data MapDefinition = MapDefinition { x        :: Int
-                                   , y        :: Int
-                                   , inputDim :: Int
-                                   }
+data MapDefinition g = MapDefinition { x        :: Int
+                                     , y        :: Int
+                                     , inputDim :: Int
+                                     , randomize :: Randomization g
+                                     }
 
 instance Network (SOM) where
-  type Parameters = MapDefinition
+  type Parameters g = MapDefinition g
 
   predict :: Vector Double -> SOM -> Vector Double
   predict inputs network = inputs
 
   -- | Create a SOM and initialize it with given weights
-  createNetwork :: (RandomGen g) => RandomTransform -> g -> Parameters -> SOM
+  createNetwork :: (RandomGen g) => RandomTransform -> g -> Parameters g -> SOM
   createNetwork transformation g def = SOM randomVectors
     where randomVectors = reshapeList (x def) $
                           makeVectors transformation g (inputDim def)

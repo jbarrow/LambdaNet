@@ -3,7 +3,7 @@ module TestLayer where
 import Test.Hspec
 import Test.QuickCheck
 
-import AI.DemoNeuron
+import AI.Neuron
 import AI.Layer
 
 testLayer :: IO ()

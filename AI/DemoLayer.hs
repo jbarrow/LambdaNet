@@ -10,7 +10,7 @@ module AI.DemoLayer
 , LayerWidth
 , Connectivity
 
-, createLayer
+--, createLayer
 ) where
 
 import AI.DemoNeuron
@@ -20,6 +20,7 @@ import Numeric.LinearAlgebra.Data
 import Data.Binary
 import Data.Binary.Put
 import qualified Data.ByteString.Lazy as B
+import System.Random
 
 data LayerDefinition a = LayerDefinition { neuronType   :: a
                                          , width        :: LayerWidth
@@ -40,7 +41,7 @@ instance (Neuron a) => Binary (Layer a) where
   put Layer{..} = do put weights; put biases
   get = do weights <- get; biases <- get; return Layer{..}
 
-createLayer :: (Neuron a, RandomGen g)
-               => RandomTransform -> g -> LayerDefinition a
-               -> LayerDefinition a -> Layer
-createLayer t g li lj = Layer (neuron lj) 
+-- createLayer :: (Neuron a, RandomGen g)
+--               => RandomTransform -> g -> LayerDefinition a
+--               -> LayerDefinition a -> Layer
+-- createLayer t g li lj = Layer (neuron lj) 
