@@ -48,7 +48,8 @@ updateNetwork mag t nablas n = addFeedForwardNetworks n
 -- | Calculate the nablas for a minibatch and return them as a network (so each
 --   weight and bias gets its own nabla).
 calculateNablas :: BackpropTrainer -> FeedForwardNetwork -> FeedForwardNetwork -> TrainingData -> FeedForwardNetwork
-calculateNablas t n nablas e = FeedForwardNetwork $ map (updateLayer t) (zip3 (layers n) ds os)
+calculateNablas t n nablas e = addFeedForwardNetworks nablas
+  (FeedForwardNetwork $ map (updateLayer t) (zip3 (layers n) ds os))
   where ds = deltas t n e
         os = outputs (fst e) n
 
