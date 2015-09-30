@@ -11,6 +11,9 @@ module AI.Trainer
 
 , quadraticCost
 , quadraticCost'
+, softmax
+, softmaxCost
+, softmaxCost'
 , minibatch
 , online
 
@@ -25,6 +28,7 @@ import           AI.Neuron
 
 import           Data.List.Split       (chunksOf)
 import           Numeric.LinearAlgebra
+import           Numeric.LinearAlgebra.Data (size)
 import           System.Random
 import           System.Random.Shuffle (shuffle')
 
@@ -60,6 +64,20 @@ quadraticCost y a = sumElements $ 0.5 * (a - y) ** 2
 -- | The derivative of the quadratic cost function sum (y - a)
 quadraticCost' :: Vector Double -> Vector Double -> Vector Double
 quadraticCost' y a = a - y
+
+-- | The softmax function: a / (e ** a)
+--   Subtracts the maxium element when computes 'exp' to avoid numerical issues.
+softmax :: Vector Double -> Vector Double
+softmax a = (1 / (sumElements a')) `scale` a'
+  where a' = cmap (\ x -> exp $ x - maxElement a) a
+
+-- | The softmax cost function: - y * (log p), where p = softmax a
+softmaxCost :: Vector Double -> Vector Double -> Double
+softmaxCost y a = - (y <.> (log $ softmax a)) / (fromIntegral $ size y)
+
+-- | The derivative of the softmax cost function: a - y
+softmaxCost' :: Vector Double -> Vector Double -> Vector Double
+softmaxCost' y a = (1.0 / (fromIntegral $ size y)) `scale` (a - y)
 
 -- | The minibatch function becomes a Selection when partially applied
 --   with the minibatch size
