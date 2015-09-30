@@ -58,7 +58,7 @@ addFeedForwardNetworks n1 n2 = if isEmptyFeedForwardNetwork n1 then n2 else
           ((biasVector l1) + (biasVector l2)) (neuron l1)
 
 instance Network (FeedForwardNetwork) where
-  type Parameters g = [LayerDefinition g]
+  type Parameters FeedForwardNetwork g = [LayerDefinition g]
 
   -- | Predict folds over each layer of the network using the input vector as the
   --   first value of the accumulator. It operates on whatever network you pass in.

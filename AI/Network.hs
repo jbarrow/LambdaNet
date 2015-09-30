@@ -12,7 +12,7 @@ import           System.Random
 
 -- | A network is
 class Network a where
-  type Parameters g :: *
+  type Parameters a g :: *
 
   predict :: Vector Double -> a -> Vector Double
-  createNetwork :: (RandomGen g) => RandomTransform -> g -> Parameters g -> a
+  createNetwork :: (RandomGen g) => RandomTransform -> g -> Parameters a g -> a
