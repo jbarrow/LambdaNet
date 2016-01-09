@@ -23,6 +23,7 @@ import           Data.Binary           (Binary (..), decode, encode)
 import qualified Data.ByteString.Lazy  as B
 import           Data.Monoid           (Monoid (..))
 import           Numeric.LinearAlgebra
+import           Numeric.LinearAlgebra.Data (cmap)
 import           System.IO
 import           System.Random
 
@@ -78,7 +79,7 @@ instance Network (FeedForwardNetwork) where
 -- | A function used in the fold in predict that applies the activation
 --   function and pushes the input through a layer of the network.
 apply :: Vector Double -> Layer -> Vector Double
-apply vector layer = mapVector sigma (weights <> vector + bias)
+apply vector layer = cmap sigma (weights #> vector + bias)
   where sigma = activation (neuron layer)
         weights = weightMatrix layer
         bias = biasVector layer

@@ -36,7 +36,7 @@ library
   -- other-modules:
   build-depends:
     base >= 4 && < 5,
-    hmatrix == 0.16.0.6,
+    hmatrix >= 0.17.0.1,
     random,
     random-shuffle >= 0.0.4,
     split,

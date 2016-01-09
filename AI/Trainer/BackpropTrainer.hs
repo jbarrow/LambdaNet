@@ -57,7 +57,7 @@ calculateNablas t n nablas e = addFeedForwardNetworks nablas
 updateLayer :: BackpropTrainer -> (Layer, Vector Double, Vector Double) -> Layer
 updateLayer t (l, delta, output) = Layer newWeight newBias n
   where n = neuron l
-        newWeight = ((reshape 1 delta) <> (reshape (dim output) output))
+        newWeight = scalar $ dot delta output
         newBias = delta
 
 -- | The outputs function scans over each layer of the network and stores the
@@ -70,16 +70,16 @@ outputs input network = scanl apply input (layers network)
 inputs :: Vector Double -> FeedForwardNetwork -> [Vector Double]
 inputs input network = if null (layers network) then []
   else unactivated : inputs activated (FeedForwardNetwork (tail $ layers network))
-  where unactivated = weightMatrix layer <> input + biasVector layer
+  where unactivated = weightMatrix layer #> input + biasVector layer
         layer = head $ layers network
-        activated = mapVector (activation (neuron layer)) unactivated
+        activated = cmap (activation (neuron layer)) unactivated
 
 -- | The deltas function returns a list of layer deltas.
 deltas :: BackpropTrainer -> FeedForwardNetwork -> TrainingData -> [Vector Double]
 deltas t n example = (reverse (hiddenDeltas
   (FeedForwardNetwork (reverse (layers n))) outputDelta (tail $ reverse is))) ++ [outputDelta]
   where outputDelta = costd (snd example) output *
-          mapVector activationd lastInput
+          cmap activationd lastInput
         costd = cost' t
         activationd = activation' (neuron (last (layers n)))
         output = last os
@@ -92,6 +92,6 @@ hiddenDeltas :: FeedForwardNetwork -> Vector Double -> [Vector Double] -> [Vecto
 hiddenDeltas n prevDelta is = if length (layers n) <= 1 then []
   else delta : hiddenDeltas rest delta (tail is)
   where rest = FeedForwardNetwork (tail $ layers n)
-        delta = (trans w) <> prevDelta * spv
+        delta = tr w #> prevDelta * spv
         w = weightMatrix (head $ layers n)
-        spv = mapVector (activation' (neuron (head $ layers n))) (head is)
+        spv = cmap (activation' (neuron (head $ layers n))) (head is)
