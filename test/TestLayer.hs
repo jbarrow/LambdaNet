@@ -7,7 +7,7 @@ import AI.Neuron
 import AI.Layer
 
 testLayer :: IO ()
-testLayer = hspec $ do
-  describe "Layer" $ do
-    it "should be able to pass tests" $ do
+testLayer = hspec $
+  describe "Layer" $
+    it "should be able to pass tests" $
       1 `shouldBe` 1

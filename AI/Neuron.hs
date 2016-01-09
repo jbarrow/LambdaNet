@@ -24,8 +24,8 @@ data Neuron = Neuron { activation  :: ActivationFunction
                      , description :: String
                      }
 
-instance Show (Neuron) where
-  show n = description n
+instance Show Neuron where
+  show = description
 
 type ActivationFunction = Double -> Double
 type ActivationFunction' = Double -> Double
@@ -69,4 +69,4 @@ reclu t = log (1 + exp t)
 -- | The derivative of the rectified linear activation function is just the
 --   sigmoid.
 reclu' :: Double -> Double
-reclu' t = sigmoid t
+reclu' = sigmoid

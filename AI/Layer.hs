@@ -44,7 +44,7 @@ data Layer = Layer { weightMatrix :: Matrix Double
                    , neuron       :: Neuron
                    } deriving Show
 
-instance Binary (Layer) where
+instance Binary Layer where
   put Layer{..} = do put weightMatrix; put biasVector
   get = do weightMatrix <- get; biasVector <- get; return Layer{..}
 
@@ -78,20 +78,18 @@ type RandomTransform = [Double] -> [Double]
 createLayer :: (RandomGen g)
   => RandomTransform -> g -> LayerDefinition g -> LayerDefinition g -> Layer
 createLayer t g layerDef layerDef' =
-  Layer (randomMatrix * (connectivity i j))
+  Layer (randomMatrix * connectivity i j)
         (randomVector * bias)
         (neuronDef layerDef)
-  where randomMatrix = fst randomValues
-        randomVector = snd randomValues
-        randomValues = (randomize layerDef') g t i j
+  where (randomMatrix, randomVector) = randomize layerDef' g t i j
         i = neuronCount layerDef'
         j = neuronCount layerDef
         connectivity = connect layerDef'
-        bias = i |> (repeat 1) -- bias connectivity (full)
+        bias = i |> repeat 1 -- bias connectivity (full)
 
 scaleLayer :: Double -> Layer -> Layer
 scaleLayer factor l =
-  Layer (factor `scale` (weightMatrix l)) (factor `scale` (biasVector l)) (neuron l)
+  Layer (factor `scale` weightMatrix l) (factor `scale` biasVector l) (neuron l)
 
 -- | The randomizeFully function takes in a source of entropy, the number of output
 --   neurons, and the number of input neurons, and returns a tuple of the 
@@ -99,7 +97,7 @@ scaleLayer factor l =
 randomizeFully :: (RandomGen g) => Randomization g
 randomizeFully g t i j = (randomMatrix, randomVector)
   where randomMatrix = (i >< j) (randomList t g')
-        randomVector = i |> (randomList t g'')
+        randomVector = i |> randomList t g''
         (g', g'') = split g
 
 -- | The randomizeLocally function takes in ConvolutionalSettings a source
@@ -108,7 +106,7 @@ randomizeFully g t i j = (randomMatrix, randomVector)
 randomizeLocally :: (RandomGen g) => Int -> Int -> Int -> Int -> Int -> Int -> Int -> Int -> Int -> Randomization g
 randomizeLocally f s p k d w1 h1 w2 h2 g t i j = (randomMatrix, randomVector)
   where randomMatrix = fromLists (locallyRandomList f s p k d w1 h1 w2 h2 g' t i j) :: Matrix Double
-        randomVector = i |> (randomList t g'')
+        randomVector = i |> randomList t g''
         (g', g'') = split g
 
 -- | The locallyRandomList function takes in ConvolutionalSettings a source
@@ -118,14 +116,14 @@ locallyRandomList :: (RandomGen g) => Int -> Int -> Int -> Int -> Int -> Int -> 
 locallyRandomList f s p k d w1 h1 w2 h2 g t i j =
   if k == 0 then []
   else filterValues ++ nextFilterValues
-    where filterValues = [(replicate (rowZeroOffset + colZeroOffset) 0)
-                          ++ (take (j - rowZeroOffset - colZeroOffset) (randomList t g'))
-                          | n <- [0..((div i k)-1)],
+    where filterValues = [replicate (rowZeroOffset + colZeroOffset) 0
+                          ++ take (j - rowZeroOffset - colZeroOffset) (randomList t g')
+                          | n <- [0..div i k-1],
                           let rowSize = w1 + 2 * p,
-                          let postsynPerFilter = (rem n (div i k)),
-                          let rowZeroOffset = (1 + s) * (quot postsynPerFilter w2) * rowSize,
-                          let colZeroOffset = (1 + s) * (mod n w2)]
-          nextFilterValues = locallyRandomList f s p (k - 1) k w1 h1 w2 h2 g'' t (i - (div i k)) j
+                          let postsynPerFilter = rem n (div i k),
+                          let rowZeroOffset = (1 + s) * quot postsynPerFilter w2 * rowSize,
+                          let colZeroOffset = (1 + s) * mod n w2]
+          nextFilterValues = locallyRandomList f s p (k - 1) k w1 h1 w2 h2 g'' t (i - div i k) j
           (g', g'') = split g
 
 -- | The connectFully function takes the number of input neurons for a layer, i,
@@ -139,17 +137,17 @@ connectFully i j = (i >< j) (repeat 1)
 connectLocally :: Int -> Int -> Int -> Int -> Int -> Int -> Int -> Int -> Int -> Connectivity
 connectLocally f s p k d w1 h1 w2 h2 i j =
   repmat (fromLists conn :: Matrix Double) k d
-  where conn = [(replicate rowZeroOffset 0)
-                ++ (take (f * rowSize) (cycle fieldArea)) 
-                ++ (replicate (rowSize * colSize - rowSize * f - rowZeroOffset) 0)
-                | n <- [0.. (quot i k)-1],
+  where conn = [replicate rowZeroOffset 0
+                ++ take (f * rowSize) (cycle fieldArea)
+                ++ replicate (rowSize * colSize - rowSize * f - rowZeroOffset) 0
+                | n <- [0.. quot i k-1],
                   let rowSize = w1 + 2 * p,
                   let colSize = h1 + 2 * p,
-                  let rowZeroOffset = (1 + s) * (quot n w2) * rowSize,
-                  let fieldAreaZeroOffset = (1 + s) * (mod n w2),
-                  let fieldArea = (replicate fieldAreaZeroOffset 0) 
-                                   ++ (replicate f 1)
-                                   ++ (replicate (rowSize - f - fieldAreaZeroOffset) 0)]
+                  let rowZeroOffset = (1 + s) * quot n w2 * rowSize,
+                  let fieldAreaZeroOffset = (1 + s) * mod n w2,
+                  let fieldArea = replicate fieldAreaZeroOffset 0
+                                   ++ replicate f 1
+                                   ++ replicate (rowSize - f - fieldAreaZeroOffset) 0]
 
 -- | To go from a showable to a layer, we also need a neuron type,
 --   which is an unfortunate restriction owed to Haskell's inability to
@@ -172,7 +170,7 @@ boxMuller x1 x2 = (z1, z2)
 -- | This is a function of type RandomTransform that transforms a list of
 --   uniformly distributed numbers to a list of normally distributed numbers.
 normals :: RandomTransform
-normals (x1:x2:xs) = z1:z2:(normals xs)
+normals (x1:x2:xs) = z1:z2:normals xs
   where (z1, z2) = boxMuller x1 x2
 normals _ = []
 
@@ -185,5 +183,5 @@ uniforms xs = xs
 -- | An affine transformation to return a list of uniforms on the range
 --   (a, b]
 boundedUniforms :: (Double, Double) -> [Double] -> [Double]
-boundedUniforms (lower, upper) xs = map affine xs
+boundedUniforms (lower, upper) = map affine
   where affine x = lower + x * (upper - lower)

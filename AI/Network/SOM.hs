@@ -30,7 +30,7 @@ data MapDefinition = MapDefinition { x        :: Int
                                    , inputDim :: Int
                                    }
 
-instance Network (SOM) where
+instance Network SOM where
   type Parameters SOM g = MapDefinition
 
   predict :: Vector Double -> SOM -> Vector Double
@@ -41,7 +41,7 @@ instance Network (SOM) where
   createNetwork transformation g def = SOM randomVectors
     where randomVectors = reshapeList (x def) $
                           makeVectors transformation g (inputDim def)
-                          ((x def) * (y def))
+                          (x def * y def)
 
 -- | A helper function to reshape a 1D list into a 2D list
 reshapeList :: Int -> [a] -> [[a]]
@@ -51,12 +51,12 @@ reshapeList x lst = h : reshapeList x t
 
 -- | Create a random set of weights for a given neuron
 randomNeuron :: (RandomGen g) => RandomTransform -> g -> Int -> Vector Double
-randomNeuron transform g inputDim = inputDim |> (randomList transform g)
+randomNeuron transform g inputDim = inputDim |> randomList transform g
 
 -- | Make a 1D list of vectors to be used by the SOM in creating a map of weights
 makeVectors :: (RandomGen g) => RandomTransform -> g -> Int -> Int -> [Vector Double]
 makeVectors transform g inputDim 0 = []
-makeVectors transform g inputDim num = (randomNeuron transform g' inputDim) :
+makeVectors transform g inputDim num = randomNeuron transform g' inputDim :
                                        makeVectors transform g'' inputDim (num - 1)
   where (g', g'') = split g
 

@@ -32,7 +32,7 @@ data BackpropTrainer = BackpropTrainer { eta   :: Double
 instance Trainer BackpropTrainer FeedForwardNetwork where
   fit s t n examples = foldl (backprop t) n $ s examples
   -- | Use the cost function to determine the error of a network
-  evaluate t n example = (cost t) (snd example) (predict (fst example) n)
+  evaluate t n example = cost t (snd example) (predict (fst example) n)
 
 -- | Perform backpropagation on a single training data instance.
 backprop :: BackpropTrainer -> FeedForwardNetwork -> [TrainingData] -> FeedForwardNetwork
@@ -43,7 +43,7 @@ backprop t n es =
 --   as a network, and the network itself, return a network with updated wieghts.
 updateNetwork :: Int -> BackpropTrainer -> FeedForwardNetwork -> FeedForwardNetwork -> FeedForwardNetwork
 updateNetwork mag t nablas n = addFeedForwardNetworks n
-  (FeedForwardNetwork $ map (scaleLayer $ -1 * (eta t) / (fromIntegral mag)) (layers nablas))
+  (FeedForwardNetwork $ map (scaleLayer $ -1 * eta t / fromIntegral mag) (layers nablas))
 
 -- | Calculate the nablas for a minibatch and return them as a network (so each
 --   weight and bias gets its own nabla).
@@ -76,8 +76,8 @@ inputs input network = if null (layers network) then []
 
 -- | The deltas function returns a list of layer deltas.
 deltas :: BackpropTrainer -> FeedForwardNetwork -> TrainingData -> [Vector Double]
-deltas t n example = (reverse (hiddenDeltas
-  (FeedForwardNetwork (reverse (layers n))) outputDelta (tail $ reverse is))) ++ [outputDelta]
+deltas t n example = reverse (hiddenDeltas
+  (FeedForwardNetwork (reverse (layers n))) outputDelta (tail $ reverse is)) ++ [outputDelta]
   where outputDelta = costd (snd example) output *
           cmap activationd lastInput
         costd = cost' t

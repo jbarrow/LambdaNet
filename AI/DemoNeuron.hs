@@ -41,17 +41,17 @@ class (Show a) => Neuron a where
   evaluate :: a -> NeuronWeights -> Values -> Activation
   evaluate' :: a -> NeuronWeights -> Values -> Activation
 
-instance Show (ReducedNeuron) where
-  show n = description n
+instance Show ReducedNeuron where
+  show = description
 
-instance Neuron (ReducedNeuron) where
+instance Neuron ReducedNeuron where
     evaluate n weights values = f $ dot weights values
         where f = activation n
 
     evaluate' n weights values = f' $ dot weights values
         where f' = activation' n
            
-instance Neuron (L2Neuron) where
+instance Neuron L2Neuron where
   evaluate  n = l2Norm
   evaluate' n = l1Norm
 
@@ -98,7 +98,7 @@ reclu t = log (1 + exp t)
 -- | The derivative of the rectified linear activation function is just the
 --   sigmoid.
 reclu' :: Double -> Activation
-reclu' t = sigmoid t
+reclu' = sigmoid
 
 -- | Calculate the distance between a SOM neuron and an input
 l2Norm :: NeuronWeights -> Values -> Activation

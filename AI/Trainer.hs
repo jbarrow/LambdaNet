@@ -68,21 +68,21 @@ quadraticCost' y a = a - y
 -- | The softmax function: a / (e ** a)
 --   Subtracts the maxium element when computes 'exp' to avoid numerical issues.
 softmax :: Vector Double -> Vector Double
-softmax a = (1 / (sumElements a')) `scale` a'
+softmax a = (1 / sumElements a') `scale` a'
   where a' = cmap (\ x -> exp $ x - maxElement a) a
 
 -- | The softmax cost function: - y * (log p), where p = softmax a
 softmaxCost :: Vector Double -> Vector Double -> Double
-softmaxCost y a = - (y <.> (log $ softmax a)) / (fromIntegral $ size y)
+softmaxCost y a = - (y <.> log (softmax a)) / fromIntegral (size y)
 
 -- | The derivative of the softmax cost function: a - y
 softmaxCost' :: Vector Double -> Vector Double -> Vector Double
-softmaxCost' y a = (1.0 / (fromIntegral $ size y)) `scale` (a - y)
+softmaxCost' y a = (1.0 / fromIntegral (size y)) `scale` (a - y)
 
 -- | The minibatch function becomes a Selection when partially applied
 --   with the minibatch size
 minibatch :: Int -> [TrainingData] -> [[TrainingData]]
-minibatch size = chunksOf size
+minibatch = chunksOf
 
 -- | If we want to train the network online
 online :: [TrainingData] -> [[TrainingData]]
@@ -95,7 +95,7 @@ online = minibatch 1
 --         without providing 0?
 networkErrorLessThan :: (Trainer t n) => Double -> n -> t -> [TrainingData] -> Int -> Bool
 networkErrorLessThan err network trainer dat _ = meanError < err
-  where meanError = (sum errors) / fromIntegral (length errors)
+  where meanError = sum errors / fromIntegral (length errors)
         errors = map (evaluate trainer network) dat
 
 -- | Given a network, a trainer, a list of training data,
@@ -104,7 +104,7 @@ networkErrorLessThan err network trainer dat _ = meanError < err
 trainNTimes :: (Trainer t n, RandomGen g) => g -> n -> t -> Selection -> [TrainingData] -> Int -> n
 trainNTimes g network trainer s dat n =
   trainUntil g network trainer s dat completion 0
-  where completion _ _ _ n' = (n == n')
+  where completion _ _ _ n' = n == n'
 
 -- | Given a network, a trainer, a list of training data,
 --   and an error value, this function trains the network with the list of
