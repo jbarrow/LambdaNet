@@ -23,6 +23,7 @@ import           Data.Binary           (Binary (..), decode, encode)
 import qualified Data.ByteString.Lazy  as B
 import           Data.Monoid           (Monoid (..))
 import           Numeric.LinearAlgebra
+import           Numeric.LinearAlgebra.Data (cmap)
 import           System.IO
 import           System.Random
 
@@ -33,7 +34,7 @@ data FeedForwardNetwork = FeedForwardNetwork { layers :: [Layer] } deriving Show
 -- | We gain the ability to combine two networks of the same proportions
 --   by abstracting a network as a monoid. This is useful in backpropagation
 --   for batch training
-instance Monoid (FeedForwardNetwork) where
+instance Monoid FeedForwardNetwork where
   mempty = emptyFeedForwardNetwork
   mappend = addFeedForwardNetworks
 
@@ -50,14 +51,17 @@ isEmptyFeedForwardNetwork n = null $ layers n
 
 -- | A function to combine two networks
 addFeedForwardNetworks :: FeedForwardNetwork -> FeedForwardNetwork -> FeedForwardNetwork
-addFeedForwardNetworks n1 n2 = if isEmptyFeedForwardNetwork n1 then n2 else
-  if isEmptyFeedForwardNetwork n2 then n1 else
+addFeedForwardNetworks n1 n2
+  | isEmptyFeedForwardNetwork n1 = n2
+  | isEmptyFeedForwardNetwork n2 = n1
+  | otherwise =
     FeedForwardNetwork $ zipWith combineLayers (layers n1) (layers n2)
-  where combineLayers l1 l2 =
-          Layer ((weightMatrix l1) + (weightMatrix l2))
-          ((biasVector l1) + (biasVector l2)) (neuron l1)
+  where combineLayers l1 l2
+          = Layer (weightMatrix l1 + weightMatrix l2)
+              (biasVector l1 + biasVector l2)
+              (neuron l1)
 
-instance Network (FeedForwardNetwork) where
+instance Network FeedForwardNetwork where
   type Parameters FeedForwardNetwork g = [LayerDefinition g]
 
   -- | Predict folds over each layer of the network using the input vector as the
@@ -67,18 +71,17 @@ instance Network (FeedForwardNetwork) where
   -- | The createNetwork function takes in a random transform used for weight
   --   initialization, a source of entropy, and a list of layer definitions,
   --   and returns a network with the weights initialized per the random transform.
-  createNetwork t g [] = emptyFeedForwardNetwork
-  createNetwork t g (layerDef : []) = emptyFeedForwardNetwork
   createNetwork t g (layerDef : layerDef' : otherLayerDefs) =
     FeedForwardNetwork (layer : layers restOfNetwork)
     where layer = createLayer t g' layerDef layerDef'
           restOfNetwork = createNetwork t g'' (layerDef' : otherLayerDefs)
           (g', g'') = split g
+  createNetwork _ _ _ = emptyFeedForwardNetwork
 
 -- | A function used in the fold in predict that applies the activation
 --   function and pushes the input through a layer of the network.
 apply :: Vector Double -> Layer -> Vector Double
-apply vector layer = mapVector sigma (weights <> vector + bias)
+apply vector layer = cmap sigma (weights #> vector + bias)
   where sigma = activation (neuron layer)
         weights = weightMatrix layer
         bias = biasVector layer
@@ -90,6 +93,6 @@ saveFeedForwardNetwork file n = B.writeFile file (encode (layers n))
 
 -- | Given a filename, and a list of layer definitions, we want to reexpand
 --   the data back into a network.
-loadFeedForwardNetwork :: (Binary Layer, RandomGen g) => FilePath -> [LayerDefinition g] -> IO (FeedForwardNetwork)
+loadFeedForwardNetwork :: (Binary Layer, RandomGen g) => FilePath -> [LayerDefinition g] -> IO FeedForwardNetwork
 loadFeedForwardNetwork file defs = B.readFile file >>= \sls ->
-  return $ FeedForwardNetwork (map showableToLayer (zip (decode sls) defs))
+  return . FeedForwardNetwork $ zipWith (curry showableToLayer) (decode sls) defs

@@ -18,10 +18,10 @@ import           Graphics.Histogram
 import           AI.Trainer
 
 weightList :: FeedForwardNetwork -> [Double]
-weightList n = concat $ map (toList . flatten . weightMatrix) (layers n)
+weightList = toList . flatten . weightMatrix <=< layers
 
 biasList :: FeedForwardNetwork -> [Double]
-biasList n = concat $ map (toList . biasVector) (layers n)
+biasList = toList . biasVector <=< layers
 
 networkHistogram :: FilePath -> (FeedForwardNetwork -> [Double]) -> FeedForwardNetwork -> IO ()
 networkHistogram filename listFunction n = do

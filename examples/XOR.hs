@@ -37,7 +37,7 @@ main = do
 
   saveFeedForwardNetwork "xor.ann" n'
 
-  putStrLn $ "==> Network saved and reloaded: "
+  putStrLn "==> Network saved and reloaded: "
   n'' <- loadFeedForwardNetwork "xor.ann" [l, l', l'']
 
   print $ predict (fromList [0, 0]) n''

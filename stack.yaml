@@ -1,0 +1,9 @@
+flags: {}
+extra-package-dbs: []
+packages:
+- '.'
+extra-deps:
+- Histogram-0.1.0.2
+- data-accessor-transformers-0.2.1.6
+- gnuplot-0.5.4
+resolver: lts-4.0
