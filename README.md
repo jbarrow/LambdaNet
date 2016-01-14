@@ -12,6 +12,11 @@ The library comes with a pre-defined set of functions that can be composed
 in many ways to operate on real-world data. These will be enumerated later
 in the documentation.
 
+## Current Release
+
+The code from this repo doesn't reflect the current release of LambdaNet. The README 
+for the current release on Hackage  [can be found here](https://github.com/jbarrow/LambdaNet/tree/8bb914712794cc87dd442a6577b34cdb72ad059b).
+
 ## Installation
 
 The first step is to follow the [HMatrix installation instructions](https://github.com/albertoruiz/hmatrix/blob/master/INSTALL.md).
