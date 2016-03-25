@@ -22,6 +22,10 @@ cabal-version:       >=1.8
 extra-source-files:  README.md
                      Changelog
 
+flag examples
+    Description: Enable examples
+    Default:     False
+
 library
   exposed-modules:
     AI.Network,
@@ -53,6 +57,10 @@ executable convolutional
     LambdaNet,
     hmatrix >= 0.17.0.1,
     random
+  if flag(examples)
+    buildable:         True
+  else
+    buildable:         False
 
 executable som
   main-is: SOM.hs
@@ -62,6 +70,10 @@ executable som
     LambdaNet,
     hmatrix >= 0.17.0.1,
     random
+  if flag(examples)
+    buildable:         True
+  else
+    buildable:         False
 
 executable xor
   main-is: XOR.hs
@@ -71,6 +83,10 @@ executable xor
     LambdaNet,
     hmatrix >= 0.17.0.1,
     random
+  if flag(examples)
+    buildable:         True
+  else
+    buildable:         False
 
 test-suite test-all
   type: exitcode-stdio-1.0
