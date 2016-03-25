@@ -22,6 +22,10 @@ cabal-version:       >=1.8
 extra-source-files:  README.md
                      Changelog
 
+flag examples
+    Description: Enable examples
+    Default:     False
+
 library
   exposed-modules:
     AI.Network,
@@ -44,3 +48,52 @@ library
     bytestring,
     Histogram,
     hspec
+
+executable convolutional
+  main-is: Convolutional.hs
+  hs-source-dirs: examples
+  build-depends:
+    base >= 4 && < 5,
+    LambdaNet,
+    hmatrix >= 0.17.0.1,
+    random
+  if flag(examples)
+    buildable:         True
+  else
+    buildable:         False
+
+executable som
+  main-is: SOM.hs
+  hs-source-dirs: examples
+  build-depends:
+    base >= 4 && < 5,
+    LambdaNet,
+    hmatrix >= 0.17.0.1,
+    random
+  if flag(examples)
+    buildable:         True
+  else
+    buildable:         False
+
+executable xor
+  main-is: XOR.hs
+  hs-source-dirs: examples
+  build-depends:
+    base >= 4 && < 5,
+    LambdaNet,
+    hmatrix >= 0.17.0.1,
+    random
+  if flag(examples)
+    buildable:         True
+  else
+    buildable:         False
+
+test-suite test-all
+  type: exitcode-stdio-1.0
+  main-is: Main.hs
+  hs-source-dirs: test
+  build-depends:
+    base >= 4 && < 5,
+    LambdaNet,
+    hspec,
+    QuickCheck
