@@ -45,6 +45,33 @@ library
     Histogram,
     hspec
 
+executable convolutional
+  main-is: Convolutional.hs
+  hs-source-dirs: examples
+  build-depends:
+    base >= 4 && < 5,
+    LambdaNet,
+    hmatrix >= 0.17.0.1,
+    random
+
+executable som
+  main-is: SOM.hs
+  hs-source-dirs: examples
+  build-depends:
+    base >= 4 && < 5,
+    LambdaNet,
+    hmatrix >= 0.17.0.1,
+    random
+
+executable xor
+  main-is: XOR.hs
+  hs-source-dirs: examples
+  build-depends:
+    base >= 4 && < 5,
+    LambdaNet,
+    hmatrix >= 0.17.0.1,
+    random
+
 test-suite test-all
   type: exitcode-stdio-1.0
   main-is: Main.hs
